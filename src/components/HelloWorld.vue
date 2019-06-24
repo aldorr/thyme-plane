@@ -1,7 +1,7 @@
 <template>
   <section class="hero is-primary is-fullheight" style="background:url(https://source.unsplash.com/1600x720/?business,note)">
     <div class="hero-body">
-      <div class="container" style="mix-blend-mode:difference;background-color:#000;">
+      <div class="container" style="mix-blend-mode:difference;">
         <h1 class="title">
           {{ msg }}
         </h1>
@@ -25,6 +25,9 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.hero.is-primary {
+  background-color: #222;
+}
 h3 {
   margin: 40px 0 0;
 }
