@@ -7,3 +7,16 @@
     </div>
   </section>
 </template>
+
+<script>
+export default {
+  // methods: {
+  //   listAllUsers() {
+  //     this.$store.dispatch('listAllUsers')
+  //   }
+  // },
+  // mounted() {
+  //   this.listAllUsers()
+  // }
+}
+</script>

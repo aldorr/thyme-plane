@@ -5,14 +5,14 @@
                 <router-link class="navbar-item" to="/">
                 <img src="../assets/logo.png" width="112" height="27">
                 </router-link>
-                <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBreeder" v-on:click="showNav = !showNav" v-bind:class="{ 'is-active' : showNav }">
+                <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBreeder" v-on:click="showNav = !showNav" v-bind:class="{ 'is-active':showNav }">
                 <span aria-hidden="true"></span>
                 <span aria-hidden="true"></span>
                 <span aria-hidden="true"></span>
                 </a>
             </div>
 
-            <div id="navbarBreeder" class="navbar-menu" v-bind:class="{ 'is-active' : showNav }">
+            <div id="navbarBreeder" class="navbar-menu" v-bind:class="{ 'is-active':showNav }">
                 <div class="navbar-start" v-if="userLoggedIn">
                     <router-link v-for="navitem in navitems" :key="navitem.title" :to="navitem.link" class="navbar-item">
                         <b-icon :icon="navitem.icon" size="is-small" :type="navitem.type"> </b-icon>
@@ -25,6 +25,7 @@
                         <div class="buttons">
                             <b-button icon-left="user" class="button is-light" @click="openLogin()" v-if="!userLoggedIn">Sign In</b-button>
                             <b-button icon-left="user" class="button is-warning" @click="logoutFromFirebase" v-if="userLoggedIn">Sign Out</b-button>
+                            <b-button icon-left="user-plus" class="button is-default" @click="addNewUser" v-if="userLoggedIn"></b-button>
                         </div>
                     </div>
                 </div>
@@ -34,7 +35,8 @@
 </template>
 
 <script>
-import SigninVue from '@/components/auth/SignIn.vue';
+import SigninVue from '@/components/auth/SignIn.vue'
+import AdduserVue from '@/components/auth/AddUser.vue'
 export default {
     name: "NavBar",
     props: ['hideNavLogins'],
@@ -102,6 +104,16 @@ export default {
                 component: SigninVue,
                 hasModalCard: true,
                 props: {
+                }
+            })
+        },
+        addNewUser() {
+            this.$modal.open({
+                parent: this,
+                component: AdduserVue,
+                hasModalCard: true,
+                props: {
+
                 }
             })
         }

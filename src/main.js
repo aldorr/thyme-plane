@@ -4,6 +4,7 @@ import router from './router'
 import store from './store'
 
 import firebase from "firebase/app"
+// import * as admin from "firebase-admin"
 import "firebase/auth"
 import "firebase/database"
 import { firebaseConfig } from "./firebase"

@@ -73,6 +73,36 @@ const store = new Vuex.Store({
           router.push('/');
         })
     },
+
+    newUserAction ({ commit }, payload) {
+      firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password)
+      .catch(function(error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        console.log(errorCode)
+        console.log(errorMessage)
+      });
+    },
+
+    listAllUsers(nextPageToken) {
+      // List batch of users, 1000 at a time.
+      firebase.auth().listUsers(1000, nextPageToken)
+        .then(function(listUsersResult) {
+          listUsersResult.users.forEach(function(userRecord) {
+            console.log('user', userRecord.toJSON());
+          });
+          if (listUsersResult.pageToken) {
+            // List next batch of users.
+            listAllUsers(listUsersResult.pageToken);
+          }
+        })
+        .catch(function(error) {
+          console.log('Error listing users:', error);
+        });
+    },
+// Start listing users from the beginning, 1000 at a time.
+// listAllUsers();
     loadCustomerEntries({ commit }) {
         return firebase
           .database()
