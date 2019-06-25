@@ -5,7 +5,8 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "deploy": "./deploy.sh"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.8.2",
@@ -13,6 +14,7 @@
     "@fortawesome/free-solid-svg-icons": "^5.8.2",
     "@fortawesome/vue-fontawesome": "^0.1.6",
     "buefy": "^0.7.7",
+    "cleave.js": "^1.5.0",
     "core-js": "^2.6.9",
     "firebase": "^6.1.0",
     "firebaseui": "^4.0.0",

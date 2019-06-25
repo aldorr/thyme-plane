@@ -34,7 +34,7 @@
                                             </b-autocomplete>
                                         </b-field>
 
-                                        <b-field label="Bereich" v-if="kunde !== null">
+                                        <b-field label="Bereich" v-if="kunde !== ''">
                                             <b-autocomplete
                                             expanded
                                                 v-model="bereich"
@@ -48,7 +48,7 @@
                                             </b-autocomplete>
                                         </b-field>
 
-                                        <b-field label="Job" v-if="kunde !== null">
+                                        <b-field label="Job" v-if="kunde !== ''">
                                             <b-autocomplete
                                             expanded
                                                 v-model="job"
@@ -102,18 +102,12 @@
                                             </b-datepicker>
                                         </b-field>
 
-                                        <div class="field">
-                                            <label for="time" class="label">Zeitspanne</label>
-                                            <div class="control has-icons-left">
-                                                <input type="text" size="10" maxlength="10" placeholder = '11h 11m' class="input duration" v-model="time"/>
-                                                <span class="icon is-small is-left">
-                                                    <i class="fas fa-clock"></i>
-                                                </span>
-                                            </div>
-                                        </div>
+                                        <b-field label="Zeitspanne">
+                                                <b-input placeholder='01h 05m' class="duration" :value="duration" v-cleave="masks.duration" @input.native="onInput" icon="clock"/>
+                                        </b-field>
 
                                         <b-field label="Notiz">
-                                            <b-input maxlength="200" type="textarea" v-model="note"></b-input>
+                                            <b-input type="textarea" v-model="note"></b-input>
                                         </b-field>
                                         
                                     </div>
@@ -139,24 +133,23 @@
 </template>
 
 <script>
-    // const data = {
-    //     "entries": {
-    //         "-aLajr3939r": {
-    //             "id": 0,
-    //             "name": "Elbphilharmonie",
-    //             "bereiche": ["Broschure E","Monatsprogramm E"],
-    //             "jobs": ["Something E","Something else E"]
-    //         },
-    //         "-aLjr39489rja": {
-    //             "id": 1,
-    //             "name": "Metropolis Kino",
-    //             "bereiche": ["Broschure M", "Monatsprogramm M"],
-    //             "jobs": ["Something M", "Something else M"]
-    //         }
-    //     }
-    // }
+
+    import Cleave from 'cleave.js'
+
+    const cleave = {
+        name: 'cleave',
+        bind(el, binding) {
+            const duration = el.querySelector('.duration input')
+            duration._vCleave = new Cleave(duration, binding.value)
+        },
+        unbind(el) {
+            const duration = el.querySelector('.duration input')
+            duration._vCleave.destroy()
+        }
+    }
 
     export default {
+        directives: { cleave },
         data() {
             const today = new Date()
 
@@ -170,7 +163,15 @@
                 // jobs: []
                 date: new Date(),
                 maxDate: new Date(today.getFullYear(), today.getMonth(), today.getDate()),
-                time: '',
+                duration: '',
+                rawDuration: '',
+                masks: {
+                    duration: {
+                        delimiters: ['h ', 'm'],
+                        blocks: [2, 2, 0],
+                        numericOnly: true
+                    }
+                },
                 note: ''
             }
         },
@@ -278,74 +279,10 @@
                 this.bereich = ''
                 this.job = ''
             },
-            to_seconds(dd,hh,mm) {
-                var d = parseInt(dd);
-                var h = parseInt(hh);
-                var m = parseInt(mm);
-                if (isNaN(d)) d = 0;
-                if (isNaN(h)) h = 0;
-                if (isNaN(m)) m = 0;
-              
-                var t = d * 24 * 60 * 60 +
-                    h * 60 * 60 +
-                    m * 60;
-                return t;
-            },
-            // expects 1d 11h 11m, or 1d 11h,
-            // or 11h 11m, or 11h, or 11m, or 1d
-            // returns a number of seconds.
-            parseDuration(sDuration) {
-                if (sDuration == null || sDuration === '') return 0;
-                var mrx = new RegExp(/([0-9][0-9]?)[ ]?m/);
-                var hrx = new RegExp(/([0-9][0-9]?)[ ]?h/);
-                var drx = new RegExp(/([0-9])[ ]?d/);
-                var days = 0;
-                var hours = 0;
-                var minutes = 0;
-                if (mrx.test(sDuration)) {
-                    minutes = mrx.exec(sDuration)[1];
-                }
-                if (hrx.test(sDuration)) {
-                    hours = hrx.exec(sDuration)[1];
-                }
-                if (drx.test(sDuration)) {
-                    days = drx.exec(sDuration)[1];
-                }
-                
-                return to_seconds(days, hours, minutes);
-            },
-            // outputs a duration string based on
-            // the number of seconds provided.
-            // rounded off to the nearest 1 minute.
-            toDurationString(iDuration) {
-                var result;
-                if (iDuration <= 0) return "";
-                var m = Math.floor((iDuration/60)%60);
-                var h = Math.floor((iDuration/3600)%24);
-                var d = Math.floor(iDuration/86400);
-                result = "";
-                if (d > 0) result = result + d + "d ";
-                if (h > 0) result  = result + h + "h ";
-                if (m > 0) result  = result + m + "m ";
-                return result.substring(0, result.length - 1);
-            },
-    /*
-            var input_duration = document.querySelector("form input.duration");
-            input_duration.addEventListener("change", function(event) {
-                event.preventDefault();
-                var sd = input_duration.value;
-                var seconds = parseDuration(sd);
-                if (sd !== "" && seconds === 0) {
-                    input_duration.classList.add("is-warning");
-                    input_duration.classList.remove("is-success");
-                    input_duration.focus();
-                } else {
-                    input_duration.value = toDurationString(seconds);
-                    input_duration.classList.add("is-success");
-                    input_duration.classList.remove("is-warning");
-                }
-            });
-    */
+            onInput(event) {
+                this.rawDuration = event.target._vCleave.getRawValue()
+                this.duration = event.target._vCleave.getFormattedValue()
+            }
         },
         mounted() {
             this.loadCustomerData()
