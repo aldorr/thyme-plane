@@ -87,23 +87,23 @@
                                                 placeholder="Click to select..."
                                                 icon="calendar" class="is-small" v-model="date" expanded
                                                 :max-date="maxDate">
-<div class="buttons is-right">
-                                                <button class="button is-primary is-fullwidth"
-                                                    @click.prevent="date = new Date()">
-                                                    <b-icon icon="calendar-alt"></b-icon>
-                                                    <span>Heute</span>
-                                                </button>
-                                                <button class="button is-danger is-fullwidth"
-                                                    @click.prevent="date = null">
-                                                    <b-icon icon="times-circle"></b-icon>
-                                                    <span>Zurücksetzen</span>
-                                                </button>
-</div>
+                                                <div class="buttons is-right">
+                                                    <button class="button is-primary is-fullwidth"
+                                                        @click.prevent="date = new Date()">
+                                                        <b-icon icon="calendar-alt"></b-icon>
+                                                        <span>Heute</span>
+                                                    </button>
+                                                    <button class="button is-danger is-fullwidth"
+                                                        @click.prevent="date = null">
+                                                        <b-icon icon="times-circle"></b-icon>
+                                                        <span>Zurücksetzen</span>
+                                                    </button>
+                                                </div>
                                             </b-datepicker>
                                         </b-field>
 
-                                        <b-field label="Zeitspanne">
-                                                <b-input placeholder='01h 05m' class="duration" :value="duration" v-cleave="masks.duration" @input.native="onInput" icon="clock"/>
+                                        <b-field label="Zeitspanne" :type="{'is-danger':errors.has('duration')}" :message="errors.first('duration')">
+                                                <b-input name="duration" placeholder='01h 05m' class="duration" :value="duration | durationFilter" v-cleave="masks.duration" v-validate="'required'" v-on:keyup.native="onInput" icon="clock"/>
                                         </b-field>
 
                                         <b-field label="Notiz">
@@ -164,12 +164,13 @@
                 date: new Date(),
                 maxDate: new Date(today.getFullYear(), today.getMonth(), today.getDate()),
                 duration: '',
-                rawDuration: '',
+                // rawDuration: '',
                 masks: {
                     duration: {
                         delimiters: ['h ', 'm'],
                         blocks: [2, 2, 0],
-                        numericOnly: true
+                        numericOnly: true,
+                        noImmediatePrefix: true
                     }
                 },
                 note: ''
@@ -248,10 +249,16 @@
                 var keys = [], i = 0;
                 for (keys[i++] in this.customerEntries) {}
                 return keys
+            },
+            rawDuration() {
+                let mins = this.duration.slice(4, 6)
+                let hrs = this.duration.slice(0, 2)
+                return hrs * 60 * 60 + mins * 60
             }
         },
         methods: {
             addEntry() {
+                // console.log(this.rawDuration)
                 this.$toast.open({duration: 5000,
                     message: `Not active, yet!`,
                     position: 'is-bottom',
@@ -263,7 +270,7 @@
             },
             setKundeSubs() {
                 this.bereiche = this.bereiche
-                console.log(this.bereiche)
+                // console.log(this.bereiche)
             },
             getKunde() {
                 return this.data.kunde
@@ -280,9 +287,40 @@
                 this.job = ''
             },
             onInput(event) {
-                this.rawDuration = event.target._vCleave.getRawValue()
+                // this.rawDuration = event.target._vCleave.getRawValue()
                 this.duration = event.target._vCleave.getFormattedValue()
             }
+        },
+        filters: {
+          durationFilter: function (value) {
+            // console.log(value)
+            let hrs, mins
+            if (value.length === 4) {
+                hrs = value.slice(0, 2)
+                // console.log(hrs)
+                if (hrs > 12) {
+                    hrs = 12
+                }
+                return hrs + "h "
+            }
+            if (value.length >= 6) {
+                mins = value.slice(4, 6)
+                hrs = value.slice(0, 2)
+                // console.log(hrs)
+                if (hrs > 12) {
+                    hrs = 12
+                }
+                // console.log(mins)
+                if (mins > 59) {
+                    mins = 59
+                }
+                return hrs + "h " + mins
+                this.onInput()
+            } else {
+                return value
+            }
+
+          }
         },
         mounted() {
             this.loadCustomerData()
