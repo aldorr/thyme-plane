@@ -25,7 +25,9 @@
                         <div class="buttons">
                             <b-button icon-left="user" class="button is-light" @click="openLogin()" v-if="!userLoggedIn">Sign In</b-button>
                             <b-button icon-left="user" class="button is-warning" @click="logoutFromFirebase" v-if="userLoggedIn">Sign Out</b-button>
-                            <b-button icon-left="user-plus" class="button is-default" @click="addNewUser" v-if="userLoggedIn"></b-button>
+                            <!-- <b-button icon-left="user-plus" class="button is-default" @click="addNewUser" v-if="userLoggedIn"></b-button> -->
+
+                            <!-- <b-button icon-left="tools" class="button" tag="router-link" to="/admin" type="is-default" v-if="userLoggedIn"></b-button> -->
                         </div>
                     </div>
                 </div>

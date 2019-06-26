@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Home from './views/Home.vue'
-import SignIn from './components/auth/SignIn'
+// import SignIn from './components/auth/SignIn'
+import Admin from './views/About'
 import store from './store'
 
 Vue.use(Router)
@@ -15,11 +16,11 @@ const router = new Router({
       name: 'home',
       component: Home
     },
-    {
-      path: '/signin',
-      name: 'signin',
-      component: SignIn
-    },
+    // {
+    //   path: '/signin',
+    //   name: 'signin',
+    //   component: SignIn
+    // },
     {
       path: '/about',
       name: 'about',
@@ -51,6 +52,14 @@ const router = new Router({
       path: '/list',
       name: 'list',
       component: () => import('./views/List.vue'),
+      meta: {
+                authRequired: true
+            }
+    },
+    {
+      path: '/admin',
+      name: 'admin',
+      component: () => import('./views/Admin.vue'),
       meta: {
                 authRequired: true
             }
