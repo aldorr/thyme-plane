@@ -17,7 +17,6 @@
     "cleave.js": "^1.5.0",
     "core-js": "^2.6.9",
     "firebase": "^6.1.0",
-    "firebaseui": "^4.0.0",
     "vee-validate": "^2.2.9",
     "vue": "^2.6.10",
     "vue-router": "^3.0.3",
