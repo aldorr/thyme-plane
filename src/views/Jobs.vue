@@ -6,7 +6,7 @@
                     <div class="card">
                         <form action="#">
                             <header class="card-header">
-                                <p class="card-header-title">Add Job</p>
+                                <p class="card-header-title">Kunden, Bereiche & Jobs bearbeiten</p>
                             </header>
                             <div class="card-content">
                                 <div class="columns">
