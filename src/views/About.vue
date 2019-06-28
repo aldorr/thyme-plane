@@ -10,13 +10,18 @@
 
 <script>
 export default {
+    // methods: {
+    //     loadCustomerData() {
+    //         this.$store.dispatch('loadCustomerEntries')
+    //     },
+    //   },
   // methods: {
   //   listAllUsers() {
   //     this.$store.dispatch('listAllUsers')
   //   }
   // },
   // mounted() {
-  //   this.listAllUsers()
+  //   this.loadCustomerData()
   // }
 }
 </script>
