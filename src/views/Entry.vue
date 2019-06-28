@@ -7,7 +7,22 @@
                     <div class="card">
                         <form action="#">
                             <header class="card-header">
-                                <p class="card-header-title">Add Entry</p>
+                                <p class="card-header-title">
+                                    Zeit erfassen für &nbsp; 
+                                    <b-field :type="{'is-danger': errors.has('userName')}" :message="errors.first('userName')">
+                                        <b-select placeholder="Name auswählen"
+                                                name="userName"
+                                                v-model="userName"
+                                                v-validate="'required'" mode="eager">
+                                            <option
+                                                v-for="option in userList"
+                                                :value="option"
+                                                :key="option">
+                                                {{ option }}
+                                            </option>
+                                        </b-select>
+                                    </b-field>
+                                </p>
                             </header>
                             <div class="card-content">
                                 <div class="columns">
@@ -20,8 +35,10 @@
                                                 </option>
                                             </b-select>
                                         </b-field> -->
-                                        <b-field label="Kunde auswählen">
+                                        <b-field label="Kunde auswählen" :type="{'is-danger': errors.has('kunde')}" :message="errors.first('kunde')">
                                             <b-autocomplete
+                                            expanded
+                                                name="kunde"
                                                 v-model="kunde"
                                                 ref="autocomplete"
                                                 open-on-focus
@@ -29,35 +46,40 @@
                                                 placeholder="e.g. Metropolis"
                                                 icon="building"
                                                 @select="option => selected = option"
-                                                @input="clearJobs">
+                                                @input="clearJobs"
+                                                 v-validate="'required'" key="customer-input">
                                                 <template slot="empty">Leider keine Kunden namens {{kunde}}</template>
                                             </b-autocomplete>
                                         </b-field>
 
-                                        <b-field label="Bereich" v-if="kunde !== ''">
+                                        <b-field label="Bereich" v-if="kunde !== ''" :type="{'is-danger': errors.has('bereich')}" :message="errors.first('bereich')">
                                             <b-autocomplete
                                             expanded
+                                                name="bereich"
                                                 v-model="bereich"
                                                 ref="autocomplete"
                                                 open-on-focus
                                                 :data="filteredBereicheArray"
                                                 placeholder="Bereich Wählen"
                                                 icon="folder-open"
-                                                @select="option => selected = option">
+                                                @select="option => selected = option"
+                                                 v-validate="'required'" key="bereich-input">
                                                 <template slot="empty">No results for "{{bereich}}"</template>
                                             </b-autocomplete>
                                         </b-field>
 
-                                        <b-field label="Job" v-if="kunde !== ''">
+                                        <b-field label="Job" v-if="kunde !== ''" :type="{'is-danger': errors.has('job')}" :message="errors.first('job')">
                                             <b-autocomplete
                                             expanded
+                                                name="job"
                                                 v-model="job"
                                                 ref="autocomplete"
                                                 open-on-focus
                                                 :data="filteredJobsArray"
                                                 placeholder="Job Wählen"
                                                 icon="file-alt"
-                                                @select="option => selected = option">
+                                                @select="option => selected = option"
+                                                 v-validate="'required'" key="job-input">
                                                 <template slot="empty">No results for "{{job}}"</template>
                                             </b-autocomplete>
                                         </b-field>
@@ -82,11 +104,13 @@
 
                                     </div>
                                     <div class="column">
-                                        <b-field label="Datum">
+                                        <b-field label="Datum" :type="{'is-danger':errors.has('date')}" :message="errors.first('date')">
                                             <b-datepicker
+                                                name="date"
                                                 placeholder="Click to select..."
                                                 icon="calendar" class="is-small" v-model="date" expanded
-                                                :max-date="maxDate">
+                                                :max-date="maxDate"
+                                                 v-validate="'required'" key="date-input">
                                                 <div class="buttons is-right">
                                                     <button class="button is-primary is-fullwidth"
                                                         @click.prevent="date = new Date()">
@@ -103,7 +127,8 @@
                                         </b-field>
 
                                         <b-field label="Zeitspanne" :type="{'is-danger':errors.has('duration')}" :message="errors.first('duration')">
-                                                <b-input name="duration" placeholder='01h 05m' class="duration" :value="duration | durationFilter" v-cleave="masks.duration" v-validate="'required'" v-on:keyup.native="onInput" icon="clock"/>
+                                                <b-input name="duration" placeholder='01h 05m' class="duration" :value="duration | durationFilter" v-cleave="masks.duration" v-validate="'required'" v-on:keyup.native="onInput" icon="clock"
+                                                key="time-input"/>
                                         </b-field>
 
                                         <b-field label="Notiz">
@@ -173,15 +198,54 @@
                         noImmediatePrefix: true
                     }
                 },
-                note: ''
+                note: '',
+                userName: '',
+                timeEntries: {}
             }
         },
         computed: {
             // currentBereiche() {
             //     return this.getBereicheArray(this.data.kunde)
             // },
-
-            
+            // timeEntries() {
+            //     return this.$store.getters.usertimes
+            // },
+            currentUserName() {
+                // get user's name with the id this.$store.getters.user
+                let userID = this.$store.getters.user
+                // let timeEntries = this.timeEntries
+                let currentUserName = this.timeEntries[userID].fullname
+                // console.log(currentUserName)
+                return currentUserName
+            },
+            userList() {
+                // get all users' names and ids
+                // let userID = this.$store.getters.user
+                let userList = []
+                let timeEntries = this.timeEntries
+                // console.dir(timeEntries)
+                //                for (let [id, user] of Object.entries(timeEntries)) {
+                for (let [id] of Object.entries(timeEntries)) {
+                    userList.push(timeEntries[id].fullname)
+                }
+                return userList
+            },
+            userIdList() {
+                // get all users' names and ids
+                // let userID = this.$store.getters.user
+                let userIdList = []
+                let timeEntries = this.timeEntries
+                // console.dir(timeEntries)
+                //                for (let [id, user] of Object.entries(timeEntries)) {
+                for (let [id] of Object.entries(timeEntries)) {
+                    userIdList.push(id)
+                }
+                return userIdList
+            },
+            currentUserId() {
+                let userIndex = this.userList.indexOf(this.userName)
+                return this.userIdList[userIndex]
+            },
             filteredKundenArray() {
                 return this.kunden.filter((option) => {
                     return option
@@ -246,27 +310,91 @@
                 return myJobsReturn
             },
             idxs() {
-                var keys = [], i = 0;
-                for (keys[i++] in this.customerEntries) {}
+                let keys = [], i = 0;
+                for (keys[i++] in this.customerEntries) {
+                    // do nothing?
+                }
                 return keys
             },
             rawDuration() {
                 let mins = this.duration.slice(4, 6)
                 let hrs = this.duration.slice(0, 2)
                 return hrs * 60 * 60 + mins * 60
+            },
+            dateToString() {
+                return this.date.toString()
+            },
+            dateToHuman() {
+                let date = this.date
+                let dateHuman
+                let year    = date.getFullYear();
+                let month   = date.getMonth() + 1;
+                let day     = date.getDate();
+                dateHuman = day + '.' + month + '.' + year
+                return dateHuman
             }
         },
         methods: {
             addEntry() {
-                // console.log(this.rawDuration)
-                this.$toast.open({duration: 5000,
-                    message: `Not active, yet!`,
-                    position: 'is-bottom',
-                    type: 'is-warning'
+                this.$validator.validateAll().then((result) => {
+                    if (result) {
+                        this.$dialog.confirm({
+                            title: 'Eingaben nochmals überprüfen',
+                            message: 'Mitarbeiter: ' + this.userName +'<br>Kunde: ' + this.kunde + '<br>Bereich: ' + this.bereich + '<br>Job: ' + this.job + '<br>Datum: ' + this.dateToHuman + '<br>Zeitspanne: ' + this.duration + '<br>Notiz: ' + this.note,
+                            confirmText: 'Okay',
+                            type: 'is-default',
+                            hasIcon: true,
+                            icon: 'calendar',
+                            onConfirm: () => {
+                                // console.log(this.rawDuration)
+                                let user = this.currentUserId
+                                let newEntry = {
+                                    customer: this.kunde,
+                                    area: this.bereich,
+                                    job: this.job,
+                                    date: this.dateToString,
+                                    time: this.rawDuration,
+                                    note: this.note
+                                }
+                                // console.log(user)
+                                // console.log(newEntry)
+                                this.$store.dispatch('newEntry', {
+                                    user: user,
+                                    newEntry: newEntry
+                                }).then(
+                                    this.$toast.open({duration: 5000,
+                                        message: `Added!`,
+                                        position: 'is-bottom',
+                                        type: 'is-success'
+                                    }),
+                                    this.resetData()
+                                )
+                            }
+                        })
+                    } else {
+                      this.$toast.open({
+                        message: 'It seems your form is missing something! Please check the fields.',
+                        type: 'is-danger',
+                        position: 'is-bottom'
+                      })
+                    }
                 })
             },
-            loadCustomerData() {
+            resetData(){
+                this.kunde = '',
+                this.bereich = '',
+                this.job = '',
+                this.date = new Date(),
+                this.duration = '',
+                this.note = ''
+            },
+            loadAllData() {
                 this.$store.dispatch('loadCustomerEntries')
+                this.$store.dispatch('loadTimeEntries')
+                .then(() => {
+                    this.timeEntries = this.$store.state.userTimeEntries
+                    this.userName = this.currentUserName
+                })
             },
             setKundeSubs() {
                 this.bereiche = this.bereiche
@@ -314,8 +442,8 @@
                 if (mins > 59) {
                     mins = 59
                 }
-                return hrs + "h " + mins
-                this.onInput()
+                // this.onInput()
+                return hrs + "h " + mins + "m"
             } else {
                 return value
             }
@@ -323,7 +451,8 @@
           }
         },
         mounted() {
-            this.loadCustomerData()
+            this.loadAllData()
+            // this.timeEntries = this.$store.state.userTimeEntries
         }
     }
 </script>

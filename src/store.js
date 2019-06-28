@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import firebase from 'firebase'
+import firebase from 'firebase/app'
 import router from '@/router';
 
 Vue.use(Vuex)
@@ -11,7 +11,8 @@ const store = new Vuex.Store({
     user: null,
     status: null,
     error: null,
-    customerEntries: null
+    customerEntries: null,
+    userTimeEntries: null
   },
 
   mutations: {
@@ -25,8 +26,12 @@ const store = new Vuex.Store({
 
     setCustomerEntries (state, payload) {
       state.customerEntries = payload
-    }
-    ,
+    },
+
+    setTimeEntries(state, payload) {
+      state.userTimeEntries = payload
+    },
+
     setStatus (state, payload) {
       state.status = payload
     },
@@ -48,6 +53,8 @@ const store = new Vuex.Store({
           commit('setError', null)
           localStorage.user = true;
           router.push('/about');
+          this.dispatch('loadCustomerEntries')
+          this.dispatch('loadTimeEntries')
         })
         .catch((error) => {
           commit('setStatus', 'failure')
@@ -74,14 +81,18 @@ const store = new Vuex.Store({
         })
     },
 
-    newUserAction ({ commit }, payload) {
+    newUserAction ( { commit }, payload ) {
       firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password)
-      .catch(function(error) {
+      .then(() => {
+        commit('setStatus', 'success')
+        commit('setError', null)
+      })
+      .catch((error) => {
         // Handle Errors here.
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        console.log(errorCode)
-        console.log(errorMessage)
+        let errorCode = error.code;
+        let errorMessage = error.message;
+        commit('setStatus', 'failure')
+        commit('setError', errorCode + '\r' + errorMessage)
       });
     },
 
@@ -92,12 +103,31 @@ const store = new Vuex.Store({
           .once('value', snapshot => {
             commit('setCustomerEntries', snapshot.val());
         })
-        .catch(() => {
-          // eslint-disable-next-line
-          console.log("Sorry, couldn't get customers")
+        .then(() => {
+            commit('setStatus', 'success')
+        })
+        .catch((error) => {
+          commit('setStatus', 'failure')
+          commit('setError', error)
         })
     },
-    removeBereich({ state, commit }, payload) {
+    loadTimeEntries({ commit }) {
+      // get all of the customer entries
+        return firebase
+            .database()
+            .ref('users')
+            .once('value', snapshot => {
+                commit('setTimeEntries', snapshot.val());
+        })
+        .then(() => {
+            commit('setStatus', 'success')
+        })
+        .catch((error) => {
+          commit('setStatus', 'failure')
+          commit('setError', error)
+        })
+    },
+    removeBereich( { commit }, payload ) {
       let myRef = 'customerentries/' + payload.idx + '/' + payload.section + '/' + payload.itemToDelete
       // console.log(myRef)
       // console.log(state.customerEntries);
@@ -105,49 +135,53 @@ const store = new Vuex.Store({
         .database()
         .ref(myRef)
         .remove()
-        .then(
+        .then(() => {
+          commit('setStatus', 'success')
           // just reload customers after committing to firebase
           this.dispatch('loadCustomerEntries')
-        )
+        })
       // console.log(payload)
     },
-    addCustomer({ state, commit }, payload) {
+    addCustomer( { commit }, payload ) {
       firebase
         .database()
         .ref('customerentries')
         .push(payload)
-        .then(
+        .then(() => {
+          commit('setStatus', 'success')
           this.dispatch('loadCustomerEntries')
-        )
+        })
     },
-    addBereich({ state, commit }, payload) {
+    addBereich( { commit }, payload ) {
       let myRef = 'customerentries/' + payload.idx + '/bereiche/'
       // console.log(myRef)
-      let myKey = Math.floor(Date.now() + Math.random())
+      // let myKey = Math.floor(Date.now() + Math.random())
       return firebase
         .database()
         .ref(myRef)
         .push(payload.bereich)
-        .then(
+        .then(() => {
+          commit('setStatus', 'success')
           // console.log(this.state.customerEntries[payload.idx].bereiche)
           // this.state.customerEntries[payload.idx].bereiche[myKey]=payload.bereich
           this.dispatch('loadCustomerEntries')
-        )
+        })
     },
-    addJob({ state, commit }, payload) {
+    addJob( { commit }, payload ) {
       let myRef = 'customerentries/' + payload.idx + '/jobs/'
       // console.log(myRef)
-      let myKey = Math.floor(Date.now() + Math.random())
+      // let myKey = Math.floor(Date.now() + Math.random())
       return firebase
         .database()
         .ref(myRef)
         .push(payload.job)
-        .then(
+        .then(() => {
+          commit('setStatus', 'success')
           // console.log(this.state.customerEntries[payload.idx].jobs + ": " + myKey)
           // this.state.customerEntries[payload.idx].jobs[myKey]=payload.job
           this.dispatch('loadCustomerEntries')
-        )
-    }
+        })
+    },
     /**
      * TODO: need
      * load Jobs
@@ -166,23 +200,20 @@ const store = new Vuex.Store({
     //         .remove()
     // },
     // eslint-disable-next-line
-    // newEntry({ state }, payload) {
-    //   firebase
-    //       .database()
-    //       .ref('users')
-    //       .child(state.user.user.uid)
-    //       .push(payload)
-    // },
-    // eslint-disable-next-line
-    // loadEntries({ state, commit }) {
-    //     return firebase
-    //         .database()
-    //         .ref('users')
-    //         .child(state.user.user.uid)
-    //         .once('value', snapshot => {
-    //             commit('setEntries', snapshot.val());
-    //         })
-    // },
+    newEntry({ commit }, payload) {
+      let myRef = 'users/' + payload.user + '/timeentries/'
+      console.log(myRef)
+      console.log(payload.newEntry)
+      return firebase
+          .database()
+          .ref('users')
+          .child(payload.user)
+          .child('timeentries')
+          .push(payload.newEntry)
+      .then(() => {
+        commit('setStatus', 'success')
+      })
+    },
   },
 
   getters: {
@@ -196,6 +227,10 @@ const store = new Vuex.Store({
 
     customers (state) {
       return state.customerEntries
+    },
+
+    usertimes (state) {
+      return state.userTimeEntries
     },
 
     error (state) {
