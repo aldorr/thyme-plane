@@ -23,8 +23,8 @@
                 <div class="navbar-end">
                     <div class="navbar-item">
                         <div class="buttons">
-                            <b-button icon-left="user" class="button is-light" @click="openLogin()" v-if="!userLoggedIn">Sign In</b-button>
-                            <b-button icon-left="user" class="button is-warning" @click="logoutFromFirebase" v-if="userLoggedIn">Sign Out</b-button>
+                            <b-button icon-left="user" class="button is-light" @click="openLogin()" v-if="!userLoggedIn">Anmelden</b-button>
+                            <b-button icon-left="user" class="button is-warning" @click="logoutFromFirebase" v-if="userLoggedIn">Abmelden</b-button>
                             <!-- <b-button icon-left="user-plus" class="button is-default" @click="addNewUser" v-if="userLoggedIn"></b-button> -->
 
                             <!-- <b-button icon-left="tools" class="button" tag="router-link" to="/admin" type="is-default" v-if="userLoggedIn"></b-button> -->
@@ -52,38 +52,30 @@ export default {
         navitems () {
             let menuItems = [
             {
-                title: 'Edit Jobs',
+                title: 'Kunden editieren',
                 icon: 'pen',
                 link: '/jobs',
                 type: 'is-danger'
             },
             {
-                title: 'Single Entry',
+                title: 'Zeiteingabe',
                 icon: 'plus',
                 link: '/entry',
                 type: 'is-success'
             },
             {
-                title: 'Monthly Overview',
+                title: 'Zeitübersicht',
                 icon: 'calendar',
                 link: '/list',
                 type: 'is-primary'
             },
             {
-                title: 'About',
+                title: 'Über',
                 icon: 'info',
                 link: '/about',
                 type: 'is-dark'
             }
             ]
-            return menuItems
-        },
-        metaitems () {
-            let menuItems = [{
-                title: 'Sign In',
-                icon: 'user',
-                link: 'openLogin()'
-            }]
             return menuItems
         },
         userLoggedIn () {
