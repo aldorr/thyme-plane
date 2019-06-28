@@ -262,7 +262,11 @@
                 </div>
             </div> -->
 
-            <b-table :data="currentTimeEntries" :columns="columns"></b-table>
+            <b-table
+                :data="currentTimeEntries"
+                :columns="columns"
+                default-sort-direction="asc"
+                default-sort="date"></b-table>
         </div>
     </div>
     <!-- END CALENDAR VIEW -->

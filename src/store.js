@@ -9,6 +9,7 @@ const store = new Vuex.Store({
 
   state: {
     user: null,
+    userEmail: '',
     status: null,
     error: null,
     customerEntries: null,
@@ -18,6 +19,10 @@ const store = new Vuex.Store({
   mutations: {
     setUser (state, payload) {
       state.user = payload
+    },
+
+    setuserEmail (state, payload) {
+      state.userEmail = payload
     },
 
     removeUser (state) {
@@ -48,7 +53,9 @@ const store = new Vuex.Store({
           .auth()
           .signInWithEmailAndPassword(payload.email, payload.password)
         .then((response) => {
+          // console.log(response)
           commit('setUser', response.user.uid)
+          commit('setuserEmail', response.user.email)
           commit('setStatus', 'success')
           commit('setError', null)
           localStorage.user = true;
@@ -223,6 +230,10 @@ const store = new Vuex.Store({
 
     user (state) {
       return state.user
+    },
+
+    userEmail (state) {
+      return state.userEmail
     },
 
     customers (state) {
