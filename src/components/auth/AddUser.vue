@@ -8,6 +8,9 @@
                 <b-icon icon="lock"></b-icon>
             </header>
             <div class="modal-card-body">
+              <b-field horizontal :type="{'is-danger':errors.has('fullname')}" :message="errors.first('fullname')" label="fullname">
+                      <b-input type="text" v-model="fullname" name="fullname" v-validate="'required'" value="fullname@domain.com" key="fullname-input" placeholder="Regula Pfeiffer" />
+              </b-field>
               <b-field horizontal :type="{'is-danger':errors.has('email')}" :message="errors.first('email')" label="Email">
                       <b-input type="email" v-model="email" name="email" v-validate="'required|email'" value="email@domain.com" key="email-input" placeholder="neuernutzer@breeder.de" />
               </b-field>
@@ -30,6 +33,7 @@
 export default {
 
   data: () => ({
+    fullname: '',
     email: '',
     password: ''
   }),
@@ -56,6 +60,8 @@ export default {
 
     addUserToFirebase () {
       const user = {
+        newuser:
+          { fullname: this.fullname },
         email: this.email,
         password: this.password
       }

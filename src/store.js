@@ -90,9 +90,14 @@ const store = new Vuex.Store({
 
     newUserAction ( { commit }, payload ) {
       firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password)
+      firebase
+        .database()
+        .ref('users')
+        .push(payload.newuser)
       .then(() => {
         commit('setStatus', 'success')
         commit('setError', null)
+        this.dispatch('loadTimeEntries')
       })
       .catch((error) => {
         // Handle Errors here.

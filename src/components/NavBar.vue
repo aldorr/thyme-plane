@@ -5,14 +5,14 @@
                 <router-link class="navbar-item" to="/">
                 <img src="../assets/logo.png" width="112" height="27">
                 </router-link>
-                <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBreeder" v-on:click="showNav = !showNav" v-bind:class="{ 'is-active':showNav }">
+                <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarThyme" v-on:click="showNav = !showNav" v-bind:class="{ 'is-active':showNav }">
                 <span aria-hidden="true"></span>
                 <span aria-hidden="true"></span>
                 <span aria-hidden="true"></span>
                 </a>
             </div>
 
-            <div id="navbarBreeder" class="navbar-menu" v-bind:class="{ 'is-active':showNav }">
+            <div id="navbarThyme" class="navbar-menu" v-bind:class="{ 'is-active':showNav }">
                 <div class="navbar-start" v-if="userLoggedIn">
                     <router-link v-for="navitem in navitems" :key="navitem.title" :to="navitem.link" class="navbar-item">
                         <b-icon :icon="navitem.icon" size="is-small" :type="navitem.type"> </b-icon>
@@ -25,7 +25,7 @@
                         <div class="buttons">
                             <b-button icon-left="user" class="button is-light" @click="openLogin()" v-if="!userLoggedIn">Anmelden</b-button>
                             <b-button icon-left="user" class="button is-warning" @click="logoutFromFirebase" v-if="userLoggedIn">Abmelden</b-button>
-                            <!-- <b-button icon-left="user-plus" class="button is-default" @click="addNewUser" v-if="userLoggedIn"></b-button> -->
+                            <b-button icon-left="user-plus" class="button is-default" @click="addNewUser" v-if="userLoggedIn"></b-button>
 
                             <!-- <b-button icon-left="tools" class="button" tag="router-link" to="/admin" type="is-default" v-if="userLoggedIn"></b-button> -->
                         </div>
@@ -46,6 +46,11 @@ export default {
         return {
             showNav: false,
             navLogin: true
+        }
+    },
+    watch: {
+        '$route' () {
+            this.hideNav()
         }
     },
     computed: {
@@ -85,7 +90,7 @@ export default {
     mounted() {
         this.navLogin = this.hideNavLogins
         if(this.hideNavLogins == undefined) {
-            this.navLogin = true;
+            this.navLogin = true
         }
     },
     methods: {
@@ -100,6 +105,7 @@ export default {
                 props: {
                 }
             })
+            this.hideNav()
         },
         addNewUser() {
             this.$modal.open({
@@ -107,15 +113,23 @@ export default {
                 component: AdduserVue,
                 hasModalCard: true,
                 props: {
-
                 }
             })
+        },
+        hideNav() {
+            this.showNav = false
         }
     }
 }
 </script>
 
 <style>
+@media screen and (min-width: 1024px) {
+    .navbar.is-white #navbarThyme .navbar-start>a.navbar-item.router-link-active {
+        background-color: #f2f2f2;
+        color: #0a0a0a;
+    }
+}
 .icon.is-small {
     margin-right: 0.25em;
 }
