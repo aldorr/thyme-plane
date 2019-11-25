@@ -2,7 +2,7 @@
 
 **thyme expert** is a PWA created with [vue.js](https://vuejs.org/)  & [buefy](https://buefy.org/) for making time entry and calculation easier. Adding clients, adding projects, and time for each project is simple. Then doing monthly calculations with filters by client and project makes creating reports a cinch.
 
-![npm](https://img.shields.io/npm/v/npm)
+![npm](https://img.shields.io/npm/v/npm) ![Custom badge](https://img.shields.io/endpoint?color=success&label=license&url=https%3A%2F%2Fgithub.com%2Faldorr%2Fthyme-expert%2Fblob%2Fmaster%2FLICENSE)
 
 ## Project setup
 
