@@ -10,30 +10,36 @@
 ## Project setup
 
 ### Clone Repository
-```
+
+```bash
 git clone https://github.com/aldorr/thyme-expert.git
 ```
 
 ### Install Dependencies
-```
+
+```bash
 npm install
 ```
 
 ### Compile and serve hot-reloading for development
 
-```
+```bash
 npm run serve
 ```
 
+* To log in, you will need to have an account.
+* Shoot me a mail, if you'd like one. [thyme-dev@aldorr.net](mailto:thyme-dev@aldorr.net)
+* Or try it out with your own firebase setup.
+
 ### Compile and minify for production
 
-```
+```bash
 npm run build
 ```
 
 ### Run your tests
 
-```
+```bash
 npm run test
 ```
 
@@ -41,14 +47,13 @@ TODO: write tests
 
 ### Lints and fixes files
 
-```
+```bash
 npm run lint
 ```
 
 ### Customize configuration
 
 See vue.js CLI [Configuration Reference](https://cli.vuejs.org/config/).
-
 
 ## License
 
