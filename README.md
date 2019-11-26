@@ -51,6 +51,19 @@ TODO: write tests
 npm run lint
 ```
 
+### Deploy script not included
+
+```bash
+npm run deploy
+```
+
+* Make your own `deploy.sh` script
+* Mine is something like
+
+```bash
+surge ./dist
+```
+
 ### Customize configuration
 
 See vue.js CLI [Configuration Reference](https://cli.vuejs.org/config/).
