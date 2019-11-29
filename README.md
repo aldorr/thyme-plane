@@ -9,11 +9,15 @@
 
 ## Project setup
 
-### Clone Repository
+## git steps
 
-```bash
-git clone https://github.com/aldorr/thyme-expert.git
-```
+* make new branch
+* clone repository (i.e.): `bash git clone https://github.com/aldorr/thyme-expert.git`
+* make changes
+* submit changes
+* submit pull request
+
+## npm steps
 
 ### Install Dependencies
 
@@ -51,7 +55,7 @@ TODO: write tests
 npm run lint
 ```
 
-### Deploy script not included!
+### Deploy script not included
 
 ```bash
 npm run deploy
@@ -71,3 +75,8 @@ Code released under [MIT](https://github.com/buefy/buefy/blob/master/LICENSE) li
 ## Version
 
 * Version 0.2.0
+
+## Communication
+
+* notify about issues here
+* or directly on discord: https://discord.gg/2U8EmG
