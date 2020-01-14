@@ -9,6 +9,7 @@ import "firebase/auth"
 import "firebase/database"
 import { firebaseConfig } from "./firebase"
 
+// Could reduce to only needed buefy components
 import Buefy from 'buefy'
 // import 'buefy/dist/buefy.css'
 import { library } from '@fortawesome/fontawesome-svg-core'

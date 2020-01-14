@@ -18,7 +18,8 @@ export default {
 
 
 <style lang="scss">
-// Import Bulma's core
+// Import Bulma's core -- but wait, didn't we also import Buefy (including Bulma)
+// This is probably important to make our own color palette.
 @import "~bulma/sass/utilities/_all";
 
 // Set your colors

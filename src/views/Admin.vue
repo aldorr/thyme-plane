@@ -12,6 +12,7 @@
 
 <script>
   export default {
+    // TODO: Admin area
     name: "Admin",
     data() {
       return {

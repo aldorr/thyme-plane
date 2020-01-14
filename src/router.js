@@ -1,3 +1,7 @@
+/**
+ * Sets the path for our various tabs.
+ * 
+ */
 import Vue from 'vue'
 import Router from 'vue-router'
 import Home from './views/Home.vue'
@@ -67,6 +71,12 @@ const router = new Router({
   ]
 })
 
+
+/**
+ * This should also check our auth state, and only show if we are authorized.
+ * TODO: When reload, keep auth state!
+ * 
+ */
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.authRequired)) {
       if (!store.state.status) {

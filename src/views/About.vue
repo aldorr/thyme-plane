@@ -10,6 +10,7 @@
 
 <script>
 export default {
+  /** Just to show something, when you first login. */
   // methods: {
   //     loadCustomerData() {
   //         this.$store.dispatch('loadCustomerEntries')

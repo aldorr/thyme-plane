@@ -273,6 +273,12 @@
 </template>
 
 <script>
+/** This has the most work to do.
+ * Figuring out/making all these filter possibilities.
+ * First we should sketch it out.
+ * TODO: Filterable List
+ * 
+ */
     export default {
         data() {
             return {

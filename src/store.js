@@ -1,3 +1,7 @@
+/**
+ * States, mutations and actions that should be available to multiple components 
+ * 
+*/
 import Vue from 'vue'
 import Vuex from 'vuex'
 import firebase from 'firebase/app'

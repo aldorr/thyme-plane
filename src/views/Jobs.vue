@@ -67,6 +67,7 @@
 </template>
 
 <script>
+// This was just test data... now getting from firebase
     // const data = {
     //     "entries": {
     //         "-aLajr3939r": {
@@ -118,6 +119,7 @@
             },
             idxs() {
                 var keys = [], i = 0;
+                // eslint-disable-next-line no-empty
                 for (keys[i++] in this.customerEntries) {}
                 return keys
             }

@@ -179,17 +179,13 @@
             const today = new Date()
 
             return {
-                // data,
                 kunde: '',
                 idx: '',
                 bereich: '',
                 job: '',
-                // bereiche: [],
-                // jobs: []
                 date: new Date(),
                 maxDate: new Date(today.getFullYear(), today.getMonth(), today.getDate()),
                 duration: '',
-                // rawDuration: '',
                 masks: {
                     duration: {
                         delimiters: ['h ', 'm'],
@@ -204,27 +200,16 @@
             }
         },
         computed: {
-            // currentBereiche() {
-            //     return this.getBereicheArray(this.data.kunde)
-            // },
-            // timeEntries() {
-            //     return this.$store.getters.usertimes
-            // },
             currentUserName() {
                 // get user's name with the id this.$store.getters.user
                 let userID = this.$store.getters.user
-                // let timeEntries = this.timeEntries
                 let currentUserName = this.timeEntries[userID].fullname
-                // console.log(currentUserName)
                 return currentUserName
             },
             userList() {
                 // get all users' names and ids
-                // let userID = this.$store.getters.user
                 let userList = []
                 let timeEntries = this.timeEntries
-                // console.dir(timeEntries)
-                //                for (let [id, user] of Object.entries(timeEntries)) {
                 for (let [id] of Object.entries(timeEntries)) {
                     userList.push(timeEntries[id].fullname)
                 }
@@ -232,11 +217,8 @@
             },
             userIdList() {
                 // get all users' names and ids
-                // let userID = this.$store.getters.user
                 let userIdList = []
                 let timeEntries = this.timeEntries
-                // console.dir(timeEntries)
-                //                for (let [id, user] of Object.entries(timeEntries)) {
                 for (let [id] of Object.entries(timeEntries)) {
                     userIdList.push(id)
                 }
@@ -256,7 +238,6 @@
             },
 
             filteredBereicheArray() {
-                // console.log(this.bereiche)
                 return this.bereiche.filter((option) => {
                     return option
                         .toString()
@@ -277,8 +258,6 @@
             },
             kunden() {
                 let myKundenReturn = []
-                // let idxs = Object.keys(this.$store.state.customerEntries)
-                // this.idxs = idxs
                 for (let entry in this.customerEntries) {
                     myKundenReturn.push(this.customerEntries[entry].name)
                 }
@@ -288,9 +267,7 @@
                 let myBereicheReturn = []
                 // check in each array if it has that one
                 for (let entry in this.customerEntries) {
-                    // console.log(this.customerEntries[entry].name)
                     if (this.customerEntries[entry].name === this.kunde) {
-                        // console.log(this.customerEntries[entry].bereiche)
                         for (let bereich in this.customerEntries[entry].bereiche) {
                             myBereicheReturn.push(this.customerEntries[entry].bereiche[bereich])
                         }
@@ -346,7 +323,6 @@
                             hasIcon: true,
                             icon: 'calendar',
                             onConfirm: () => {
-                                // console.log(this.rawDuration)
                                 let user = this.currentUserId
                                 let newEntry = {
                                     customer: this.kunde,
@@ -356,8 +332,6 @@
                                     time: this.rawDuration,
                                     note: this.note
                                 }
-                                // console.log(user)
-                                // console.log(newEntry)
                                 this.$store.dispatch('newEntry', {
                                     user: user,
                                     newEntry: newEntry
@@ -398,7 +372,6 @@
             },
             setKundeSubs() {
                 this.bereiche = this.bereiche
-                // console.log(this.bereiche)
             },
             getKunde() {
                 return this.data.kunde
@@ -415,17 +388,14 @@
                 this.job = ''
             },
             onInput(event) {
-                // this.rawDuration = event.target._vCleave.getRawValue()
                 this.duration = event.target._vCleave.getFormattedValue()
             }
         },
         filters: {
           durationFilter: function (value) {
-            // console.log(value)
             let hrs, mins
             if (value.length === 4) {
                 hrs = value.slice(0, 2)
-                // console.log(hrs)
                 if (hrs > 12) {
                     hrs = 12
                 }
@@ -434,15 +404,12 @@
             if (value.length >= 6) {
                 mins = value.slice(4, 6)
                 hrs = value.slice(0, 2)
-                // console.log(hrs)
                 if (hrs > 12) {
                     hrs = 12
                 }
-                // console.log(mins)
                 if (mins > 59) {
                     mins = 59
                 }
-                // this.onInput()
                 return hrs + "h " + mins + "m"
             } else {
                 return value
@@ -452,7 +419,6 @@
         },
         mounted() {
             this.loadAllData()
-            // this.timeEntries = this.$store.state.userTimeEntries
         }
     }
 </script>
