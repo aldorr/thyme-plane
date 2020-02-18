@@ -18,7 +18,8 @@ const store = new Vuex.Store({
         status: null,
         error: null,
         customerEntries: null,
-        userTimeEntries: null
+        userTimeEntries: null,
+        newUID: null
     },
 
     plugins: [createPersistedState()],
@@ -50,6 +51,10 @@ const store = new Vuex.Store({
 
         setError(state, payload) {
             state.error = payload
+        },
+
+        setNewUID(state, payload) {
+            state.newUID = payload
         }
     },
 
@@ -97,10 +102,21 @@ const store = new Vuex.Store({
 
         newUserAction({ commit }, payload) {
             firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password)
+                .then(function(result) {
+                    // result.user.tenantId should be ‘TENANT_PROJECT_ID’.
+                    // console.log(result.user)
+                    // console.log(result.user.uid)
+                    commit('setNewUID', result.user.uid)
+                }).catch(function(error) {
+                    // Handle error.
+                    console.log(error)
+                });
+            // do we get something in return, that we can then use in the database path to create new user
+            // that way we can associate logged in user with their own data
             firebase
                 .database()
-                .ref('users')
-                .push(payload.newuser)
+                .ref('users/' + this.getters.getNewUID)
+                .set(payload.newuser)
                 .then(() => {
                     commit('setStatus', 'success')
                     commit('setError', null)
@@ -258,6 +274,10 @@ const store = new Vuex.Store({
 
         error(state) {
             return state.error
+        },
+
+        getNewUID(state) {
+            return state.newUID
         }
     }
 })

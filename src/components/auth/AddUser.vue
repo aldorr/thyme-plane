@@ -38,6 +38,25 @@ export default {
     password: ''
   }),
 
+  computed: {
+    username () {
+      // let atsignpos = this.fullname.indexOf("@")
+      // let username = this.fullname.slice(atsignpos, )
+      let username = this.fullname.toLowerCase();
+      username = username.replace(/[|&;$%@"<>()+,\s]/g, "")
+      // username.replace(/\s/g, '')
+      // Ü, ü     \u00dc, \u00fc
+      // Ä, ä     \u00c4, \u00e4
+      // Ö, ö     \u00d6, \u00f6
+      // ß        \u00df
+      username = username.replace(/\u00e4/g, "ae")
+      username = username.replace(/\u00f6/g, "oe")
+      username = username.replace(/\u00fc/g, "ue")
+      username = username.replace(/\u00df/g, "ss")
+      return username
+    }
+  },
+
   methods: {
 
     validate () {
@@ -61,7 +80,7 @@ export default {
     addUserToFirebase () {
       const user = {
         newuser:
-          { fullname: this.fullname },
+          { fullname: this.fullname, username: this.username, email: this.email },
         email: this.email,
         password: this.password
       }

@@ -62,13 +62,15 @@
         computed: {
             userID() {
                 return this.$store.getters.user
+                // return "-LwJBENaxghb8A16APxW"
             },
             timeEntries() {
                 return this.$store.getters.usertimes
             },
             currentUserName() {
                 // get user's name with the id this.$store.getters.user
-                let userID = this.$store.getters.user
+                // let userID = this.$store.getters.user
+                let userID = this.userID
                 // let timeEntries = this.timeEntries
                 let currentUserName = this.timeEntries[userID].fullname
                 // console.log(userID)
