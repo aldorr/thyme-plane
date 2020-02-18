@@ -107,27 +107,28 @@ const store = new Vuex.Store({
                     // console.log(result.user)
                     // console.log(result.user.uid)
                     commit('setNewUID', result.user.uid)
+
+                    // do we get something in return, that we can then use in the database path to create new user
+                    // that way we can associate logged in user with their own data
+                    firebase
+                        .database()
+                        .ref('users/' + result.user.uid)
+                        .set(payload.newuser)
+                        .then(() => {
+                            commit('setStatus', 'success')
+                            commit('setError', null)
+                            this.dispatch('loadTimeEntries')
+                        })
+                        .catch((error) => {
+                            // Handle Errors here.
+                            let errorCode = error.code;
+                            let errorMessage = error.message;
+                            commit('setStatus', 'failure')
+                            commit('setError', errorCode + '\r' + errorMessage)
+                        });
                 }).catch(function(error) {
                     // Handle error.
                     console.log(error)
-                });
-            // do we get something in return, that we can then use in the database path to create new user
-            // that way we can associate logged in user with their own data
-            firebase
-                .database()
-                .ref('users/' + this.getters.getNewUID)
-                .set(payload.newuser)
-                .then(() => {
-                    commit('setStatus', 'success')
-                    commit('setError', null)
-                    this.dispatch('loadTimeEntries')
-                })
-                .catch((error) => {
-                    // Handle Errors here.
-                    let errorCode = error.code;
-                    let errorMessage = error.message;
-                    commit('setStatus', 'failure')
-                    commit('setError', errorCode + '\r' + errorMessage)
                 });
         },
 
