@@ -10,7 +10,6 @@
             </div>
         </div>
         <div class="container">
-
             <b-table
                 :data="currentTimeEntries"
                 :columns="columns"
@@ -72,6 +71,7 @@
                 let userID = this.userID
                 // let timeEntries = this.timeEntries
                 let currentUserName = this.timeEntries[userID].fullname
+                // console.log(userID)
                 // console.log(currentUserName)
                 return currentUserName
             },
