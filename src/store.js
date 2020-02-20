@@ -181,8 +181,8 @@ const store = new Vuex.Store({
         addCustomer({ commit }, payload) {
             firebase
                 .database()
-                .ref('customerentries')
-                .push(payload)
+                .ref('customerentries/' + payload.name)
+                .set(payload)
                 .then(() => {
                     commit('setStatus', 'success')
                     this.dispatch('loadCustomerEntries')
