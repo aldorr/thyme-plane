@@ -8,7 +8,7 @@
                     <div class="columns">
                         <h2 class="title column is-2 has-text-left">Filter:</h2>
                         <div class="column">
-                            <b-field label="Nutzer auswählen" :type="{'is-danger': errors.has('userName')}" :message="errors.first('userName')">
+                            <b-field label="Nutzer:" :type="{'is-danger': errors.has('userName')}" :message="errors.first('userName')">
                                         <b-select expanded
                                                 placeholder="Name auswählen"
                                                 name="userName"
@@ -25,7 +25,7 @@
                                     </b-field>
                         </div>
                         <div class="column">
-                            <b-field label="Kunde auswählen" :type="{'is-danger': errors.has('kunde')}"
+                            <b-field label="Kunde:" :type="{'is-danger': errors.has('kunde')}"
                                 :message="errors.first('kunde')">
                                 <b-autocomplete expanded name="kunde" v-model="kunde" ref="autocomplete" open-on-focus
                                     :data="filteredKundenArray" placeholder="e.g. Metropolis" icon="building"
@@ -36,34 +36,46 @@
                             </b-field>
                         </div>
                         <div class="column">
-                            <b-field label="Bereich" v-if="kunde !== ''" :type="{'is-danger': errors.has('area')}"
+                            <b-field label="Bereich:" v-if="kunde !== ''" :type="{'is-danger': errors.has('area')}"
                                 :message="errors.first('area')">
                                 <b-autocomplete expanded name="area" v-model="area" ref="autocomplete" open-on-focus
                                     :data="filteredBereicheArray" placeholder="Bereich Wählen" icon="folder-open"
-                                    @select="option => selected = option" v-validate="'required'" key="area-input">
+                                    @select="option => selected = option" key="area-input">
                                     <template slot="empty">Leider keinen Bereich namens "{{area}}"</template>
                                 </b-autocomplete>
                             </b-field>
                         </div>
                         <div class="column">
-                            <b-field label="Job auswählen:" v-if="kunde !== ''" :type="{'is-danger': errors.has('job')}"
+                            <b-field label="Job:" v-if="kunde !== ''" :type="{'is-danger': errors.has('job')}"
                                 :message="errors.first('job')">
                                 <b-autocomplete expanded name="job" v-model="job" ref="autocomplete" open-on-focus
                                     :data="filteredJobsArray" placeholder="Job Wählen" icon="file-alt"
-                                    @select="option => selected = option" v-validate="'required'" key="job-input">
+                                    @select="option => selected = option" key="job-input">
                                     <template slot="empty">Leider keinen Job namens "{{job}}"</template>
                                 </b-autocomplete>
                             </b-field>
                         </div>
                     </div>
                     <button class="button is-link" @click.prevent="addHours">Berechne Stunden</button>
-                    <p> Zeit Gesamt: {{hoursAll}}</p>
+                    <p> Zeit Gesamt: {{hoursAll | secondsToHrsMins}}</p>
                 </div>
             </div>
         </div>
         <div class="container" v-if="kunde != ''">
-            <b-table :data="currentTimeEntries" :columns="columns" striped default-sort-direction="asc" default-sort="date">
+            <!-- <b-table :data="currentTimeEntries" :columns="columns" striped default-sort-direction="asc" default-sort="date">
+            </b-table> -->
+            <b-table :data="currentTimeEntries" striped default-sort-direction="asc" default-sort="date">
+                <template slot-scope="props">
+                    <b-table-column field="customer" label="Kunde" sortable>{{ props.row.customer }}</b-table-column>
+                    <b-table-column field="area" label="Bereich" sortable>{{ props.row.area }}</b-table-column>
+                    <b-table-column field="job" label="Job" sortable>{{ props.row.job }}</b-table-column>
+                    <b-table-column field="date" label="Datum" sortable>{{ props.row.date | dateToHuman }}</b-table-column>
+                    <b-table-column field="time" label="Zeit">{{ props.row.time | secondsToHrsMins }}</b-table-column>
+                    <b-table-column field="note" label="Notiz">{{ props.row.note }} </b-table-column>
+                    <b-table-column field="user" label="Nutzer" sortable>{{ props.row.user }} </b-table-column>
+                </template>
             </b-table>
+                   
         </div>
         <div class="container">
             <section class="hero is-info" v-if="kunde == ''">
@@ -337,7 +349,7 @@
 
                 for (let key in timeEntries) {
                     userObject = timeEntries[key]
-                    let user = "All Nutzer"
+                    let user = "Alle Nutzer"
                     if (userObject.fullname != user) {
                         user = userObject.fullname
                     }
@@ -346,15 +358,14 @@
                         currentTimeEntriesObject = userObject.timeentries
                         if (Object.keys(currentTimeEntriesObject).length > 0) {
                             currentTimeEntriesArray = this.json2array(currentTimeEntriesObject)
-                            currentTimeEntriesArray.forEach((v, i) =>
-                                currentTimeEntriesArray[i].date = this.dateToHuman(currentTimeEntriesArray[i].date)
-                                // currentTimeEntriesArray[i].date = Math.floor(currentTimeEntriesArray[i].date / 1000)
+                            // currentTimeEntriesArray.forEach((v, i) =>
+                            //     currentTimeEntriesArray[i].date = this.dateToHuman(currentTimeEntriesArray[i].date)
 
-                            );
+                            // );
 
-                            currentTimeEntriesArray.forEach((v, i) =>
-                                currentTimeEntriesArray[i].time = this.secondsToHrsMins(currentTimeEntriesArray[i].time)
-                            );
+                            // currentTimeEntriesArray.forEach((v, i) =>
+                            //     currentTimeEntriesArray[i].time = this.secondsToHrsMins(currentTimeEntriesArray[i].time)
+                            // );
                                 for (let j in currentTimeEntriesArray) {
                                     currentTimeEntriesArray[j]["user"] = user
                                 }
@@ -390,6 +401,24 @@
                 mins = mins % 60
                 return hrs + 'hrs ' + mins + 'mins'
             }
+        },
+        filters: {
+            secondsToHrsMins(seconds) {
+                if (!seconds) return ''
+                let mins = seconds / 60
+                let hrs = Math.floor(mins / 60)
+                mins = mins % 60
+                return hrs + 'hrs ' + mins + 'mins'
+            },
+            dateToHuman(dateString) {
+                let date = new Date(dateString)
+                let dateHuman
+                let year = date.getFullYear();
+                let month = date.getMonth() + 1;
+                let day = date.getDate();
+                dateHuman = day + '.' + month + '.' + year
+                return dateHuman
+            },
         },
         mounted() {
             this.loadAllData()
