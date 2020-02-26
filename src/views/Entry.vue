@@ -13,7 +13,7 @@
                                         <b-select placeholder="Name auswählen"
                                                 name="userName"
                                                 v-model="userName"
-                                                v-validate="'required'" mode="eager">
+                                                v-validate="'required'" mode="eager" icon="user">
                                             <option
                                                 v-for="option in userList"
                                                 :value="option"
@@ -27,14 +27,6 @@
                             <div class="card-content">
                                 <div class="columns">
                                     <div class="column">
-<!--                                         <b-field label="Kunde">
-                                            <b-select placeholder="Kunde auswählen" icon="building" v-model="kunde" expanded> -->
-                                                <!-- TODO: get from db -->
-<!--                                                 <option v-for="option in data.entries" :value="option.name" :key="option.id">
-                                                    {{ option.name }}
-                                                </option>
-                                            </b-select>
-                                        </b-field> -->
                                         <b-field label="Kunde auswählen" :type="{'is-danger': errors.has('kunde')}" :message="errors.first('kunde')">
                                             <b-autocomplete
                                             expanded
@@ -83,26 +75,8 @@
                                                 <template slot="empty">No results for "{{job}}"</template>
                                             </b-autocomplete>
                                         </b-field>
-
-                                        <!-- <b-field label="Bereich" v-if="kunde !== null">
-                                            <b-select placeholder="Bereich Wählen" icon="folder-open" expanded>
-                                                <option v-for="option in getBereicheArray(kunde)" :value="option" :key="option">
-                                                    {{ option }}
-                                                </option>
-
-                                            </b-select>
-                                        </b-field> -->
-                                        
-                                        <!-- <b-field label="Job" v-if="kunde !== null">
-                                            <b-select placeholder="Job Wählen" icon="file-alt" expanded>
-                                                <option v-for="option in getJobsArray(kunde)" :value="option" :key="option">
-                                                    {{ option }}
-                                                </option>
-
-                                            </b-select>
-                                        </b-field> -->
-
                                     </div>
+                                    
                                     <div class="column">
                                         <b-field label="Datum" :type="{'is-danger':errors.has('date')}" :message="errors.first('date')">
                                             <b-datepicker
