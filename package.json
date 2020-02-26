@@ -1,37 +1,37 @@
 {
-  "name": "thyme-expert",
-  "version": "0.2.0",
-  "private": true,
-  "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint",
-    "deploy": "./deploy.sh"
-  },
-  "dependencies": {
-    "@fortawesome/fontawesome-free": "^5.8.2",
-    "@fortawesome/fontawesome-svg-core": "^1.2.18",
-    "@fortawesome/free-solid-svg-icons": "^5.8.2",
-    "@fortawesome/vue-fontawesome": "^0.1.6",
-    "buefy": "^0.7.7",
-    "cleave.js": "^1.5.0",
-    "core-js": "^2.6.9",
-    "firebase": "^6.1.0",
-    "vee-validate": "^2.2.9",
-    "vue": "^2.6.10",
-    "vue-router": "^3.0.3",
-    "vuex": "^3.0.1",
-    "vuex-persistedstate": "^2.7.1"
-  },
-  "devDependencies": {
-    "@vue/cli-plugin-babel": "^3.8.0",
-    "@vue/cli-plugin-eslint": "^3.8.0",
-    "@vue/cli-service": "^3.8.0",
-    "babel-eslint": "^10.0.1",
-    "eslint": "^5.16.0",
-    "eslint-plugin-vue": "^5.0.0",
-    "node-sass": "^4.13.0",
-    "sass-loader": "^7.1.0",
-    "vue-template-compiler": "^2.6.10"
-  }
+    "name": "thyme-expert",
+    "version": "0.5.0",
+    "private": true,
+    "scripts": {
+        "serve": "vue-cli-service serve",
+        "build": "vue-cli-service build",
+        "lint": "vue-cli-service lint",
+        "deploy": "./deploy.sh"
+    },
+    "dependencies": {
+        "@fortawesome/fontawesome-free": "^5.8.2",
+        "@fortawesome/fontawesome-svg-core": "^1.2.18",
+        "@fortawesome/free-solid-svg-icons": "^5.8.2",
+        "@fortawesome/vue-fontawesome": "^0.1.6",
+        "buefy": "^0.7.7",
+        "cleave.js": "^1.5.0",
+        "core-js": "^2.6.9",
+        "firebase": "^6.1.0",
+        "vee-validate": "^2.2.9",
+        "vue": "^2.6.10",
+        "vue-router": "^3.0.3",
+        "vuex": "^3.0.1",
+        "vuex-persistedstate": "^2.7.1"
+    },
+    "devDependencies": {
+        "@vue/cli-plugin-babel": "^3.8.0",
+        "@vue/cli-plugin-eslint": "^3.8.0",
+        "@vue/cli-service": "^3.8.0",
+        "babel-eslint": "^10.0.1",
+        "eslint": "^5.16.0",
+        "eslint-plugin-vue": "^5.0.0",
+        "node-sass": "^4.13.0",
+        "sass-loader": "^7.1.0",
+        "vue-template-compiler": "^2.6.10"
+    }
 }
