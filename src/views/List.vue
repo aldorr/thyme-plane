@@ -56,15 +56,23 @@
                             </b-field>
                         </div>
                     </div>
-                    <button class="button is-link" @click.prevent="addHours">Berechne Stunden</button>
-                    <p> Zeit Gesamt: {{hoursAll | secondsToHrsMins}}</p>
+                    <div class="section">
+                        <nav class="level">
+                            <div class="level-item has-text-centered">
+                                <div>
+                                <!-- <p class="heading"><b-button icon-left="clipboard" class="button is-link" @click.prevent="addHours">Berechne Stunden</b-button></p> -->
+                                <p class="title">Zeit Gesamt: {{hoursAll | secondsToHrsMins}}</p>
+                                </div>
+                            </div>
+                        </nav>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="container" v-if="kunde != ''">
             <!-- <b-table :data="currentTimeEntries" :columns="columns" striped default-sort-direction="asc" default-sort="date">
             </b-table> -->
-            <b-table :data="currentTimeEntries" striped default-sort-direction="asc" default-sort="date">
+            <b-table :data="currentTimeEntries" striped default-sort-direction="asc" default-sort="date" :selected.sync="myselected">
                 <template slot-scope="props">
                     <b-table-column field="customer" label="Kunde" sortable>{{ props.row.customer }}</b-table-column>
                     <b-table-column field="area" label="Bereich" sortable>{{ props.row.area }}</b-table-column>
@@ -75,7 +83,14 @@
                     <b-table-column field="user" label="Nutzer" sortable>{{ props.row.user }} </b-table-column>
                 </template>
             </b-table>
-                   
+            <div class="container">
+                <button class="button field is-danger"
+                    v-if="myselected"
+                    :disabled="!myselected">
+                    <b-icon icon="edit"></b-icon>
+                    <span> Edit</span>
+                </button>
+            </div>
         </div>
         <div class="container">
             <section class="hero is-info" v-if="kunde == ''">
@@ -104,6 +119,7 @@
                 job: '',
                 area: '',
                 userName: '',
+                myselected: null,
                 columns: [{
                         field: 'customer',
                         label: 'Kunde',
@@ -274,6 +290,9 @@
                             returnArray.push(allTimeEntriesArray[key])
                         }
                     }
+                    console.log("Returning for Job: " + this.job)
+                    console.log("Returning for customer: " + this.kunde)
+                    console.log("Returning for user: " + this.userName)
                     return returnArray
 
                 } else if (this.area != '') {
@@ -285,9 +304,10 @@
                             returnArray.push(allTimeEntriesArray[key])
                         }
                     }
+                    console.log("Returning just for area: " + this.area)
                     return returnArray
 
-                } else if (this.customer != '') {
+                } else if (this.customer != '' && this.userName != "Alle Nutzer") {
                     // return list only from customer chosen
                     let returnArray = []
                     for (let key in allTimeEntriesArray) {
@@ -295,16 +315,19 @@
                             returnArray.push(allTimeEntriesArray[key])
                         }
                     }
+                    console.log("Returning just for customer: " + this.kunde + " & User: " + this.userName)
                     return returnArray
-                } else if (this.userName != "Alle Nutzer") {
-                    let returnArray = []
-                    for (let key in allTimeEntriesArray) {
-                        if (allTimeEntriesArray[key].user == this.userName) {
-                            returnArray.push(allTimeEntriesArray[key])
-                        }
-                    }
-                    return returnArray
+                // } else if (this.userName != "Alle Nutzer") {
+                //     let returnArray = []
+                //     for (let key in allTimeEntriesArray) {
+                //         if (allTimeEntriesArray[key].user == this.userName) {
+                //             returnArray.push(allTimeEntriesArray[key])
+                //         }
+                //     }
+                //     return returnArray
                 } else if (this.userName == "Alle Nutzer"){
+                    console.log("returning full list")
+                    console.log(allTimeEntriesArray)
                     return allTimeEntriesArray
                 } else {
                     return allTimeEntriesArray
@@ -349,7 +372,7 @@
 
                 for (let key in timeEntries) {
                     userObject = timeEntries[key]
-                    let user = "Alle Nutzer"
+                    let user
                     if (userObject.fullname != user) {
                         user = userObject.fullname
                     }
@@ -377,6 +400,9 @@
                 }
 
                 return allTimeEntriesArray
+            },
+            setSelected(entry) {
+                this.myselected = this.currentTimeEntries[entry]
             },
             json2array(json) {
                 var result = [];
@@ -422,7 +448,6 @@
         },
         mounted() {
             this.loadAllData()
-
         }
     }
 </script>
