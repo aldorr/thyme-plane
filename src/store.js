@@ -269,7 +269,7 @@ const store = new Vuex.Store({
             return state.customerEntries
         },
 
-        usertimes(state) {
+        getUserTimeEntries(state) {
             return state.userTimeEntries
         },
 
