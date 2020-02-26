@@ -5,8 +5,10 @@
             <div class="hero is-small is-light">
                 <div class="hero-body">
 
-                    <div class="columns">
-                        <h2 class="title column is-2 has-text-left">Filter:</h2>
+                    <div class="columns is-vcentered">
+                        <div class="column is-2">
+                            <h1 class="title has-text-left">Filter:</h1>
+                        </div>
                         <div class="column">
                             <b-field label="Nutzer:" :type="{'is-danger': errors.has('userName')}" :message="errors.first('userName')">
                                         <b-select expanded
