@@ -83,14 +83,6 @@
                     <b-table-column field="user" label="Nutzer" sortable>{{ props.row.user }} </b-table-column>
                 </template>
             </b-table>
-            <div class="container">
-                <button class="button field is-danger"
-                    v-if="myselected"
-                    :disabled="!myselected">
-                    <b-icon icon="edit"></b-icon>
-                    <span> Edit</span>
-                </button>
-            </div>
         </div>
         <div class="container">
             <section class="hero is-info" v-if="kunde == ''">
