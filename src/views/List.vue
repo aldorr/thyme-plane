@@ -66,13 +66,27 @@
                                 <p class="title">Zeit Gesamt: {{hoursAll | secondsToHrsMins}}</p>
                                 </div>
                             </div>
+                        </nav>
+                    </div>
+                </div>
+                <div class="hero-foot has-padding-15em">
+                        <nav class="level" v-if="kunde != ''">
+                            <div class="level-item has-text-centered">
+                                <b-field label="Datum auswählen">
+                                    <b-datepicker
+                                        placeholder="Klicken..."
+                                        v-model="dates"
+                                        position="is-top-right"
+                                        range>
+                                    </b-datepicker>
+                                </b-field>
+                            </div>
                             <div class="level-item has-text-centered">
                                 <div class="buttons">
-                                    <b-button expanded icon-left="file-alt" class="button is-info" @click.prevent="exportTableToCSV" v-if="kunde != ''">Exportieren</b-button>
+                                    <b-button expanded icon-left="file-alt" class="button is-info" @click.prevent="exportTableToCSV">Exportieren</b-button>
                                 </div>
                             </div>
                         </nav>
-                    </div>
                 </div>
             </div>
         </div>
@@ -119,6 +133,7 @@
                 area: '',
                 userName: '',
                 myselected: null,
+                dates: [],
                 columns: [{
                         field: 'customer',
                         label: 'Kunde',
@@ -502,3 +517,8 @@
         }
     }
 </script>
+<style>
+.has-padding-15em {
+    padding: 1.5em !important;
+}
+</style>
