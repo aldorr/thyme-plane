@@ -369,6 +369,9 @@
             clearJobs() {
                 this.bereich = ''
                 this.job = ''
+                requestAnimationFrame(() => {
+                    this.$refs.observer.reset();
+                });
             },
             onInput(event) {
                 this.duration = event.target._vCleave.getFormattedValue()
