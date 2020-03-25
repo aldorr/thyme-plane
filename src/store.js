@@ -128,7 +128,7 @@ const store = new Vuex.Store({
                         });
                 }).catch(function(error) {
                     // Handle error.
-                    console.log(error)
+                    commit('setError', error)
                 });
         },
 
@@ -238,8 +238,8 @@ const store = new Vuex.Store({
         // eslint-disable-next-line
         newEntry({ commit }, payload) {
             let myRef = 'users/' + payload.user + '/timeentries/'
-            console.log(myRef)
-            console.log(payload.newEntry)
+                // console.log(myRef)
+                // console.log(payload.newEntry)
             return firebase
                 .database()
                 .ref('users')

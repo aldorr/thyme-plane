@@ -40,7 +40,8 @@
                                         </ValidationProvider>
 
                                         <ValidationProvider name="bereich" rules="required" v-slot="{ errors, valid }">
-                                            <b-field label="Bereich wählen" :type="{'is-danger': errors[0], 'is-success': valid}"
+                                            <b-field label="Bereich wählen" v-if="kunde !== ''"
+                                            :type="{'is-danger': errors[0], 'is-success': valid}"
                                                 :message="errors">
                                                 <b-autocomplete expanded v-model="bereich" ref="autocomplete"
                                                     open-on-focus :data="filteredBereicheArray"
