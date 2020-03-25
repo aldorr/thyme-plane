@@ -98,22 +98,20 @@ export default {
             this.$store.dispatch('signOutAction')
         },
         openLogin() {
-            this.$modal.open({
+            this.$buefy.modal.open({
                 parent: this,
                 component: SigninVue,
                 hasModalCard: true,
-                props: {
-                }
+                trapFocus: true
             })
             this.hideNav()
         },
         addNewUser() {
-            this.$modal.open({
+            this.$buefy.modal.open({
                 parent: this,
                 component: AdduserVue,
                 hasModalCard: true,
-                props: {
-                }
+                trapFocus: true
             })
         },
         hideNav() {

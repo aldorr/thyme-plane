@@ -1,5 +1,6 @@
 <template>
     <form>
+  <ValidationObserver ref="observer" v-slot="{ passes }">
         <div class="modal-card">
             <header class="modal-card-head">
                 <p class="modal-card-title">
@@ -8,26 +9,56 @@
                 <b-icon icon="lock"></b-icon>
             </header>
             <div class="modal-card-body">
-              <b-field horizontal :type="{'is-danger':errors.has('email')}" :message="errors.first('email')" label="Email">
-                      <b-input type="email" v-model="email" name="email" v-validate="'required|email'" value="email@domain.com" key="email-input" placeholder="your email address" />
+            <ValidationProvider name="email" rules="required|email" v-slot="{ errors, valid }">
+
+              <b-field horizontal :type="{'is-danger':errors[0], 'is-success': valid}" :message="errors[0]" label="Email">
+                      <b-input type="email" v-model="email" name="email" value="email@domain.com" key="email" placeholder="your email address" />
               </b-field>
-              <b-field horizontal :type="{'is-danger':errors.has('password')}" :message="errors.first('password')" label="Password">
-                      <b-input type="password" v-model="password" name="password" v-validate="'required'" key="password-input" placeholder="something secret" />
+            </ValidationProvider>
+            <ValidationProvider name="password" rules="required" v-slot="{ errors, valid }">
+
+              <b-field horizontal :type="{'is-danger':errors[0], 'is-success': valid}" :message="errors[0]" label="Password">
+                      <b-input type="password" v-model="password" name="password" key="password" placeholder="something secret" />
               </b-field>
+            </ValidationProvider>
             </div>
             <footer class="modal-card-foot">
                     <b-button @click="$parent.close()" style="margin-left:auto;">Cancel</b-button>
                     <b-button
                     type="is-success"
                     icon-right="lock"
-                    @click.prevent="validate">Connect</b-button>
+                    @click.prevent="passes(validate)">Connect</b-button>
             </footer>
         </div>
+  </ValidationObserver>
     </form>
 </template>
 
 <script>
+import {
+  extend
+} from 'vee-validate';
+import {
+  required, email
+} from 'vee-validate/dist/rules';
+
+// Add the rules
+extend('email', email);
+extend('required', {
+  ...required,
+  message: 'Nicht vergessen…'
+});
+
+import {
+  ValidationObserver,
+  ValidationProvider
+} from 'vee-validate'
+
 export default {
+        components: {
+            ValidationObserver,
+            ValidationProvider
+        },
 
   data: () => ({
     email: '',
@@ -36,37 +67,37 @@ export default {
 
   methods: {
 
-    validate () {
-      this.$validator.validateAll().then((result) => {
-        if (result) {
+    validate() {
+
+        // if (this.$refs.form.valid) {
           this.loginWithFirebase()
-        } else {
-          this.$toast.open({
-            message: 'It seems your form is missing something! Please check the fields.',
-            type: 'is-danger',
-            position: 'is-bottom'
-          })
-        }
-      })
+        // } else {
+        //   this.$toast.open({
+        //     message: 'It seems your form is missing something! Please check the fields.',
+        //     type: 'is-danger',
+        //     position: 'is-bottom'
+        //   })
+        // }
+
     },
 
-    reset () {
+    reset() {
       this.$refs.form.reset()
     },
 
-    loginWithFirebase () {
+    loginWithFirebase() {
       const user = {
         email: this.email,
         password: this.password
       }
       this.$store.dispatch('signInAction', user).then(
-            this.$toast.open({
-              message: 'Thanks for loggin\' in!',
-              type: 'is-success',
-              position: 'is-bottom'
-            })
+        this.$buefy.toast.open({
+          message: 'Thanks for loggin\' in!',
+          type: 'is-success',
+          position: 'is-bottom'
+        })
       );
-      this.$parent.close()
+      this.$emit('close')
       return;
     }
   }
