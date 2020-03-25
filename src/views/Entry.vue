@@ -1,5 +1,6 @@
 <template>
-<!-- START SINGLE ADD -->
+  <ValidationObserver ref="observer" v-slot="{ passes }">
+    <!-- START SINGLE ADD -->
     <div id="is-time-add" class="section is-view">
         <div class="container">
             <div class="columns">
@@ -8,117 +9,105 @@
                         <form action="#">
                             <header class="card-header">
                                 <p class="card-header-title">
-                                    Zeit erfassen für &nbsp; 
-                                    <b-field :type="{'is-danger': errors.has('userName')}" :message="errors.first('userName')">
-                                        <b-select placeholder="Name auswählen"
-                                                name="userName"
-                                                v-model="userName"
-                                                v-validate="'required'" mode="eager" icon="user">
-                                            <option
-                                                v-for="option in userList"
-                                                :value="option"
-                                                :key="option">
-                                                {{ option }}
-                                            </option>
-                                        </b-select>
-                                    </b-field>
+                                    <span class="column is-narrow">
+                                    Zeit erfassen für &nbsp;
+                                    </span>
+                                    <span class="column is-narrow">
+                                        <b-field>
+                                            <b-select placeholder="Name auswählen" v-model="userName" mode="eager" icon="user">
+                                                <option v-for="option in userList" :value="option" :key="option">
+                                                    {{ option }}
+                                                </option>
+                                            </b-select>
+                                        </b-field>
+                                    </span>
                                 </p>
                             </header>
                             <div class="card-content">
                                 <div class="columns">
                                     <div class="column">
-                                        <b-field label="Kunde auswählen" :type="{'is-danger': errors.has('kunde')}" :message="errors.first('kunde')">
-                                            <b-autocomplete
-                                            expanded
-                                                name="kunde"
-                                                v-model="kunde"
-                                                ref="autocomplete"
-                                                open-on-focus
-                                                :data="filteredKundenArray"
-                                                placeholder="e.g. Metropolis"
-                                                icon="building"
-                                                @select="option => selected = option"
-                                                @input="clearJobs"
-                                                 v-validate="'required'" key="customer-input">
-                                                <template slot="empty">Leider keine Kunden namens {{kunde}}</template>
-                                            </b-autocomplete>
-                                        </b-field>
+                                        <ValidationProvider name="kunde" rules="required" v-slot="{ errors, valid }">
+                                            <b-field label="Kunde wählen" :type="{'is-danger': errors[0], 'is-success': valid}"
+                                                :message="errors">
+                                                <b-autocomplete expanded v-model="kunde" ref="autocomplete"
+                                                    open-on-focus :data="filteredKundenArray"
+                                                    placeholder="e.g. Metropolis" icon="building"
+                                                    @select="option => selected = option" @input="clearJobs" key="customer">
+                                                    <template slot="empty">Noch keine Kunden namens
+                                                        {{kunde}}</template>
+                                                </b-autocomplete>
+                                            </b-field>
+                                        </ValidationProvider>
 
-                                        <b-field label="Bereich" v-if="kunde !== ''" :type="{'is-danger': errors.has('bereich')}" :message="errors.first('bereich')">
-                                            <b-autocomplete
-                                            expanded
-                                                name="bereich"
-                                                v-model="bereich"
-                                                ref="autocomplete"
-                                                open-on-focus
-                                                :data="filteredBereicheArray"
-                                                placeholder="Bereich Wählen"
-                                                icon="folder-open"
-                                                @select="option => selected = option"
-                                                 v-validate="'required'" key="bereich-input">
-                                                <template slot="empty">No results for "{{bereich}}"</template>
-                                            </b-autocomplete>
-                                        </b-field>
+                                        <ValidationProvider name="bereich" rules="required" v-slot="{ errors, valid }">
+                                            <b-field label="Bereich wählen" :type="{'is-danger': errors[0], 'is-success': valid}"
+                                                :message="errors">
+                                                <b-autocomplete expanded v-model="bereich" ref="autocomplete"
+                                                    open-on-focus :data="filteredBereicheArray"
+                                                    placeholder="Bereich Wählen" icon="folder-open"
+                                                    @select="option => selected = option" key="bereich">
+                                                    <template slot="empty">Noch keinen Bereich namens "{{bereich}}"</template>
+                                                </b-autocomplete>
+                                            </b-field>
+                                        </ValidationProvider>
 
-                                        <b-field label="Job" v-if="kunde !== ''" :type="{'is-danger': errors.has('job')}" :message="errors.first('job')">
-                                            <b-autocomplete
-                                            expanded
-                                                name="job"
-                                                v-model="job"
-                                                ref="autocomplete"
-                                                open-on-focus
-                                                :data="filteredJobsArray"
-                                                placeholder="Job Wählen"
-                                                icon="file-alt"
-                                                @select="option => selected = option"
-                                                 v-validate="'required'" key="job-input">
-                                                <template slot="empty">No results for "{{job}}"</template>
-                                            </b-autocomplete>
-                                        </b-field>
+                                        <ValidationProvider name="job" rules="required" v-slot="{ errors, valid }">
+                                            <b-field label="Job wählen" v-if="kunde !== ''"
+                                                :type="{'is-danger': errors[0], 'is-success': valid}" :message="errors">
+                                                <b-autocomplete expanded v-model="job" ref="autocomplete"
+                                                    open-on-focus :data="filteredJobsArray" placeholder="Job Wählen"
+                                                    icon="file-alt" @select="option => selected = option"
+                                                    key="job">
+                                                    <template slot="empty">Noch keinen Job namens "{{job}}"</template>
+                                                </b-autocomplete>
+                                            </b-field>
+                                        </ValidationProvider>
                                     </div>
-                                    
+
                                     <div class="column">
-                                        <b-field label="Datum" :type="{'is-danger':errors.has('date')}" :message="errors.first('date')">
-                                            <b-datepicker
-                                                name="date"
-                                                placeholder="Click to select..."
-                                                icon="calendar" class="is-small" v-model="date" expanded
-                                                :max-date="maxDate"
-                                                 v-validate="'required'" key="date-input">
-                                                <div class="buttons is-right">
-                                                    <button class="button is-primary is-fullwidth"
-                                                        @click.prevent="date = new Date()">
-                                                        <b-icon icon="calendar-alt"></b-icon>
-                                                        <span>Heute</span>
-                                                    </button>
-                                                    <button class="button is-danger is-fullwidth"
-                                                        @click.prevent="date = null">
-                                                        <b-icon icon="times-circle"></b-icon>
-                                                        <span>Zurücksetzen</span>
-                                                    </button>
-                                                </div>
-                                            </b-datepicker>
-                                        </b-field>
-
-                                        <b-field label="Zeitspanne" :type="{'is-danger':errors.has('duration')}" :message="errors.first('duration')">
-                                                <b-input name="duration" placeholder='01h 05m' class="duration" :value="duration | durationFilter" v-cleave="masks.duration" v-validate="'required'" v-on:keyup.native="onInput" icon="clock"
-                                                key="time-input"/>
-                                        </b-field>
-
+                                        <ValidationProvider name="date" rules="required" v-slot="{ errors, valid }">
+                                            <b-field label="Datum ändern" :type="{'is-danger': errors[0], 'is-success': valid}"
+                                                message="Standard: Heute">
+                                                <b-datepicker placeholder="Click to select..."
+                                                    icon="calendar" class="is-small" v-model="date" expanded
+                                                    :max-date="maxDate" key="date">
+                                                    <div class="buttons is-right">
+                                                        <button class="button is-primary is-fullwidth"
+                                                            @click.prevent="date = new Date()">
+                                                            <b-icon icon="calendar-alt"></b-icon>
+                                                            <span>Heute</span>
+                                                        </button>
+                                                        <!-- <button class="button is-danger is-fullwidth"
+                                                            @click.prevent="date = null">
+                                                            <b-icon icon="times-circle"></b-icon>
+                                                            <span>Zurücksetzen</span>
+                                                        </button> -->
+                                                    </div>
+                                                </b-datepicker>
+                                            </b-field>
+                                        </ValidationProvider>
+                                        <ValidationProvider name="duration" rules="required" v-slot="{ errors, valid }">
+                                            <b-field label="Zeitspanne eingeben" :type="{'is-danger':errors[0], 'is-success': valid}"
+                                                :message="{[errors]: errors[0], 'Im Format: 01h 05m': !errors[0]}">
+                                                <b-input placeholder='01h 05m' class="duration"
+                                                    :value="duration | durationFilter" v-cleave="masks.duration"
+                                                    v-on:keyup.native="onInput" icon="clock"
+                                                    key="time-input" />
+                                            </b-field>
+                                        </ValidationProvider>
                                         <b-field label="Notiz">
                                             <b-input type="textarea" v-model="note"></b-input>
                                         </b-field>
-                                        
                                     </div>
                                 </div>
                             </div>
                             <div class="card-footer is-right">
                                 <div class="field is-grouped is-grouped-right" style="margin-left:auto;">
                                     <div class="control card-footer-item">
-                                        <button class="button is-text" @click.prevent="addEntry">Cancel</button>
+                                        <button class="button is-text" @click.prevent="resetData">Reset</button>
                                     </div>
                                     <div class="control card-footer-item is-link">
-                                        <button class="button is-link" @click.prevent="addEntry">Submit</button>
+                                        <button class="button is-link" @click="passes(addEntry)">Submit</button>
                                     </div>
                                 </div>
                             </div>
@@ -129,11 +118,22 @@
         </div>
     </div>
     <!-- END SINGLE ADD -->
+  </ValidationObserver>
 </template>
 
 <script>
 
     import Cleave from 'cleave.js'
+
+    import { extend } from 'vee-validate';
+    import { required } from 'vee-validate/dist/rules';
+    // Add the required rule
+    extend('required', {
+        ...required,
+        message: 'Nicht vergessen…'
+    });
+
+    import { ValidationObserver, ValidationProvider } from 'vee-validate'
 
     const cleave = {
         name: 'cleave',
@@ -148,6 +148,10 @@
     }
 
     export default {
+        components: {
+            ValidationObserver,
+            ValidationProvider
+        },
         directives: { cleave },
         data() {
             const today = new Date()
@@ -287,15 +291,16 @@
         },
         methods: {
             addEntry() {
-                this.$validator.validateAll().then((result) => {
-                    if (result) {
-                        this.$dialog.confirm({
+                // this.$validator.validateAll().then((result) => {
+                //     if (result) {
+                        this.$buefy.dialog.confirm({
                             title: 'Eingaben nochmals überprüfen',
                             message: 'Mitarbeiter: ' + this.userName +'<br>Kunde: ' + this.kunde + '<br>Bereich: ' + this.bereich + '<br>Job: ' + this.job + '<br>Datum: ' + this.dateToHuman + '<br>Zeitspanne: ' + this.duration + '<br>Notiz: ' + this.note,
-                            confirmText: 'Okay',
+                            confirmText: 'Speichern',
                             type: 'is-default',
                             hasIcon: true,
                             icon: 'calendar',
+                            cancelText: 'Bearbeiten',
                             onConfirm: () => {
                                 let user = this.currentUserId
                                 let newEntry = {
@@ -319,14 +324,14 @@
                                 )
                             }
                         })
-                    } else {
-                      this.$toast.open({
-                        message: 'It seems your form is missing something! Please check the fields.',
-                        type: 'is-danger',
-                        position: 'is-bottom'
-                      })
-                    }
-                })
+                //     } else {
+                //       this.$toast.open({
+                //         message: 'It seems your form is missing something! Please check the fields.',
+                //         type: 'is-danger',
+                //         position: 'is-bottom'
+                //       })
+                //     }
+                // })
             },
             resetData(){
                 this.kunde = '',
@@ -335,6 +340,9 @@
                 this.date = new Date(),
                 this.duration = '',
                 this.note = ''
+                requestAnimationFrame(() => {
+                    this.$refs.observer.reset();
+                });
             },
             loadAllData() {
                 this.$store.dispatch('loadCustomerEntries')
@@ -344,9 +352,9 @@
                     this.userName = this.currentUserName
                 })
             },
-            setKundeSubs() {
-                this.bereiche = this.bereiche
-            },
+            // setKundeSubs() {
+            //     this.bereiche = this.bereiche
+            // },
             getKunde() {
                 return this.data.kunde
             },
@@ -398,7 +406,11 @@
 </script>
 
 <style>
+span .field {
+    margin-bottom: 1em;
+}
 label.label {
     text-align: left;
 }
+
 </style>

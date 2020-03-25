@@ -17,21 +17,23 @@ import { fas } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 library.add(fas)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
-import VeeValidate from 'vee-validate'
+    // import 'vee-validate'
 
-Vue.use(VeeValidate, {
-  useConstraintAttrs: false
-});
+// Vue.use(vee-validate, {
+//     useConstraintAttrs: false,
+//     errorBagName: 'errors'
+// });
+
 
 Vue.use(Buefy, { defaultIconPack: 'fas' })
 
 Vue.config.productionTip = false
 
 new Vue({
-  router,
-  store,
-  created() {
+    router,
+    store,
+    created() {
         firebase.initializeApp(firebaseConfig)
     },
-  render: h => h(App)
+    render: h => h(App)
 }).$mount('#app')
