@@ -237,9 +237,9 @@ const store = new Vuex.Store({
         // },
         // eslint-disable-next-line
         newEntry({ commit }, payload) {
-            let myRef = 'users/' + payload.user + '/timeentries/'
-                // console.log(myRef)
-                // console.log(payload.newEntry)
+            // let myRef = 'users/' + payload.user + '/timeentries/'
+            // console.log(myRef)
+            // console.log(payload.newEntry)
             return firebase
                 .database()
                 .ref('users')
