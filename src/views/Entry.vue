@@ -40,10 +40,10 @@
                                         </ValidationProvider>
 
                                         <ValidationProvider name="bereich" rules="required" v-slot="{ errors, valid }">
-                                            <b-field label="Bereich wählen" v-if="kunde !== ''"
-                                            :type="{'is-danger': errors[0], 'is-success': valid}"
-                                                :message="errors">
-                                                <b-autocomplete expanded v-model="bereich" ref="autocomplete"
+                                            <b-field label="Bereich wählen"
+                                            :type="{'is-danger': errors[0] && kunde, 'is-success': valid, 'is-unselectable': !kunde}"
+                                            :message="kunde?errors:''">
+                                                <b-autocomplete expanded :disabled="!kunde" v-model="bereich" ref="autocomplete"
                                                     open-on-focus :data="filteredBereicheArray"
                                                     placeholder="Bereich Wählen" icon="folder-open"
                                                     @select="option => selected = option" key="bereich">
@@ -53,9 +53,9 @@
                                         </ValidationProvider>
 
                                         <ValidationProvider name="job" rules="required" v-slot="{ errors, valid }">
-                                            <b-field label="Job wählen" v-if="kunde !== ''"
-                                                :type="{'is-danger': errors[0], 'is-success': valid}" :message="errors">
-                                                <b-autocomplete expanded v-model="job" ref="autocomplete"
+                                            <b-field label="Job wählen"
+                                                :type="{'is-danger': errors[0] && kunde, 'is-success': valid}" :message="kunde?errors:''">
+                                                <b-autocomplete expanded :disabled="!kunde" v-model="job" ref="autocomplete"
                                                     open-on-focus :data="filteredJobsArray" placeholder="Job Wählen"
                                                     icon="file-alt" @select="option => selected = option"
                                                     key="job">
@@ -407,7 +407,7 @@
 </script>
 
 <style>
-span .field {
+span > .field {
     margin-bottom: 1em;
 }
 label.label {
