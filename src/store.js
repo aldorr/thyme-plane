@@ -5,7 +5,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import firebase from 'firebase/app'
-import router from '@/router';
+// import router from '@/router';
 import createPersistedState from 'vuex-persistedstate'
 
 Vue.use(Vuex)
@@ -94,7 +94,7 @@ const store = new Vuex.Store({
                     commit('setUser', null)
                     commit('setStatus', 'success')
                     commit('setError', null)
-                    router.push('/')
+                        // router.push('/')
                 })
                 .catch((error) => {
                     commit('setStatus', 'failure')
@@ -159,15 +159,17 @@ const store = new Vuex.Store({
                 .ref('users')
                 .once('value', snapshot => {
                     let result = snapshot.val()
-                    let userID = this.state.user
-                    console.log(userID)
-                    commit('setTimeEntries', snapshot.val());
-                    // console.log(userID)
-                    // get username from timeEntries based on the UID
-                    // i.e. here from Component... not working
-                    commit('setUserName', result[userID].fullname)
+                    commit('setTimeEntries', result)
+                        // get username from timeEntries based on the UID
+                        // i.e. here from Component... not working
                 })
                 .then(() => {
+                    let userID = this.state.user
+                    let userTimeEntries = this.state.userTimeEntries
+                        // console.log(userID)
+                        // console.log(userTimeEntries)
+                        // console.log(userTimeEntries[userID])
+                    commit('setUserName', userTimeEntries[userID].fullname)
                     commit('setStatus', 'success')
                 })
                 .catch((error) => {

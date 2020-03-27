@@ -99,7 +99,7 @@ export default {
           })
         )
       );
-      this.$router.push('about')
+      this.$router.push({ name: 'about'})
       this.$emit('close')
       return;
     }

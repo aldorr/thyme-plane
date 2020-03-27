@@ -16,24 +16,23 @@ export default {
       return this.$store.getters.userEmail
     },
     userName: {
-        get() {
+        get: function() {
           return this.$store.getters.userName
         },
-        set(value) {
-          this.$store.dispatch('setUserName', value)
+        set: function(value) {
+          // console.log(value)
+          this.$store.commit('setUserName', value)
         }
     }
   },
   methods: {
     loadAllData() {
         this.$store.dispatch('loadTimeEntries')
-        .then((result) => {
-          if (result) {
-            let userID = this.$store.getters.user
-            let currentUserName = result[userID].fullname
-            this.userName = currentUserName
-          }
-        })
+        // .then(() => {
+        //     let userID = this.$store.getters.user
+        //     let currentUserName = this.$store.getters.getUserTimeEntries[userID].fullname
+        //     this.userName = currentUserName
+        // })
     },
   },
   mounted() {

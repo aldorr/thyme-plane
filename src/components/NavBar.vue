@@ -2,7 +2,7 @@
     <nav class="navbar is-white is-fixed-top">
         <div class="container">
             <div class="navbar-brand">
-                <router-link class="navbar-item" to="/">
+                <router-link class="navbar-item" :to="userLoggedIn?'/about':'/'">
                 <img src="../assets/logo.png" width="140" height="27">
                 </router-link>
                 <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarThyme" v-on:click="showNav = !showNav" v-bind:class="{ 'is-active':showNav }">
@@ -96,6 +96,10 @@ export default {
     methods: {
         logoutFromFirebase () {
             this.$store.dispatch('signOutAction')
+            .then(() => {
+                this.$router.push({name: 'home'})
+            })
+
         },
         openLogin() {
             this.$buefy.modal.open({
