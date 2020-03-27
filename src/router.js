@@ -5,8 +5,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Home from './views/Home.vue'
-// import SignIn from './components/auth/SignIn'
-// import Admin from './views/About'
 import store from './store'
 
 Vue.use(Router)
@@ -15,12 +13,12 @@ const router = new Router({
     mode: 'history',
     base: process.env.BASE_URL,
     routes: [{
-            path: '/',
+            path: '/login',
             name: 'home',
             component: Home
         },
         {
-            path: '/about',
+            path: '/',
             name: 'about',
             // route level code-splitting
             // this generates a separate chunk (about.[hash].js) for this route
@@ -79,9 +77,8 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
     if (to.matched.some(record => record.meta.authRequired)) {
         if (store.state.user == null) {
-            // console.log(store.state.status);
             next({
-                path: '/'
+                path: '/login'
             })
         } else {
             next()

@@ -13,6 +13,13 @@ export default {
   name: 'home',
   components: {
     HelloWorld
+  },
+  mounted() {
+    // kind of a reverse route protection.
+    // seems like this should happen in the router, but hey, it works.
+    if (this.$store.state.user !== null) {
+      this.$router.push({name: 'about'})
+    }
   }
 }
 </script>

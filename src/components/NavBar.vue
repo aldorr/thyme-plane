@@ -2,7 +2,7 @@
     <nav class="navbar is-white is-fixed-top">
         <div class="container">
             <div class="navbar-brand">
-                <router-link class="navbar-item" :to="userLoggedIn?'/about':'/'">
+                <router-link class="navbar-item" :to="userLoggedIn?'/':'/login'">
                 <img src="../assets/logo.png" width="140" height="27">
                 </router-link>
                 <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarThyme" v-on:click="showNav = !showNav" v-bind:class="{ 'is-active':showNav }">
@@ -57,6 +57,12 @@ export default {
         navitems () {
             let menuItems = [
             {
+                title: 'Home',
+                icon: 'info',
+                link: '/',
+                type: 'is-dark'
+            },
+            {
                 title: 'Kunden editieren',
                 icon: 'pen',
                 link: '/jobs',
@@ -73,12 +79,6 @@ export default {
                 icon: 'calendar',
                 link: '/list',
                 type: 'is-primary'
-            },
-            {
-                title: 'Über',
-                icon: 'info',
-                link: '/about',
-                type: 'is-dark'
             }
             ]
             return menuItems
