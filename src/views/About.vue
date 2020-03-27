@@ -27,11 +27,13 @@ export default {
   methods: {
     loadAllData() {
         this.$store.dispatch('loadTimeEntries')
-        .then(() => {
-          let userID = this.$store.getters.user
-          let currentUserName = this.timeEntries[userID].fullname
-          this.userName = currentUserName
-        })
+        // .then((result) => {
+        //   if (result) {
+        //     let userID = this.$store.getters.user
+        //     let currentUserName = result[userID].fullname
+        //     this.userName = currentUserName
+        //   }
+        // })
     },
   },
   mounted() {
