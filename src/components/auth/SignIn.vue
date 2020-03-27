@@ -88,7 +88,8 @@ export default {
           this.$buefy.toast.open({
             message: 'Thanks for loggin\' in!',
             type: 'is-success',
-            position: 'is-bottom'
+            position: 'is-bottom',
+            duration: 3000
           })
           this.$emit('close')
       },
@@ -98,7 +99,8 @@ export default {
           this.$buefy.toast.open({
             message: errorMessage,
             type: 'is-danger',
-            position: 'is-bottom'
+            position: 'is-bottom',
+            duration: 6000
           })
       })
       // return;
