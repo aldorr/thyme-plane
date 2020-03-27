@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <HelloWorld msg="Welcome to Your Billing App." text="Please sign in to continue."/>
+    <HelloWorld msg="Get ready to become a Thyme Expert." text="Please sign in to continue."/>
   </div>
 </template>
 

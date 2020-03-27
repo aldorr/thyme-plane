@@ -15,10 +15,11 @@ const store = new Vuex.Store({
     state: {
         user: null,
         userEmail: '',
+        userName: '',
         status: null,
         error: null,
         customerEntries: null,
-        userTimeEntries: null,
+        userTimeEntries: {},
         newUID: null
     },
 
@@ -31,6 +32,10 @@ const store = new Vuex.Store({
 
         setuserEmail(state, payload) {
             state.userEmail = payload
+        },
+
+        setUserName(state, payload) {
+            state.userName = payload
         },
 
         removeUser(state) {
@@ -71,14 +76,14 @@ const store = new Vuex.Store({
                         commit('setStatus', 'success')
                         commit('setError', null)
                         localStorage.user = true;
-                        router.push('/about');
                         this.dispatch('loadCustomerEntries')
                         this.dispatch('loadTimeEntries')
+                            // router.push('about')
                     })
                     .catch((error) => {
                         commit('setStatus', 'failure')
                         commit('setError', error.message)
-                        router.push('/')
+                            // router.push('/')
                     })
             })
         },
@@ -96,7 +101,7 @@ const store = new Vuex.Store({
                     commit('setError', error.message)
                     commit('setUser', null);
                     commit('setIsAuthenticated', false);
-                    router.push('/');
+                    // router.push('/');
                 })
         },
 
@@ -153,7 +158,14 @@ const store = new Vuex.Store({
                 .database()
                 .ref('users')
                 .once('value', snapshot => {
+                    let result = snapshot.val()
+                    let userID = this.state.user
+                    console.log(userID)
                     commit('setTimeEntries', snapshot.val());
+                    // console.log(userID)
+                    // get username from timeEntries based on the UID
+                    // i.e. here from Component... not working
+                    commit('setUserName', result[userID].fullname)
                 })
                 .then(() => {
                     commit('setStatus', 'success')
@@ -263,6 +275,10 @@ const store = new Vuex.Store({
 
         userEmail(state) {
             return state.userEmail
+        },
+
+        userName(state) {
+            return state.userName
         },
 
         customers(state) {

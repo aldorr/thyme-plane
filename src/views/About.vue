@@ -1,32 +1,41 @@
 <template>
-  <section class="hero is-light is-fullheight">
-    <div class="hero-body">
-      <div class="container">
-        <h1 class="title">Willkommen {{userEmail}}!</h1>
-      </div>
-    </div>
-  </section>
+        <HelloWorld v-bind:msg="`Willkommen ` + userName" v-bind:text="`Du bist als ` + userEmail + ` eingeloggt`"/>
 </template>
 
 <script>
+import HelloWorld from '@/components/HelloWorld.vue'
+
 export default {
-  /** Just to show something, when you first login. */
-  // methods: {
-  //     loadCustomerData() {
-  //         this.$store.dispatch('loadCustomerEntries')
-  //     },
-  //   },
-  //   listAllUsers() {
-  //     this.$store.dispatch('listAllUsers')
-  //   }
-  // },
+  // Just the home page
+  name: 'home',
+  components: {
+    HelloWorld
+  },
   computed: {
     userEmail() {
       return this.$store.getters.userEmail
+    },
+    userName: {
+        get() {
+          return this.$store.getters.userName
+        },
+        set(value) {
+          this.$store.dispatch('setUserName', value)
+        }
     }
+  },
+  methods: {
+    loadAllData() {
+        this.$store.dispatch('loadTimeEntries')
+        .then(() => {
+          let userID = this.$store.getters.user
+          let currentUserName = this.timeEntries[userID].fullname
+          this.userName = currentUserName
+        })
+    },
+  },
+  mounted() {
+    this.loadAllData()
   }
-  // mounted() {
-  //   this.loadCustomerData()
-  // }
 }
 </script>
