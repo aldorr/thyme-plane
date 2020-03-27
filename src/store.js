@@ -5,7 +5,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import firebase from 'firebase/app'
-// import router from '@/router';
+import router from '@/router';
 import createPersistedState from 'vuex-persistedstate'
 
 Vue.use(Vuex)
@@ -65,36 +65,45 @@ const store = new Vuex.Store({
 
     actions: {
         signInAction({ commit }, payload) {
-            firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(function() {
-                firebase
-                    .auth()
-                    .signInWithEmailAndPassword(payload.email, payload.password)
-                    .then((response) => {
-                        // console.log(response)
-                        commit('setUser', response.user.uid)
-                        commit('setuserEmail', response.user.email)
-                        commit('setStatus', 'success')
-                        commit('setError', null)
-                        localStorage.user = true;
-                        this.dispatch('loadCustomerEntries')
-                        this.dispatch('loadTimeEntries')
+            return new Promise((resolve, reject) => {
+                firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(function() {
+                    firebase
+                        .auth()
+                        .signInWithEmailAndPassword(payload.email, payload.password)
+                        .then((response) => {
+                            commit('setUser', response.user.uid)
+                            commit('setuserEmail', response.user.email)
+                            commit('setStatus', 'success')
+                            commit('setError', null)
+                            localStorage.user = true;
+                            // this.dispatch('loadCustomerEntries')
+                            // this.dispatch('loadTimeEntries')
                             // router.push('about')
-                    })
-                    .catch((error) => {
-                        commit('setStatus', 'failure')
-                        commit('setError', error.message)
-                            // router.push('/')
-                    })
+                            router.push({ name: 'about' })
+                            resolve(response)
+                        })
+                        .catch((error) => {
+                            commit('setStatus', 'failure')
+                            commit('setError', error.message)
+                                // router.push('/')
+                            reject(error.message)
+                        })
+                })
             })
+
         },
 
         signOutAction({ commit }) {
             firebase.auth().signOut()
                 .then(() => {
                     commit('setUser', null)
+                    commit('setuserEmail', null)
+                    commit('setUserName', null)
                     commit('setStatus', 'success')
                     commit('setError', null)
+                    commit('setTimeEntries', null)
                         // router.push('/')
+                        // also remove persisted state
                 })
                 .catch((error) => {
                     commit('setStatus', 'failure')

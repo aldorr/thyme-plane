@@ -27,12 +27,7 @@ export default {
   },
   methods: {
     loadAllData() {
-        this.$store.dispatch('loadTimeEntries')
-        // .then(() => {
-        //     let userID = this.$store.getters.user
-        //     let currentUserName = this.$store.getters.getUserTimeEntries[userID].fullname
-        //     this.userName = currentUserName
-        // })
+      this.$store.dispatch('loadTimeEntries')
     },
   },
   mounted() {

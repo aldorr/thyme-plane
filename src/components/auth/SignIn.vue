@@ -10,11 +10,11 @@
             </header>
             <div class="modal-card-body">
             <ValidationProvider name="email" rules="required|email" v-slot="{ errors, valid }">
-
-              <b-field horizontal :type="{'is-danger':errors[0], 'is-success': valid}" :message="errors[0]" label="Email">
-                      <b-input type="email" v-model="email" name="email" value="email@domain.com" key="email" placeholder="your email address" />
+              <b-field horizontal label="Email" :type="{'is-danger':errors[0], 'is-success': valid}">
+                      <b-input type="email" :message="errors[0]" v-model="email" name="email" value="email@domain.com" key="email" placeholder="your email address" />
               </b-field>
             </ValidationProvider>
+
             <ValidationProvider name="password" rules="required" v-slot="{ errors, valid }">
               <b-field horizontal :type="{'is-danger':errors[0], 'is-success': valid}" :message="errors[0]" label="Password">
                       <b-input type="password" v-model="password" name="password" key="password" placeholder="something secret" />
@@ -63,21 +63,14 @@ export default {
     email: '',
     password: ''
   }),
-
+  computed: {
+    error() {
+      return this.$store.state.error
+    }
+  },
   methods: {
-
     validate() {
-
-        // if (this.$refs.form.valid) {
           this.loginWithFirebase()
-        // } else {
-        //   this.$buefy.toast.open({
-        //     message: 'It seems your form is missing something! Please check the fields.',
-        //     type: 'is-danger',
-        //     position: 'is-bottom'
-        //   })
-        // }
-
     },
 
     reset() {
@@ -89,20 +82,33 @@ export default {
         email: this.email,
         password: this.password
       }
-      this.$store.dispatch('signInAction', user).then(
-
-        this.$store.dispatch("loadTimeEntries").then(
+      this.$store.dispatch('signInAction', user)
+      .then(response => {
+        console.log(response)
           this.$buefy.toast.open({
             message: 'Thanks for loggin\' in!',
             type: 'is-success',
             position: 'is-bottom'
           })
-        )
-      );
-      this.$router.push({ name: 'about'})
-      this.$emit('close')
-      return;
+          this.$emit('close')
+      },
+      error => {
+          // Handle Errors here.
+          let errorMessage = error;
+          this.$buefy.toast.open({
+            message: errorMessage,
+            type: 'is-danger',
+            position: 'is-bottom'
+          })
+      })
+      // return;
     }
   }
 }
 </script>
+
+<style>
+span > .field {
+  margin-bottom: 0.75em;
+}
+</style>

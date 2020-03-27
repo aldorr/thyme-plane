@@ -13,7 +13,7 @@
             </div>
 
             <div id="navbarThyme" class="navbar-menu" v-bind:class="{ 'is-active':showNav }">
-                <div class="navbar-start" v-if="userLoggedIn">
+                <div class="navbar-start has-text-right-touch" v-if="userLoggedIn">
                     <router-link v-for="navitem in navitems" :key="navitem.title" :to="navitem.link" class="navbar-item">
                         <b-icon :icon="navitem.icon" size="is-small" :type="navitem.type"> </b-icon>
                         <span>{{navitem.title}}</span>
@@ -22,7 +22,7 @@
 
                 <div class="navbar-end">
                     <div class="navbar-item">
-                        <div class="buttons">
+                        <div class="buttons is-right">
                             <b-button icon-left="user" class="button is-light" @click="openLogin()" v-if="!userLoggedIn">Anmelden</b-button>
                             <b-button icon-left="user" class="button is-warning" @click="logoutFromFirebase" v-if="userLoggedIn">Abmelden</b-button>
                             <b-button icon-left="user-plus" class="button is-default" @click="addNewUser" v-if="userLoggedIn"></b-button>
@@ -97,6 +97,11 @@ export default {
         logoutFromFirebase () {
             this.$store.dispatch('signOutAction')
             .then(() => {
+                this.$buefy.toast.open({
+                    message: 'Come back soon!',
+                    type: 'is-success',
+                    position: 'is-bottom'
+                }),
                 this.$router.push({name: 'home'})
             })
 
