@@ -316,7 +316,7 @@
                                     user: user,
                                     newEntry: newEntry
                                 }).then(
-                                    this.$toast.open({duration: 5000,
+                                    this.$buefy.toast.open({duration: 5000,
                                         message: `Added!`,
                                         position: 'is-bottom',
                                         type: 'is-success'
@@ -326,7 +326,7 @@
                             }
                         })
                 //     } else {
-                //       this.$toast.open({
+                //       this.$buefy.toast.open({
                 //         message: 'It seems your form is missing something! Please check the fields.',
                 //         type: 'is-danger',
                 //         position: 'is-bottom'

@@ -144,7 +144,7 @@
                 }
             },
             showAddKunde() {
-                this.$dialog.prompt({
+                this.$buefy.dialog.prompt({
                     message: `Kunde hinzufügen`,
                     inputAttrs: {
                         placeholder: 'e.g. fuxpax',
@@ -158,7 +158,7 @@
                         this.$store.dispatch('addCustomer', {
                             name: value
                         }).then(
-                            this.$toast.open('"' + value + '" als Kunde hinzugefügt!')
+                            this.$buefy.toast.open('"' + value + '" als Kunde hinzugefügt!')
                             // close dialog
                         )
                     }
@@ -200,9 +200,9 @@
                 } else if (section === 'jobs') {
                     myKey = this.getKeyByValue(this.getJobsArray(kunde), thingToDelete)
                 }
-                this.$dialog.confirm({
+                this.$buefy.dialog.confirm({
                     title: 'Löschen?',
-                    message: 'Bist du sicher, du willst ' + kunde + 's "' + thingToDelete + '" <b>löschen</b>? Du kannst es später immer noch wieder neue hinzufügen.',
+                    message: 'Bist du sicher, du willst ' + kunde + 's "' + thingToDelete + '" <b>löschen</b>? Du kannst es später immer noch wieder neu hinzufügen.',
                     confirmText: 'Wirklich löschen',
                     type: 'is-danger',
                     hasIcon: true,
@@ -214,7 +214,7 @@
                             keyToDelete: myKey,
                             itemToDelete: this.getIndex(kunde, section, thingToDelete)
                         }).then(
-                            this.$toast.open('"' + thingToDelete + '" gelöscht!')
+                            this.$buefy.toast.open('"' + thingToDelete + '" gelöscht!')
                         )
                     }
                 })
@@ -229,7 +229,7 @@
                 })
                 // then show succes toast
                 .then(
-                    this.$toast.open('"' + this.newbereich + '" added!')
+                    this.$buefy.toast.open('"' + this.newbereich + '" added!')
                 ).then(
                     this.newbereich = ""
                 )
@@ -244,7 +244,7 @@
                 })
                 // then show succes toast
                 .then(
-                    this.$toast.open('"' + this.newjob + '" added!')
+                    this.$buefy.toast.open('"' + this.newjob + '" added!')
                 ).then(
                     this.newjob = ""
                 )

@@ -16,7 +16,6 @@
               </b-field>
             </ValidationProvider>
             <ValidationProvider name="password" rules="required" v-slot="{ errors, valid }">
-
               <b-field horizontal :type="{'is-danger':errors[0], 'is-success': valid}" :message="errors[0]" label="Password">
                       <b-input type="password" v-model="password" name="password" key="password" placeholder="something secret" />
               </b-field>
@@ -72,7 +71,7 @@ export default {
         // if (this.$refs.form.valid) {
           this.loginWithFirebase()
         // } else {
-        //   this.$toast.open({
+        //   this.$buefy.toast.open({
         //     message: 'It seems your form is missing something! Please check the fields.',
         //     type: 'is-danger',
         //     position: 'is-bottom'
@@ -91,12 +90,16 @@ export default {
         password: this.password
       }
       this.$store.dispatch('signInAction', user).then(
-        this.$buefy.toast.open({
-          message: 'Thanks for loggin\' in!',
-          type: 'is-success',
-          position: 'is-bottom'
-        })
+
+        this.$store.dispatch("loadTimeEntries").then(
+          this.$buefy.toast.open({
+            message: 'Thanks for loggin\' in!',
+            type: 'is-success',
+            position: 'is-bottom'
+          })
+        )
       );
+      this.$router.push('about')
       this.$emit('close')
       return;
     }

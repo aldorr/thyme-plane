@@ -1,5 +1,6 @@
 <template>
     <form>
+  <ValidationObserver ref="observer" v-slot="{ passes }">
         <div class="modal-card">
             <header class="modal-card-head">
                 <p class="modal-card-title">
@@ -8,29 +9,60 @@
                 <b-icon icon="lock"></b-icon>
             </header>
             <div class="modal-card-body">
-              <b-field horizontal :type="{'is-danger':errors.has('fullname')}" :message="errors.first('fullname')" label="fullname">
-                      <b-input type="text" v-model="fullname" name="fullname" v-validate="'required'" value="fullname@domain.com" key="fullname-input" placeholder="Regula Pfeiffer" />
+            <ValidationProvider name="email" rules="required" v-slot="{ errors, valid }">
+              <b-field horizontal :type="{'is-danger':errors[0], 'is-success':valid}" :message="errors" label="fullname">
+                      <b-input type="text" v-model="fullname" name="fullname" value="fullname@domain.com" key="fullname" placeholder="Regula Pfeiffer" />
               </b-field>
-              <b-field horizontal :type="{'is-danger':errors.has('email')}" :message="errors.first('email')" label="Email">
-                      <b-input type="email" v-model="email" name="email" v-validate="'required|email'" value="email@domain.com" key="email-input" placeholder="neuernutzer@breeder.de" />
+            </ValidationProvider>
+            <ValidationProvider name="email" rules="required|email" v-slot="{ errors, valid }">
+              <b-field horizontal :type="{'is-danger':errors[0], 'is-success':valid}" :message="errors" label="Email">
+                      <b-input type="email" v-model="email" name="email" value="email@domain.com" key="email" placeholder="neuernutzer@breeder.de" />
               </b-field>
-              <b-field horizontal :type="{'is-danger':errors.has('password')}" :message="errors.first('password')" label="Password">
-                      <b-input type="password" v-model="password" name="password" v-validate="'required'" key="password-input" placeholder="something-secret-and-maybe-funny" />
+            </ValidationProvider>
+            <ValidationProvider name="password" rules="required" v-slot="{ errors, valid }">
+              <b-field horizontal :type="{'is-danger':errors[0], 'is-success':valid}" :message="errors" label="Password">
+                      <b-input type="password" v-model="password" name="password" key="password" placeholder="something-secret-and-maybe-funny" />
               </b-field>
+            </ValidationProvider>
             </div>
             <footer class="modal-card-foot">
                     <b-button @click="$parent.close()" style="margin-left:auto;">Cancel</b-button>
                     <b-button
                     type="is-success"
                     icon-right="lock"
-                    @click.prevent="validate">Hinzufügen</b-button>
+                    @click.prevent="passes(validate)">Hinzufügen</b-button>
             </footer>
         </div>
+  </ValidationObserver>
     </form>
 </template>
 
 <script>
+import {
+  extend
+} from 'vee-validate';
+import {
+  required, email
+} from 'vee-validate/dist/rules';
+
+// Add the rules
+extend('email', email);
+extend('required', {
+  ...required,
+  message: 'Nicht vergessen…'
+});
+
+import {
+  ValidationObserver,
+  ValidationProvider
+} from 'vee-validate'
+
 export default {
+
+          components: {
+            ValidationObserver,
+            ValidationProvider
+        },
 
   data: () => ({
     fullname: '',
@@ -60,17 +92,17 @@ export default {
   methods: {
 
     validate () {
-      this.$validator.validateAll().then((result) => {
-        if (result) {
+      // this.$validator.validateAll().then((result) => {
+      //   if (result) {
           this.addUserToFirebase()
-        } else {
-          this.$toast.open({
-            message: 'It seems your form is missing something! Please check the fields.',
-            type: 'is-danger',
-            position: 'is-bottom'
-          })
-        }
-      })
+      //   } else {
+      //     this.$buefy.toast.open({
+      //       message: 'It seems your form is missing something! Please check the fields.',
+      //       type: 'is-danger',
+      //       position: 'is-bottom'
+      //     })
+      //   }
+      // })
     },
 
     reset () {
@@ -86,7 +118,7 @@ export default {
       }
       // console.log(user)
       this.$store.dispatch('newUserAction', user).then(
-            this.$toast.open({
+            this.$buefy.toast.open({
               message: 'New user: ' + user.email +' added!',
               type: 'is-success',
               position: 'is-bottom'
