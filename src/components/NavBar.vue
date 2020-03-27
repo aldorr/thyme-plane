@@ -3,7 +3,7 @@
         <div class="container">
             <div class="navbar-brand">
                 <router-link class="navbar-item" to="/">
-                <img src="../assets/logo.png" width="87" height="27">
+                <img src="../assets/logo.png" width="140" height="27">
                 </router-link>
                 <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarThyme" v-on:click="showNav = !showNav" v-bind:class="{ 'is-active':showNav }">
                 <span aria-hidden="true"></span>

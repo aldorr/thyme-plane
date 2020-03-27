@@ -6,7 +6,7 @@
           {{ msg }}
         </h1>
         <h2 class="subtitle">
-          {{text}}
+          {{ text }}
         </h2>
       </div>
     </div>
