@@ -347,7 +347,7 @@ export default {
         },
         byDateTimeEntries() {
             let userNameTimeEntries = this.byUserNameTimeEntries
-            console.log(this.dates)
+            // console.log(this.dates)
             if (0 !== this.dates.length) {
                 // console.log(this.dates)
                 // console.log(this.dates[0])
@@ -494,6 +494,11 @@ export default {
             }
             if (this.job) {
                 filename += "-" + this.job
+            }
+            if (0 !== this.dates.length) {
+                let dateStart = this.dateToHuman(this.dates[0])
+                let dateEnd = this.dateToHuman(this.dates[1])
+                filename += "-" + dateStart + "-" + dateEnd
             }
             filename += ".csv"
 
