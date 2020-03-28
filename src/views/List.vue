@@ -69,7 +69,7 @@
                                                             <b-icon icon="calendar-alt"></b-icon>
                                                             <span>Heute</span>
                                                         </button> -->
-                                        <button class="button is-danger is-fullwidth" @click.prevent="dates = null">
+                                        <button class="button is-danger is-fullwidth" @click.prevent="dates = []">
                                             <b-icon icon="times-circle"></b-icon>
                                             <span>Zurücksetzen</span>
                                         </button>
@@ -280,90 +280,98 @@ export default {
         customerEntries() {
             return this.$store.state.customerEntries
         },
-        currentTimeEntries() {
-            let allTimeEntriesArray = this.getAllTimeEntries()
-            // console.log("All time entries for use by: ")
-            // console.log(allTimeEntriesArray)
-
-            /*  here we need to filter in this order:
-                by User (with ability to select all users)
-                ---- by Customer (only one at a time - no need to show all customer's listings together?)
-                -------- by Job (unselected, it shows time entries from all jobs from customer)
-                -------- by Area (unselected, it shows time entries from all areas from customer)
-                there's gotta be a smarter way to do this!
-             */
-            if (this.job != '' && this.area != '') {
-                // return special List
+        // chain for each, based on all time entries,
+        // byKundeTimeEntries -- if kunde !== '' return filtered list, otherwise return value,
+        byKundeTimeEntries() {
+            let allTimeEntries = this.getAllTimeEntries()
+            if (this.kunde != '') {
+                // return list only from customer chosen
                 let returnArray = []
-                for (let key in allTimeEntriesArray) {
-                    if (allTimeEntriesArray[key].job == this.job && allTimeEntriesArray[key].customer == this.kunde && allTimeEntriesArray[key].area == this.area && allTimeEntriesArray[key].user == this.userName) {
-                        returnArray.push(allTimeEntriesArray[key])
+                for (let key in allTimeEntries) {
+                    if (allTimeEntries[key].customer == this.kunde) {
+                        returnArray.push(allTimeEntries[key])
                     }
                 }
                 return returnArray
-            } else if (this.job != '') {
-
+            } else {
+                return allTimeEntries
+            }
+        },
+        // byJobTimeEntries -- if job !== '' return filtered list, otherwise return value,
+        byJobTimeEntries() {
+            let kundeTimeEntries = this.byKundeTimeEntries
+            if (this.job != '') {
                 let returnArray = []
-                // return special List
-                for (let key in allTimeEntriesArray) {
-                    if (allTimeEntriesArray[key].job == this.job && allTimeEntriesArray[key].customer == this.kunde && allTimeEntriesArray[key].user == this.userName) {
-                        returnArray.push(allTimeEntriesArray[key])
+                for (let key in kundeTimeEntries) {
+                    if (kundeTimeEntries[key].job == this.job) {
+                        returnArray.push(kundeTimeEntries[key])
                     }
                 }
-                // console.log("Returning for Job: " + this.job)
-                // console.log("Returning for customer: " + this.kunde)
-                // console.log("Returning for user: " + this.userName)
                 return returnArray
-
-            } else if (this.area != '') {
-
+            } else {
+                return kundeTimeEntries
+            }
+        },
+        // byAreaTimeEntries -- if area !== '' return filtered list, otherwise return value,
+        byAreaTimeEntries() {
+            let jobTimeEntries = this.byJobTimeEntries
+            if (this.area != '') {
                 // return special List
                 let returnArray = []
-                for (let key in allTimeEntriesArray) {
-                    if (allTimeEntriesArray[key].area == this.area && allTimeEntriesArray[key].customer == this.kunde && allTimeEntriesArray[key].user == this.userName) {
-                        returnArray.push(allTimeEntriesArray[key])
+                for (let key in jobTimeEntries) {
+                    if (jobTimeEntries[key].area == this.area) {
+                        returnArray.push(jobTimeEntries[key])
                     }
                 }
                 // console.log("Returning just for area: " + this.area)
                 return returnArray
-
-            } else if (this.customer != '' && this.userName != "Alle Nutzer") {
-                // return list only from customer chosen
+            } else {
+                return jobTimeEntries
+            }
+        },
+        // byUserNameTimeEntries -- if userName !== '' return filtered list, otherwise return value
+        byUserNameTimeEntries() {
+            let areaTimeEntries = this.byAreaTimeEntries
+            if (this.userName !== 'Alle Nutzer') {
+                // return special List
                 let returnArray = []
-                for (let key in allTimeEntriesArray) {
-                    if (allTimeEntriesArray[key].customer == this.kunde && allTimeEntriesArray[key].user == this.userName) {
-                        returnArray.push(allTimeEntriesArray[key])
+                for (let key in areaTimeEntries) {
+                    if (areaTimeEntries[key].user == this.userName) {
+                        returnArray.push(areaTimeEntries[key])
                     }
                 }
-                // console.log("Returning just for customer: " + this.kunde + " & User: " + this.userName)
                 return returnArray
-                // } else if (this.userName != "Alle Nutzer") {
-                //     let returnArray = []
-                //     for (let key in allTimeEntriesArray) {
-                //         if (allTimeEntriesArray[key].user == this.userName) {
-                //             returnArray.push(allTimeEntriesArray[key])
-                //         }
-                //     }
-                //     return returnArray
-            } else if (this.userName == "Alle Nutzer") {
-                // console.log("returning full list")
-                // console.log(allTimeEntriesArray)
-                return allTimeEntriesArray
             } else {
-                return allTimeEntriesArray
+                return areaTimeEntries
             }
-
-            // return All Time Entries 
-            /*
-            allTimeEntriesArray.forEach((v, i) =>
-                allTimeEntriesArray[i].date = this.dateToHuman(allTimeEntriesArray[i].date)
-            );
-
-            allTimeEntriesArray.forEach((v, i) =>
-                allTimeEntriesArray[i].time = this.secondsToHrsMins(allTimeEntriesArray[i].time)
-            ); 
-            */
-            // return allTimeEntriesArray
+        },
+        byDateTimeEntries() {
+            let userNameTimeEntries = this.byUserNameTimeEntries
+            console.log(this.dates)
+            if (0 !== this.dates.length) {
+                // console.log(this.dates)
+                // console.log(this.dates[0])
+                // console.log(this.dates[1])
+                // return special List
+                let returnArray = []
+                for (let key in userNameTimeEntries) {
+                    // console.log(userNameTimeEntries[key].date)
+                    let itemDate = new Date(userNameTimeEntries[key].date)
+                    let selStart = new Date(this.dates[0])
+                    let selEnd = new Date(this.dates[1])
+                    if ( itemDate > selStart && itemDate < selEnd) {
+                        returnArray.push(userNameTimeEntries[key])
+                    }
+                }
+                return returnArray
+            } else {
+                return userNameTimeEntries
+            }
+        },
+        // displayTimeEntries -- if 
+        currentTimeEntries() {
+            let allTimeEntriesArray = this.byDateTimeEntries
+            return allTimeEntriesArray
         }
     },
     methods: {
