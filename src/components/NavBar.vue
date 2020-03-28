@@ -57,12 +57,6 @@ export default {
         navitems () {
             let menuItems = [
             {
-                title: 'Home',
-                icon: 'info',
-                link: '/',
-                type: 'is-dark'
-            },
-            {
                 title: 'Kunden editieren',
                 icon: 'pen',
                 link: '/jobs',
