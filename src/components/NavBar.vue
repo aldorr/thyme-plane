@@ -1,14 +1,26 @@
 <template>
     <nav class="navbar is-white is-fixed-top">
         <div class="container">
+            
             <div class="navbar-brand">
                 <router-link class="navbar-item" :to="userLoggedIn?'/':'/login'">
                 <img src="../assets/logo.png" width="140" height="27">
                 </router-link>
-                <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarThyme" v-on:click="showNav = !showNav" v-bind:class="{ 'is-active':showNav }">
-                <span aria-hidden="true"></span>
-                <span aria-hidden="true"></span>
-                <span aria-hidden="true"></span>
+
+                <div class="navbar-item navbar-meta">
+                    <div class="buttons is-right">
+                        <b-button icon-left="user" class="button is-light" @click="openLogin()" v-if="!userLoggedIn">Anmelden</b-button>
+                        <b-button icon-left="user" class="button is-warning" @click="logoutFromFirebase" v-if="userLoggedIn">Abmelden</b-button>
+                        <b-button icon-left="user-plus" class="button is-default" @click="addNewUser" v-if="userLoggedIn"></b-button>
+<!-- TODO: Disabled - needs work -->
+                        <!-- <b-button icon-left="tools" class="button" tag="router-link" to="/admin" type="is-default" v-if="userLoggedIn"></b-button> -->
+                    </div>
+                </div>
+
+                <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarThyme" v-on:click="showNav = !showNav" v-bind:class="{ 'is-active':showNav }" v-if="userLoggedIn">
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
                 </a>
             </div>
 
@@ -19,7 +31,9 @@
                         <span>{{navitem.title}}</span>
                     </router-link>
                 </div>
+            </div>
 
+            <navbar id="navbarMeta" class="navbar-menu">
                 <div class="navbar-end">
                     <div class="navbar-item">
                         <div class="buttons is-right">
@@ -31,7 +45,8 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </navbar>
+            
         </div>
     </nav>
 </template>
@@ -82,9 +97,10 @@ export default {
         }
     },
     mounted() {
-        this.navLogin = this.hideNavLogins
         if(this.hideNavLogins == undefined) {
             this.navLogin = true
+        } else {
+            this.navLogin = this.hideNavLogins
         }
     },
     methods: {
@@ -95,8 +111,7 @@ export default {
                     message: 'Come back soon!',
                     type: 'is-success',
                     position: 'is-bottom'
-                }),
-                this.$router.push({name: 'home'})
+                })
             })
 
         },
@@ -125,12 +140,22 @@ export default {
 </script>
 
 <style>
+.navbar-brand .navbar-item.navbar-meta {
+    margin-left: auto;
+}
+.navbar-brand .navbar-burger {
+    margin-left: unset;
+}
 @media screen and (min-width: 1024px) {
     .navbar.is-white #navbarThyme .navbar-start>a.navbar-item.router-link-active {
         background-color: #f2f2f2;
         color: #0a0a0a;
     }
+    .navbar-brand .navbar-item.navbar-meta {
+        display: none;
+    }
 }
+
 .icon.is-small {
     margin-right: 0.25em;
 }
