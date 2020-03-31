@@ -108,7 +108,7 @@
                                         <button class="button is-text" @click.prevent="resetData">Reset</button>
                                     </div>
                                     <div class="control card-footer-item is-link">
-                                        <button class="button is-link" @click="passes(addEntry)">Submit</button>
+                                        <button class="button is-link" @click.prevent="passes(addEntry)">Submit</button>
                                     </div>
                                 </div>
                             </div>
