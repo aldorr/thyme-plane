@@ -108,7 +108,7 @@
                                         <button class="button is-text" @click.prevent="resetData">Reset</button>
                                     </div>
                                     <div class="control card-footer-item is-link">
-                                        <button class="button is-link" @click.prevent="passes(addEntry)">Submit</button>
+                                        <button class="button is-primary" @click.prevent="passes(addEntry)">Submit</button>
                                     </div>
                                 </div>
                             </div>
@@ -296,9 +296,10 @@
                 //     if (result) {
                         this.$buefy.dialog.confirm({
                             title: 'Eingaben nochmals überprüfen',
-                            message: 'Mitarbeiter: ' + this.userName +'<br>Kunde: ' + this.kunde + '<br>Bereich: ' + this.bereich + '<br>Job: ' + this.job + '<br>Datum: ' + this.dateToHuman + '<br>Zeitspanne: ' + this.duration + '<br>Notiz: ' + this.note,
+                            message: '<table class="table is-striped is-fullwidth"><tbody><tr><th>Mitarbeiter</th><td> ' + this.userName +'</td></tr><tr><th>Kunde</th><td>' + this.kunde + '</td></tr><tr><th>Bereich</th><td>' + this.bereich + '</td></tr><tr><th>Job</th><td>' + this.job + '</td></tr><tr><th>Datum</th><td>' + this.dateToHuman + '</td></tr><tr><th>Zeitspanne</th><td>' + this.duration + '</td></tr><tr><th>Notiz</th><td>' + this.note + "</td></tr></tbody></table>",
                             confirmText: 'Speichern',
-                            type: 'is-default',
+                            type: 'is-primary',
+                            trapFocus: true,
                             hasIcon: true,
                             icon: 'calendar',
                             cancelText: 'Bearbeiten',
@@ -416,5 +417,7 @@ span > .field {
 label.label {
     text-align: left;
 }
-
+.modal .media {
+    width: 100%;
+}
 </style>
