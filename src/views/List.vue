@@ -359,7 +359,7 @@ export default {
                     let itemDate = new Date(userNameTimeEntries[key].date)
                     let selStart = new Date(this.dates[0])
                     let selEnd = new Date(this.dates[1])
-                    if ( itemDate > selStart && itemDate < selEnd) {
+                    if ( itemDate >= selStart && itemDate <= selEnd) {
                         returnArray.push(userNameTimeEntries[key])
                     }
                 }
