@@ -102,8 +102,7 @@ const store = new Vuex.Store({
                     commit('setStatus', 'success')
                     commit('setError', null)
                     commit('setTimeEntries', null)
-                        // router.push('/')
-                        // also remove persisted state
+                    router.push({ name: 'home' })
                 })
                 .catch((error) => {
                     commit('setStatus', 'failure')
