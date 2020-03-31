@@ -357,9 +357,12 @@ export default {
                 for (let key in userNameTimeEntries) {
                     // console.log(userNameTimeEntries[key].date)
                     let itemDate = new Date(userNameTimeEntries[key].date)
-                    let selStart = new Date(this.dates[0])
-                    let selEnd = new Date(this.dates[1])
-                    if ( itemDate >= selStart && itemDate <= selEnd) {
+                    let itemTime = itemDate.getTime()
+                    let selStartDate = new Date(this.dates[0])
+                    let selStart = selStartDate.getTime()
+                    let selEndDate = new Date(this.dates[1])
+                    let selEnd = selEndDate.getTime()
+                    if ( itemTime >= selStart && itemTime <= selEnd + 86400000) {
                         returnArray.push(userNameTimeEntries[key])
                     }
                 }
