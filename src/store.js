@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /**
  * States, mutations and actions that should be available to multiple components 
  * 
@@ -91,6 +92,30 @@ const store = new Vuex.Store({
                 })
             })
 
+        },
+
+        passwordResetAction({ commit }, payload) {
+            // return new Promise((resolve, reject) => {
+            //         resolve("success")
+            //     })
+            return new Promise((resolve, reject) => {
+                firebase
+                    .auth()
+                    .sendPasswordResetEmail(payload.email)
+                    .then(() => {
+                        commit('setStatus', 'success')
+                        commit('setError', null)
+                            // Email sent.
+                        resolve("success")
+                    })
+                    .catch(function(error) {
+                        commit('setStatus', 'failure')
+                        commit('setError', error.message)
+                            // router.push('/')
+                        reject(error.message)
+                    });
+
+            })
         },
 
         signOutAction({ commit }) {

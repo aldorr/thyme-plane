@@ -33,7 +33,7 @@
                 </div>
             </div>
 
-            <navbar id="navbarMeta" class="navbar-menu">
+            <div id="navbarMeta" class="navbar navbar-menu">
                 <div class="navbar-end">
                     <div class="navbar-item">
                         <div class="buttons is-right">
@@ -45,7 +45,7 @@
                         </div>
                     </div>
                 </div>
-            </navbar>
+            </div>
             
         </div>
     </nav>

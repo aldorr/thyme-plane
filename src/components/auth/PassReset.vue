@@ -4,7 +4,7 @@
         <div class="modal-card">
             <header class="modal-card-head">
                 <p class="modal-card-title">
-                Login Form
+                Password Reset Form
                 </p>
                 <b-icon icon="lock"></b-icon>
             </header>
@@ -14,20 +14,13 @@
                       <b-input type="email" :message="errors[0]" v-model="email" name="email" value="email@domain.com" key="email" placeholder="your email address" />
               </b-field>
             </ValidationProvider>
-
-            <ValidationProvider name="password" rules="required" v-slot="{ errors, valid }">
-              <b-field horizontal :type="{'is-danger':errors[0], 'is-success': valid}" :message="errors[0]" label="Password">
-                      <b-input type="password" v-model="password" name="password" key="password" placeholder="something secret" />
-              </b-field>
-            </ValidationProvider>
             </div>
             <footer class="modal-card-foot">
-              <b-button @click="openPasswordReset()" @mouseover="forgot='I forgot'" @mouseout="forgot='I'" style="margin-right:auto; width=32px;" type="is-danger" icon-right="heart-broken">{{forgot}}</b-button>
                     <b-button @click="$parent.close()" style="margin-left:auto;">Cancel</b-button>
                     <b-button
                     type="is-success"
                     icon-right="lock"
-                    @click.prevent="passes(validate)">Connect</b-button>
+                    @click.prevent="passes(validate)">Send</b-button>
             </footer>
         </div>
   </ValidationObserver>
@@ -54,8 +47,6 @@ import {
   ValidationProvider
 } from 'vee-validate'
 
-import PassReset from '@/components/auth/PassReset.vue'
-
 export default {
         components: {
             ValidationObserver,
@@ -63,9 +54,7 @@ export default {
         },
 
   data: () => ({
-    email: '',
-    password: '',
-    forgot: 'I'
+    email: ''
   }),
   computed: {
     error() {
@@ -74,26 +63,23 @@ export default {
   },
   methods: {
     validate() {
-          this.loginWithFirebase()
+          this.passwordReset()
+          // want to display friendly message if invalid...
+          // not just red marks everywhere.
     },
 
-    reset() {
-      this.$refs.form.reset()
-    },
-
-    loginWithFirebase() {
+    passwordReset() {
       const user = {
-        email: this.email,
-        password: this.password
+        email: this.email
       }
-      this.$store.dispatch('signInAction', user)
+      this.$store.dispatch('passwordResetAction', user)
       .then(response => {
         console.log(response)
           this.$buefy.toast.open({
-            message: 'Thanks for loggin\' in!',
-            type: 'is-success',
+            message: 'Please check your email at ' + user.email + '.',
+            type: 'is-primary',
             position: 'is-bottom',
-            duration: 3000
+            duration: 6000
           })
           this.$emit('close')
       },
@@ -109,15 +95,6 @@ export default {
       })
       // return;
     },
-
-    openPasswordReset() {
-      this.$buefy.modal.open({
-          parent: this,
-          component: PassReset,
-          hasModalCard: true,
-          trapFocus: true
-      })
-    }
 
   }
 }
