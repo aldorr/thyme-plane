@@ -88,9 +88,8 @@ export default {
       }
       this.$store.dispatch('signInAction', user)
       .then(response => {
-        console.log(response)
           this.$buefy.toast.open({
-            message: 'Thanks for loggin\' in!',
+            message: 'Thanks for loggin\' in with the email address: ' + response.user.email,
             type: 'is-success',
             position: 'is-bottom',
             duration: 3000

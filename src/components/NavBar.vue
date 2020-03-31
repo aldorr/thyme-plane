@@ -105,13 +105,26 @@ export default {
     },
     methods: {
         logoutFromFirebase () {
-            this.$store.dispatch('signOutAction')
-            .then(() => {
-                this.$buefy.toast.open({
-                    message: 'Come back soon!',
-                    type: 'is-success',
-                    position: 'is-bottom'
-                })
+            // first show a confirmation thing
+
+            this.$buefy.dialog.confirm({
+                title: 'Komm bald wieder',
+                message: 'Kein Problem. <br>Wir warten hier auf dich.',
+                confirmText: 'Tschüß',
+                type: 'is-primary',
+                hasIcon: true,
+                icon: 'hand-paper',
+                cancelText: 'Bleib hier',
+                onConfirm: () => {
+                    this.$store.dispatch('signOutAction')
+                    .then(() => {
+                        this.$buefy.toast.open({
+                            message: 'Komm bald wieder!',
+                            type: 'is-primary',
+                            position: 'is-bottom'
+                        })
+                    })
+                }
             })
 
         },
