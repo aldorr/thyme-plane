@@ -5,11 +5,11 @@
             <div class="hero is-small is-light">
                 <div class="hero-body">
 
-                    <div class="columns is-vcentered">
-                        <div class="column is-2">
+                    <div class="columns is-vcentered is-multiline">
+                        <div class="column is-one-fifth-desktop is-full-touch">
                             <h1 class="title has-text-left">Filter:</h1>
                         </div>
-                        <div class="column">
+                        <div class="column is-one-fifth-desktop is-full-mobile is-half-tablet">
                             <b-field label="Nutzer:">
                                 <b-select expanded placeholder="Name auswählen" name="userName" v-model="userName">
                                     <option v-for="option in userList" :value="option" :key="option">
@@ -19,7 +19,7 @@
                                 </b-select>
                             </b-field>
                         </div>
-                        <div class="column">
+                        <div class="column is-one-fifth-desktop is-full-mobile is-half-tablet">
                             <b-field label="Kunde:">
                                 <b-autocomplete expanded name="kunde" v-model="kunde" ref="autocomplete" open-on-focus
                                     :data="filteredKundenArray" placeholder="e.g. Metropolis" icon="building"
@@ -28,7 +28,7 @@
                                 </b-autocomplete>
                             </b-field>
                         </div>
-                        <div class="column">
+                        <div class="column is-one-fifth-desktop is-full-mobile is-half-tablet">
                             <b-field label="Bereich:" v-if="kunde !== ''">
                                 <b-autocomplete expanded name="area" v-model="area" ref="autocomplete" open-on-focus
                                     :data="filteredBereicheArray" placeholder="Bereich Wählen" icon="folder-open"
@@ -37,7 +37,7 @@
                                 </b-autocomplete>
                             </b-field>
                         </div>
-                        <div class="column">
+                        <div class="column is-one-fifth-desktop is-full-mobile is-half-tablet">
                             <b-field label="Job:" v-if="kunde !== ''">
                                 <b-autocomplete expanded name="job" v-model="job" ref="autocomplete" open-on-focus
                                     :data="filteredJobsArray" placeholder="Job Wählen" icon="file-alt"
@@ -88,19 +88,35 @@
             </div>
         </div>
         <div class="container" v-if="kunde != ''">
-            <!-- <b-table :data="currentTimeEntries" :columns="columns" striped default-sort-direction="asc" default-sort="date">
-            </b-table> -->
-            <b-table :data="currentTimeEntries" striped default-sort-direction="asc" default-sort="date"
-                :selected.sync="myselected">
+            <b-table
+                ref="table"
+                :data="currentTimeEntries"
+                striped
+                default-sort-direction="asc"
+                default-sort="date"
+                detailed
+                detail-key="ID"
+                :show-detail-icon=false>
                 <template slot-scope="props">
                     <b-table-column field="customer" label="Kunde" sortable>{{ props.row.customer }}</b-table-column>
                     <b-table-column field="area" label="Bereich" sortable>{{ props.row.area }}</b-table-column>
                     <b-table-column field="job" label="Job" sortable>{{ props.row.job }}</b-table-column>
+                    <b-table-column field="user" label="Nutzer" sortable>{{ props.row.user }} </b-table-column>
                     <b-table-column field="date" label="Datum" sortable>{{ props.row.date | dateToHuman }}</b-table-column>
                     <b-table-column field="time" label="Zeit">{{ props.row.time | secondsToHrsMins }}</b-table-column>
-                    <b-table-column field="note" label="Notiz">{{ props.row.note }} </b-table-column>
-                    <b-table-column field="user" label="Nutzer" sortable>{{ props.row.user }} </b-table-column>
+                    <b-table-column field="ID" label="Notiz"><a @click="toggle(props.row)" v-if="props.row.note"><b-icon icon="angle-down"></b-icon></a><b-icon icon="angle-down" type="is-light" v-else></b-icon></b-table-column>
                 </template>
+                <template slot="detail" slot-scope="props">
+                <article class="media">
+                    <div class="media-content">
+                        <div class="content">
+                            <p>
+                                {{ props.row.note }}
+                            </p>
+                        </div>
+                    </div>
+                </article>
+            </template>
             </b-table>
         </div>
         <div class="container">
@@ -133,40 +149,7 @@ export default {
             userName: '',
             userTimeEntries: [],
             myselected: null,
-            dates: [],
-            columns: [{
-                    field: 'customer',
-                    label: 'Kunde',
-                    sortable: true,
-                },
-                {
-                    field: 'area',
-                    label: 'Bereich',
-                    sortable: true
-                },
-                {
-                    field: 'job',
-                    label: 'Job',
-                    sortable: true
-                },
-                {
-                    field: 'date',
-                    label: 'Datum',
-                    sortable: true
-                },
-                {
-                    field: 'time',
-                    label: 'Zeit',
-                },
-                {
-                    field: 'note',
-                    label: 'Notiz'
-                },
-                {
-                    field: 'user',
-                    label: 'Nutzer'
-                }
-            ],
+            dates: []
         }
     },
     computed: {
@@ -377,6 +360,9 @@ export default {
         }
     },
     methods: {
+        toggle(row) {
+            this.$refs.table.toggleDetails(row)
+        },
         clearJobs() {
             this.area = ''
             this.job = ''
@@ -410,6 +396,8 @@ export default {
                     // if (userObject.hasOwnProperty('timeentries')) {
                     currentTimeEntriesObject = userObject.timeentries
                     if (Object.keys(currentTimeEntriesObject).length > 0) {
+                        // include the key of the object...
+                        // console.log(Object.keys(currentTimeEntriesObject))
                         currentTimeEntriesArray = this.json2array(currentTimeEntriesObject)
                         // currentTimeEntriesArray.forEach((v, i) =>
                         //     currentTimeEntriesArray[i].date = this.dateToHuman(currentTimeEntriesArray[i].date)
@@ -435,24 +423,16 @@ export default {
             this.myselected = this.currentTimeEntries[entry]
         },
         json2array(json) {
-            var result = [];
-            var keys = Object.keys(json);
+            var result = []
+            var keys = Object.keys(json)
             keys.forEach(function (key) {
-                result.push(json[key]);
+                let jsonWithKey = json[key]
+                jsonWithKey["ID"] = key
+                result.push(jsonWithKey)
+                // console.log(key)
+                // console.log(jsonWithKey)
             });
-            return result;
-        },
-        dateToHuman(dateString) {
-            // Make date into string based on locale
-            let date = new Date(dateString)
-            let dateHuman = date.toLocaleDateString()
-            return dateHuman
-        },
-        secondsToHrsMins(seconds) {
-            let mins = seconds / 60
-            let hrs = Math.floor(mins / 60)
-            mins = mins % 60
-            return hrs + 'hrs ' + mins + 'mins'
+            return result
         },
         downloadCSV(csv, filename) {
             let csvFile;
@@ -524,12 +504,20 @@ export default {
             return hrs + 'hrs ' + mins + 'mins'
         },
         dateToHuman(dateString) {
-            let date = new Date(dateString)
-            let dateHuman
-            let year = date.getFullYear();
-            let month = date.getMonth() + 1;
-            let day = date.getDate();
-            dateHuman = day + '.' + month + '.' + year
+            // console.log(dateString)
+            // Make date into string based on locale
+            let dateArray = dateString.split(".")
+            // eslint-disable-next-line no-unused-vars
+            let day = dateArray[2]
+            // eslint-disable-next-line no-unused-vars
+            let month = dateArray[1] - 1
+            // eslint-disable-next-line no-unused-vars
+            let year = dateArray[0]
+            let date = new Date(year,month,day)
+            console.log(date)
+            // eslint-disable-next-line no-unused-vars
+            let dateHuman = date.toLocaleDateString()
+            // return day + "." + month + "." + year
             return dateHuman
         },
     },
