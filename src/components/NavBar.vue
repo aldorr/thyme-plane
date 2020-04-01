@@ -10,8 +10,8 @@
                 <div class="navbar-item navbar-meta">
                     <div class="buttons is-right">
                         <b-button icon-left="user" class="button is-light" @click="openLogin()" v-if="!userLoggedIn">Anmelden</b-button>
-                        <b-button icon-left="user" class="button is-warning" @click="logoutFromFirebase" v-if="userLoggedIn">Abmelden</b-button>
-                        <b-button icon-left="user-plus" class="button is-default" @click="addNewUser" v-if="userLoggedIn"></b-button>
+                        <b-button icon-left="user-slash" class="button is-warning" outlined @click="logoutFromFirebase" v-if="userLoggedIn"></b-button>
+                        <b-button icon-left="user-plus" class="button is-success" inverted @click="addNewUser" v-if="userLoggedIn"></b-button>
 <!-- TODO: Disabled - needs work -->
                         <!-- <b-button icon-left="tools" class="button" tag="router-link" to="/admin" type="is-default" v-if="userLoggedIn"></b-button> -->
                     </div>
@@ -38,8 +38,8 @@
                     <div class="navbar-item">
                         <div class="buttons is-right">
                             <b-button icon-left="user" class="button is-light" @click="openLogin()" v-if="!userLoggedIn">Anmelden</b-button>
-                            <b-button icon-left="user" class="button is-warning" @click="logoutFromFirebase" v-if="userLoggedIn">Abmelden</b-button>
-                            <b-button icon-left="user-plus" class="button is-default" @click="addNewUser" v-if="userLoggedIn"></b-button>
+                            <b-button icon-left="user-slash" class="button is-warning" outlined @click="logoutFromFirebase" v-if="userLoggedIn">Abmelden</b-button>
+                            <b-button icon-left="user-plus" class="button is-success" inverted @click="addNewUser" v-if="userLoggedIn"></b-button>
 <!-- TODO: Disabled - needs work -->
                             <!-- <b-button icon-left="tools" class="button" tag="router-link" to="/admin" type="is-default" v-if="userLoggedIn"></b-button> -->
                         </div>
@@ -111,7 +111,7 @@ export default {
                 title: 'Komm bald wieder',
                 message: 'Kein Problem. <br>Wir warten hier auf dich.',
                 confirmText: 'Tschüß',
-                type: 'is-primary',
+                type: 'is-warning',
                 hasIcon: true,
                 icon: 'hand-paper',
                 cancelText: 'Bleib hier',
