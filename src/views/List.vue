@@ -504,20 +504,13 @@ export default {
             return hrs + 'hrs ' + mins + 'mins'
         },
         dateToHuman(dateString) {
-            // console.log(dateString)
             // Make date into string based on locale
             let dateArray = dateString.split(".")
-            // eslint-disable-next-line no-unused-vars
             let day = dateArray[2]
-            // eslint-disable-next-line no-unused-vars
             let month = dateArray[1] - 1
-            // eslint-disable-next-line no-unused-vars
             let year = dateArray[0]
             let date = new Date(year,month,day)
-            console.log(date)
-            // eslint-disable-next-line no-unused-vars
             let dateHuman = date.toLocaleDateString()
-            // return day + "." + month + "." + year
             return dateHuman
         },
     },
