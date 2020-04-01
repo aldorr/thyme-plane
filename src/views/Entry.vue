@@ -278,9 +278,20 @@
                 return hrs * 60 * 60 + mins * 60
             },
             dateToString() {
-                return this.date.toString()
+                // This format is better for sorting
+                // 2016.10.15
+                let date = this.date
+                let dateString
+                let year    = date.getFullYear();
+                let month   = date.getMonth() + 1;
+                let day     = date.getDate();
+                dateString = year + '.' + month + '.' + day
+                return dateString
+                // return this.date.toString()
             },
             dateToHuman() {
+                // Maybe in this format is better
+                // 2016-10-15 13:43:27
                 let date = this.date
                 let dateHuman
                 let year    = date.getFullYear();

@@ -96,8 +96,7 @@
                     <b-table-column field="customer" label="Kunde" sortable>{{ props.row.customer }}</b-table-column>
                     <b-table-column field="area" label="Bereich" sortable>{{ props.row.area }}</b-table-column>
                     <b-table-column field="job" label="Job" sortable>{{ props.row.job }}</b-table-column>
-                    <b-table-column field="date" label="Datum" sortable>{{ props.row.date | dateToHuman }}
-                    </b-table-column>
+                    <b-table-column field="date" label="Datum" sortable>{{ props.row.date | dateToHuman }}</b-table-column>
                     <b-table-column field="time" label="Zeit">{{ props.row.time | secondsToHrsMins }}</b-table-column>
                     <b-table-column field="note" label="Notiz">{{ props.row.note }} </b-table-column>
                     <b-table-column field="user" label="Nutzer" sortable>{{ props.row.user }} </b-table-column>
@@ -444,12 +443,9 @@ export default {
             return result;
         },
         dateToHuman(dateString) {
+            // Make date into string based on locale
             let date = new Date(dateString)
-            let dateHuman
-            let year = date.getFullYear();
-            let month = date.getMonth() + 1;
-            let day = date.getDate();
-            dateHuman = day + '.' + month + '.' + year
+            let dateHuman = date.toLocaleDateString()
             return dateHuman
         },
         secondsToHrsMins(seconds) {
