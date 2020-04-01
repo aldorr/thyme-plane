@@ -62,7 +62,7 @@
                     <nav class="level" v-if="kunde != ''">
                         <div class="level-item has-text-centered">
                             <b-field label="Datum auswählen">
-                                <b-datepicker placeholder="Klicken..." v-model="dates" range>
+                                <b-datepicker placeholder="Klicken..." v-model="dates" range :mobile-native="false">
                                     <div class="buttons is-right">
                                         <!-- <button class="button is-primary is-fullwidth"
                                                             @click.prevent="date = new Date()">
