@@ -21,18 +21,9 @@
                         </div>
                         <div class="column is-one-fifth-desktop is-full-mobile is-half-tablet">
                             <b-field label="Kunde:">
-                                <b-autocomplete
-                                    expanded
-                                    name="kunde"
-                                    v-model="kunde"
-                                    ref="autocomplete"
-                                    open-on-focus
-                                    :data="filteredKundenArray"
-                                    placeholder="e.g. Metropolis"
-                                    icon="building"
-                                    @select="option => selected = option"
-                                    @input="clearJobs"
-                                    key="customer-input">
+                                <b-autocomplete expanded name="kunde" v-model="kunde" ref="autocomplete" open-on-focus
+                                    :data="filteredKundenArray" placeholder="e.g. Metropolis" icon="building"
+                                    @select="option => selected = option" @input="clearJobs" key="customer-input">
                                     <template slot="empty">Leider keine Kunden namens {{kunde}}</template>
                                 </b-autocomplete>
                             </b-field>
@@ -97,35 +88,46 @@
             </div>
         </div>
         <div class="container" v-if="kunde != ''">
-            <b-table
-                ref="table"
-                :data="currentTimeEntries"
-                striped
-                default-sort-direction="asc"
-                default-sort="date"
-                detailed
-                detail-key="ID"
-                :show-detail-icon=false>
+            <b-table ref="table" :data="currentTimeEntries" striped default-sort-direction="asc" default-sort="date"
+                detailed detail-key="ID" :show-detail-icon=false>
                 <template slot-scope="props">
                     <b-table-column field="customer" label="Kunde" sortable>{{ props.row.customer }}</b-table-column>
                     <b-table-column field="area" label="Bereich" sortable>{{ props.row.area }}</b-table-column>
                     <b-table-column field="job" label="Job" sortable>{{ props.row.job }}</b-table-column>
                     <b-table-column field="user" label="Nutzer" sortable>{{ props.row.user }} </b-table-column>
-                    <b-table-column field="date" label="Datum" sortable>{{ props.row.date | dateToHuman }}</b-table-column>
+                    <b-table-column field="date" label="Datum" sortable>{{ props.row.date | dateToHuman }}
+                    </b-table-column>
                     <b-table-column field="time" label="Zeit">{{ props.row.time | secondsToHrsMins }}</b-table-column>
-                    <b-table-column field="ID" label="Notiz"><a @click="toggle(props.row)" v-if="props.row.note"><b-icon icon="angle-right"></b-icon></a><b-icon icon="angle-down" type="is-light" v-else></b-icon></b-table-column>
+                    <b-table-column field="ID" label="Notiz"><a @click="toggle(props.row)" v-if="props.row.note">
+                            <b-icon icon="angle-right"></b-icon>
+                        </a>
+                        <b-icon icon="angle-down" type="is-light" v-else></b-icon>
+                    </b-table-column>
                 </template>
                 <template slot="detail" slot-scope="props">
-                <article class="media">
-                    <div class="media-content">
-                        <div class="content">
-                            <p>
-                                {{ props.row.note }}
-                            </p>
+                    <article class="media">
+                        <div class="media-content">
+                            <div class="content">
+                                <p>
+                                    {{ props.row.note }}
+                                </p>
+                            </div>
                         </div>
-                    </div>
-                </article>
-            </template>
+                    </article>
+                </template>
+                <template slot="empty">
+                    <section class="section">
+                        <div class="content has-text-grey has-text-centered">
+                            <p>
+                                <b-icon
+                                    icon="sad-tear"
+                                    size="is-large">
+                                </b-icon>
+                            </p>
+                            <p>Nothing here.</p>
+                        </div>
+                    </section>
+                </template>
             </b-table>
         </div>
         <div class="container">
