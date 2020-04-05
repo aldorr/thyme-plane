@@ -21,9 +21,18 @@
                         </div>
                         <div class="column is-one-fifth-desktop is-full-mobile is-half-tablet">
                             <b-field label="Kunde:">
-                                <b-autocomplete expanded name="kunde" v-model="kunde" ref="autocomplete" open-on-focus
-                                    :data="filteredKundenArray" placeholder="e.g. Metropolis" icon="building"
-                                    @select="option => selected = option" @input="clearJobs" key="customer-input">
+                                <b-autocomplete
+                                    expanded
+                                    name="kunde"
+                                    v-model="kunde"
+                                    ref="autocomplete"
+                                    open-on-focus
+                                    :data="filteredKundenArray"
+                                    placeholder="e.g. Metropolis"
+                                    icon="building"
+                                    @select="option => selected = option"
+                                    @input="clearJobs"
+                                    key="customer-input">
                                     <template slot="empty">Leider keine Kunden namens {{kunde}}</template>
                                 </b-autocomplete>
                             </b-field>
@@ -104,7 +113,7 @@
                     <b-table-column field="user" label="Nutzer" sortable>{{ props.row.user }} </b-table-column>
                     <b-table-column field="date" label="Datum" sortable>{{ props.row.date | dateToHuman }}</b-table-column>
                     <b-table-column field="time" label="Zeit">{{ props.row.time | secondsToHrsMins }}</b-table-column>
-                    <b-table-column field="ID" label="Notiz"><a @click="toggle(props.row)" v-if="props.row.note"><b-icon icon="angle-down"></b-icon></a><b-icon icon="angle-down" type="is-light" v-else></b-icon></b-table-column>
+                    <b-table-column field="ID" label="Notiz"><a @click="toggle(props.row)" v-if="props.row.note"><b-icon icon="angle-right"></b-icon></a><b-icon icon="angle-down" type="is-light" v-else></b-icon></b-table-column>
                 </template>
                 <template slot="detail" slot-scope="props">
                 <article class="media">
@@ -397,21 +406,10 @@ export default {
                     currentTimeEntriesObject = userObject.timeentries
                     if (Object.keys(currentTimeEntriesObject).length > 0) {
                         // include the key of the object...
-                        // console.log(Object.keys(currentTimeEntriesObject))
                         currentTimeEntriesArray = this.json2array(currentTimeEntriesObject)
-                        // currentTimeEntriesArray.forEach((v, i) =>
-                        //     currentTimeEntriesArray[i].date = this.dateToHuman(currentTimeEntriesArray[i].date)
-
-                        // );
-
-                        // currentTimeEntriesArray.forEach((v, i) =>
-                        //     currentTimeEntriesArray[i].time = this.secondsToHrsMins(currentTimeEntriesArray[i].time)
-                        // );
                         for (let j in currentTimeEntriesArray) {
                             currentTimeEntriesArray[j]["user"] = user
                         }
-                        // console.log("Current Time Entries for user " + user)
-                        // console.log(currentTimeEntriesArray)
                         allTimeEntriesArray = allTimeEntriesArray.concat(currentTimeEntriesArray)
                     }
                 }
@@ -475,8 +473,8 @@ export default {
                 filename += "-" + this.job
             }
             if (0 !== this.dates.length) {
-                let dateStart = this.dateToHuman(this.dates[0])
-                let dateEnd = this.dateToHuman(this.dates[1])
+                let dateStart = this.dates[0]
+                let dateEnd = this.dates[1]
                 filename += "-" + dateStart + "-" + dateEnd
             }
             filename += ".csv"
