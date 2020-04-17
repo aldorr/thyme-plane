@@ -161,7 +161,7 @@
 export default {
     data() {
         return {
-            kunde: '',
+            kunde: 'Alle Kunden',
             defaultFilter: 0,
             job: '',
             area: '',
@@ -516,6 +516,9 @@ export default {
 
                     csv.push(row.join(","));
                 }
+                let lastrow = "Zeit Gesamt,,,,," + this.secondsToHrsMins(this.hoursAll) + ","
+                // add last row with total time
+                csv.push(lastrow)
 
                 // Download CSV file
                 this.downloadCSV(csv.join("\n"), filename);
@@ -529,7 +532,14 @@ export default {
         },
         focusInput() {
             this.$refs.kunde.focus()
-        }
+        },
+        secondsToHrsMins(seconds) {
+            if (!seconds) return ''
+            let mins = seconds / 60
+            let hrs = Math.floor(mins / 60)
+            mins = mins % 60
+            return hrs + 'hrs ' + mins + 'mins'
+        },
     },
     filters: {
         secondsToHrsMins(seconds) {
