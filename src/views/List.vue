@@ -15,7 +15,6 @@
                                     <option v-for="option in userList" :value="option" :key="option">
                                         {{ option }}
                                     </option>
-                                    <template slot="empty">Keine Benutzer namens {{userName}}</template>
                                 </b-select>
                             </b-field>
                         </div>
@@ -63,14 +62,9 @@
                 <div class="hero-foot has-padding-15em">
                     <nav class="level" v-if="kunde != ''">
                         <div class="level-item has-text-centered">
-                            <b-field label="Datum auswählen">
-                                <b-datepicker placeholder="Klicken..." v-model="dates" range :mobile-native="false">
+                            <b-field label="Datum auswählen" :custom-class="anyTimeEntries?'has-text-dark':'has-text-grey-light'" label-position="on-border">
+                                <b-datepicker placeholder="Klicken..." v-model="dates" range :max-date="now" :mobile-native="false" :disabled="!anyTimeEntries">
                                     <div class="buttons is-right">
-                                        <!-- <button class="button is-primary is-fullwidth"
-                                                            @click.prevent="date = new Date()">
-                                                            <b-icon icon="calendar-alt"></b-icon>
-                                                            <span>Heute</span>
-                                                        </button> -->
                                         <button class="button is-danger is-fullwidth" @click.prevent="dates = []">
                                             <b-icon icon="times-circle"></b-icon>
                                             <span>Zurücksetzen</span>
@@ -82,7 +76,7 @@
                         <div class="level-item has-text-centered">
                             <div class="buttons">
                                 <b-button expanded icon-left="file-alt" class="button is-info"
-                                    @click.prevent="exportTableToCSV">Exportieren</b-button>
+                                    @click.prevent="exportTableToCSV" :disabled="!anyTimeEntries">Exportieren</b-button>
                             </div>
                         </div>
                     </nav>
@@ -169,19 +163,12 @@ export default {
             userTimeEntries: [],
             myselected: null,
             dates: [],
+            now: new Date,
             isToggled: false
         }
     },
     computed: {
-        /*
-        hoursPerUser() {
-            for(let k in currentTimeEntries){
-
-            }
-            return 0
-        },*/
         hoursAll() {
-            // doesn't work yet
             let sum = 0
             for (let k in this.currentTimeEntries) {
                 sum += this.currentTimeEntries[k].time
@@ -221,6 +208,7 @@ export default {
                 return option
                     .toString()
                     .toLowerCase()
+                    .indexOf(this.kunde.toLowerCase()) >= 0
             })
         },
         kunden() {
@@ -235,6 +223,7 @@ export default {
                 return option
                     .toString()
                     .toLowerCase()
+                    .indexOf(this.job.toLowerCase()) >= 0
             })
         },
         jobs() {
@@ -386,6 +375,15 @@ export default {
             }
             return detailedArray
         },
+        anyTimeEntries() {
+            console.log()
+            let entries = this.currentTimeEntries.length
+            if (entries > 0) {
+                return true
+            } else {
+                return false
+            }
+        }
     },
     methods: {
         toggle(row) {
@@ -543,7 +541,7 @@ export default {
     },
     filters: {
         secondsToHrsMins(seconds) {
-            if (!seconds) return ''
+            if (!seconds) return '0 hrs 0 mins'
             let mins = seconds / 60
             let hrs = Math.floor(mins / 60)
             mins = mins % 60
