@@ -11,7 +11,7 @@
             <div class="modal-card-body">
             <ValidationProvider name="email" rules="required|email" v-slot="{ errors, valid }">
               <b-field horizontal label="Email" :type="{'is-danger':errors[0], 'is-success': valid}">
-                      <b-input type="email" :message="errors[0]" v-model="email" name="email" value="email@domain.com" key="email" placeholder="your email address" />
+                      <b-input type="email" :message="errors[0]" v-model="email" name="email" value="email@domain.com" key="email" placeholder="your email address" ref="email"/>
               </b-field>
             </ValidationProvider>
 
@@ -116,8 +116,15 @@ export default {
           hasModalCard: true,
           trapFocus: true
       })
+    },
+
+    focusInput() {
+      this.$refs.email.focus()
     }
 
+  },
+  mounted() {
+    this.focusInput()
   }
 }
 </script>

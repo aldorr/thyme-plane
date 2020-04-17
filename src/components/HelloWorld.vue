@@ -1,5 +1,5 @@
 <template>
-  <section class="hero is-primary is-fullheight" style="background:url(https://source.unsplash.com/1600x720/?business,note)">
+  <section class="hero is-primary is-fullheight" style="background:url(https://source.unsplash.com/1600x720/?business,note);background-size:cover;">
     <div class="hero-body">
       <div class="container" style="mix-blend-mode:difference;">
         <h1 class="title">

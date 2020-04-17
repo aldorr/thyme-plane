@@ -10,8 +10,8 @@
             </header>
             <div class="modal-card-body">
             <ValidationProvider name="email" rules="required" v-slot="{ errors, valid }">
-              <b-field horizontal :type="{'is-danger':errors[0], 'is-success':valid}" :message="errors" label="fullname">
-                      <b-input type="text" v-model="fullname" name="fullname" value="fullname@domain.com" key="fullname" placeholder="Regula Pfeiffer" />
+              <b-field horizontal :type="{'is-danger':errors[0], 'is-success':valid}" :message="errors" label="Name">
+                      <b-input type="text" v-model="fullname" name="fullname" value="fullname@domain.com" key="fullname" placeholder="Regula Pfeiffer"  ref="name"/>
               </b-field>
             </ValidationProvider>
             <ValidationProvider name="email" rules="required|email" v-slot="{ errors, valid }">
@@ -126,7 +126,13 @@ export default {
       );
       this.$parent.close()
       return;
+    },
+    focusInput() {
+      this.$refs.name.focus()
     }
+  },
+  mounted() {
+    this.focusInput()
   }
 }
 </script>

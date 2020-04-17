@@ -15,38 +15,39 @@
                                     <option v-for="option in userList" :value="option" :key="option">
                                         {{ option }}
                                     </option>
-                                    <template slot="empty">Leider keine Benutzer namens {{userName}}</template>
+                                    <template slot="empty">Keine Benutzer namens {{userName}}</template>
                                 </b-select>
                             </b-field>
                         </div>
                         <div class="column is-one-fifth-desktop is-full-mobile is-half-tablet">
                             <b-field label="Kunde:">
-                                <b-autocomplete expanded name="kunde" v-model="kunde" ref="autocomplete" open-on-focus
+                                <b-autocomplete expanded name="kunde" v-model="kunde" ref="kunde" open-on-focus
                                     :data="filteredKundenArray" placeholder="e.g. Metropolis" icon="building"
-                                    @select="option => selected = option" @input="clearJobs" key="customer-input">
-                                    <template slot="empty">Leider keine Kunden namens {{kunde}}</template>
+                                    @select="option => selected = option" @input="clearJobs" key="kunde">
+                                    <template slot="empty">Keine Kunden namens {{kunde}}</template>
                                 </b-autocomplete>
                             </b-field>
                         </div>
                         <div class="column is-one-fifth-desktop is-full-mobile is-half-tablet">
-                            <b-field label="Bereich:" v-if="kunde !== ''">
-                                <b-autocomplete expanded name="area" v-model="area" ref="autocomplete" open-on-focus
+                            <b-field label="Bereich:">
+                                <b-autocomplete expanded name="area" v-model="area" open-on-focus
                                     :data="filteredBereicheArray" placeholder="Bereich Wählen" icon="folder-open"
-                                    @select="option => selected = option" key="area-input">
-                                    <template slot="empty">Leider keinen Bereich namens "{{area}}"</template>
+                                    @select="option => selected = option" key="bereich" :disabled="!kunde">
+                                    <template slot="empty">Keine Bereiche namens "{{area}}"</template>
                                 </b-autocomplete>
                             </b-field>
                         </div>
                         <div class="column is-one-fifth-desktop is-full-mobile is-half-tablet">
-                            <b-field label="Job:" v-if="kunde !== ''">
-                                <b-autocomplete expanded name="job" v-model="job" ref="autocomplete" open-on-focus
+                            <b-field label="Job:">
+                                <b-autocomplete expanded name="job" v-model="job" open-on-focus
                                     :data="filteredJobsArray" placeholder="Job Wählen" icon="file-alt"
-                                    @select="option => selected = option" key="job-input">
-                                    <template slot="empty">Leider keinen Job namens "{{job}}"</template>
+                                    @select="option => selected = option" key="job" :disabled="!kunde">
+                                    <template slot="empty">Keine Jobs namens "{{job}}"</template>
                                 </b-autocomplete>
                             </b-field>
                         </div>
                     </div>
+                    <transition  name="fade" mode="out-in" appear>
                     <div class="section" v-if="kunde != ''">
                         <nav class="level">
                             <div class="level-item has-text-centered">
@@ -57,6 +58,7 @@
                             </div>
                         </nav>
                     </div>
+                    </transition>
                 </div>
                 <div class="hero-foot has-padding-15em">
                     <nav class="level" v-if="kunde != ''">
@@ -89,7 +91,7 @@
         </div>
         <div class="container" v-if="kunde != ''">
             <b-table ref="table" :data="currentTimeEntries" striped default-sort-direction="asc" default-sort="date"
-                detailed detail-key="ID" :show-detail-icon=false>
+                detailed detail-key="ID" :show-detail-icon=false :opened-detailed="isToggled?detailed:[]">
                 <template slot-scope="props">
                     <b-table-column field="customer" label="Kunde" sortable>{{ props.row.customer }}</b-table-column>
                     <b-table-column field="area" label="Bereich" sortable>{{ props.row.area }}</b-table-column>
@@ -98,8 +100,16 @@
                     <b-table-column field="date" label="Datum" sortable>{{ props.row.date | dateToHuman }}
                     </b-table-column>
                     <b-table-column field="time" label="Zeit">{{ props.row.time | secondsToHrsMins }}</b-table-column>
-                    <b-table-column field="ID" label="Notiz"><a @click="toggle(props.row)" v-if="props.row.note">
-                            <b-icon icon="angle-right"></b-icon>
+                    <b-table-column field="ID" label="Notiz">
+                        <template slot="header" slot-scope="{ column }">
+                            <b-tooltip
+                                :label="isToggled?'Schließe ' + column.label + 'en':'Öffne ' + column.label + 'en'">
+                                <a @click="toggleAll()"> {{ column.label }} <b-icon icon="angle-right"
+                                        :class="isToggled?'open':'closed'" size="is-small"></b-icon></a>
+                            </b-tooltip>
+                        </template>
+                        <a @click="toggle(props.row)" v-if="props.row.note">
+                            <b-icon icon="angle-right" :class="showRow(props.row)"></b-icon>
                         </a>
                         <b-icon icon="angle-down" type="is-light" v-else></b-icon>
                     </b-table-column>
@@ -119,9 +129,7 @@
                     <section class="section">
                         <div class="content has-text-grey has-text-centered">
                             <p>
-                                <b-icon
-                                    icon="sad-tear"
-                                    size="is-large">
+                                <b-icon icon="sad-tear" size="is-large">
                                 </b-icon>
                             </p>
                             <p>Nothing here.</p>
@@ -160,7 +168,8 @@ export default {
             userName: '',
             userTimeEntries: [],
             myselected: null,
-            dates: []
+            dates: [],
+            isToggled: false
         }
     },
     computed: {
@@ -215,7 +224,7 @@ export default {
             })
         },
         kunden() {
-            let myKundenReturn = []
+            let myKundenReturn = ["Alle Kunden"]
             for (let entry in this.customerEntries) {
                 myKundenReturn.push(this.customerEntries[entry].name)
             }
@@ -277,7 +286,7 @@ export default {
         // byKundeTimeEntries -- if kunde !== '' return filtered list, otherwise return value,
         byKundeTimeEntries() {
             let allTimeEntries = this.getAllTimeEntries()
-            if (this.kunde != '') {
+            if (this.kunde !== '' && this.kunde !== 'Alle Kunden') {
                 // return list only from customer chosen
                 let returnArray = []
                 for (let key in allTimeEntries) {
@@ -368,11 +377,22 @@ export default {
         currentTimeEntries() {
             let allTimeEntriesArray = this.byDateTimeEntries
             return allTimeEntriesArray
-        }
+        },
+        detailed() {
+            let todosArray = this.todosArray
+            let detailedArray = []
+            for (let i in todosArray) {
+                detailedArray.push(todosArray[i].ID)
+            }
+            return detailedArray
+        },
     },
     methods: {
         toggle(row) {
             this.$refs.table.toggleDetails(row)
+        },
+        toggleAll() {
+            this.isToggled = !this.isToggled
         },
         clearJobs() {
             this.area = ''
@@ -381,6 +401,11 @@ export default {
         resetData() {
             this.kunde = '',
                 this.job = ''
+        },
+        showRow(row) {
+            let isOpen = undefined!==this.$refs.table?this.$refs.table.isActiveDetailRow(row):false
+            let myClass = isOpen?"open":"closed"
+            return myClass
         },
         loadAllData() {
             this.$store.dispatch('loadCustomerEntries')
@@ -462,37 +487,48 @@ export default {
             downloadLink.click();
         },
         exportTableToCSV() {
-            let csv = [];
             let rows = document.querySelectorAll("table tr");
-            let filename = this.userName
-            if (this.kunde) {
-                filename += "-" + this.kunde
-            }
-            if (this.area) {
-                filename += "-" + this.area
-            }
-            if (this.job) {
-                filename += "-" + this.job
-            }
-            if (0 !== this.dates.length) {
-                let dateStart = this.dates[0]
-                let dateEnd = this.dates[1]
-                filename += "-" + dateStart + "-" + dateEnd
-            }
-            filename += ".csv"
+            if (rows.length > 1) {
+                let csv = [];
+                let filename = this.userName
+                if (this.kunde) {
+                    filename += "-" + this.kunde
+                }
+                if (this.area) {
+                    filename += "-" + this.area
+                }
+                if (this.job) {
+                    filename += "-" + this.job
+                }
+                if (0 !== this.dates.length) {
+                    let dateStart = this.dates[0]
+                    let dateEnd = this.dates[1]
+                    filename += "-" + dateStart + "-" + dateEnd
+                }
+                filename += ".csv"
 
-            for (let i = 0; i < rows.length; i++) {
-                let row = [],
-                    cols = rows[i].querySelectorAll("td, th");
+                for (let i = 0; i < rows.length; i++) {
+                    let row = [],
+                        cols = rows[i].querySelectorAll("td, th");
 
-                for (let j = 0; j < cols.length; j++)
-                    row.push(cols[j].innerText);
+                    for (let j = 0; j < cols.length; j++)
+                        row.push(cols[j].innerText);
 
-                csv.push(row.join(","));
+                    csv.push(row.join(","));
+                }
+
+                // Download CSV file
+                this.downloadCSV(csv.join("\n"), filename);
+            } else {
+                this.$buefy.toast.open({
+                message: 'Macht das Sinn, etwas leeres zu exportieren?!',
+                type: 'is-warning',
+                position: 'is-bottom'
+                })
             }
-
-            // Download CSV file
-            this.downloadCSV(csv.join("\n"), filename);
+        },
+        focusInput() {
+            this.$refs.kunde.focus()
         }
     },
     filters: {
@@ -516,11 +552,18 @@ export default {
     },
     mounted() {
         this.loadAllData()
+        this.focusInput()
     }
 }
 </script>
-<style>
+<style is-scoped>
 .has-padding-15em {
     padding: 1.5em !important;
+}
+.icon.open {
+    transform: rotate(90deg);
+}
+.icon.closed {
+    transform: none;
 }
 </style>
