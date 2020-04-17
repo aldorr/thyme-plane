@@ -32,7 +32,7 @@
                             <b-field label="Bereich:">
                                 <b-autocomplete expanded name="area" v-model="area" open-on-focus
                                     :data="filteredBereicheArray" placeholder="Bereich Wählen" icon="folder-open"
-                                    @select="option => selected = option" key="bereich" :disabled="!kunde">
+                                    @select="option => selected = option" key="bereich" :disabled="!kunde||kunde=='Alle Kunden'">
                                     <template slot="empty">Keine Bereiche namens "{{area}}"</template>
                                 </b-autocomplete>
                             </b-field>
@@ -41,7 +41,7 @@
                             <b-field label="Job:">
                                 <b-autocomplete expanded name="job" v-model="job" open-on-focus
                                     :data="filteredJobsArray" placeholder="Job Wählen" icon="file-alt"
-                                    @select="option => selected = option" key="job" :disabled="!kunde">
+                                    @select="option => selected = option" key="job" :disabled="!kunde||kunde=='Alle Kunden'">
                                     <template slot="empty">Keine Jobs namens "{{job}}"</template>
                                 </b-autocomplete>
                             </b-field>
