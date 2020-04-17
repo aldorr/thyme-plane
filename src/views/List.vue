@@ -376,7 +376,6 @@ export default {
             return detailedArray
         },
         anyTimeEntries() {
-            console.log()
             let entries = this.currentTimeEntries.length
             if (entries > 0) {
                 return true
@@ -573,5 +572,9 @@ export default {
 }
 .icon.closed {
     transform: none;
+}
+/* for date click */
+input.input[readonly] {
+    cursor: pointer;
 }
 </style>
