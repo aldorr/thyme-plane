@@ -73,8 +73,8 @@ export default {
         email: this.email
       }
       this.$store.dispatch('passwordResetAction', user)
-      .then(response => {
-        console.log(response)
+      .then(() => {
+        // console.log(response)
           this.$buefy.toast.open({
             message: 'Please check your email at ' + user.email + '.',
             type: 'is-primary',
