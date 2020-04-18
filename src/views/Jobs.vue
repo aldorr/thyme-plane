@@ -6,7 +6,7 @@
                     <div class="card">
                         <form action="#">
                             <header class="card-header">
-                                <p class="card-header-title">Kunden, Bereiche & Jobs bearbeiten</p>
+                                <p class="card-header-title">Kunden, Bereiche &amp; Jobs bearbeiten</p>
                             </header>
                             <div class="card-content">
                                 <div class="columns">
@@ -192,7 +192,12 @@
                         this.$store.dispatch('addCustomer', {
                             name: value
                         }).then(
-                            this.$buefy.toast.open('"' + value + '" als Kunde hinzugefügt!')
+                            this.$buefy.toast.open({
+                            duration: 5000,
+                            message: '"' + value + '" als Kunde hinzugefügt!',
+                            position: 'is-bottom',
+                            type: 'is-success'
+                        })
                             // close dialog
                         )
                     }
@@ -238,7 +243,12 @@
                             keyToDelete: myKey,
                             itemToDelete: this.getIndex(this.kunde, section, thingToDelete)
                         }).then(
-                            this.$buefy.toast.open('"' + thingToDelete + '" gelöscht!')
+                            this.$buefy.toast.open({
+                            duration: 5000,
+                            message: '"' + thingToDelete + '" gelöscht!',
+                            position: 'is-bottom',
+                            type: 'is-success'
+                        })
                         )
                     }
                 })
@@ -254,14 +264,29 @@
                     })
                     // then show succes toast
                     .then(
-                        this.$buefy.toast.open('"' + this.newbereich + '" added!')
+                        this.$buefy.toast.open({
+                            duration: 5000,
+                            message: '"' + this.newbereich + '" hinzugefügt!',
+                            position: 'is-bottom',
+                            type: 'is-success'
+                        })
                     ).then(
                         this.newbereich = ""
                     )
                 } else if (this.newbereich !== "") {
-                    this.$buefy.toast.open('Bereich "' + this.newbereich + '" gibt es schon.')
+                    this.$buefy.toast.open({
+                            duration: 5000,
+                            message: 'Bereich "' + this.newbereich + '" gibt es schon.',
+                            position: 'is-bottom',
+                            type: 'is-danger'
+                        })
                 } else {
-                    this.$buefy.toast.open('Bitte einen neuen Bereich eingeben')
+                    this.$buefy.toast.open({
+                            duration: 5000,
+                            message: 'Bitte einen neuen Bereich eingeben',
+                            position: 'is-bottom',
+                            type: 'is-danger'
+                        })
                 }
             },
             addJob() {
@@ -275,14 +300,29 @@
                     })
                     // then show succes toast
                     .then(
-                        this.$buefy.toast.open('"' + this.newjob + '" added!')
+                        this.$buefy.toast.open({
+                            duration: 5000,
+                            message: '"' + this.newjob + '" hinzugefügt!',
+                            position: 'is-bottom',
+                            type: 'is-success'
+                        })
                     ).then(
                         this.newjob = ""
                     )
                 } else if (this.newjob !== "") {
-                    this.$buefy.toast.open('Job "' + this.newjob + '" gibt es schon.')
+                    this.$buefy.toast.open({
+                            duration: 5000,
+                            message: 'Job "' + this.newjob + '" gibt es schon.',
+                            position: 'is-bottom',
+                            type: 'is-danger'
+                        })
                 } else {
-                    this.$buefy.toast.open('Bitte einen neuen Job eingeben')
+                    this.$buefy.toast.open({
+                            duration: 5000,
+                            message: 'Bitte einen neuen Job eingeben',
+                            position: 'is-bottom',
+                            type: 'is-danger'
+                        })
                 }
             },
         },
