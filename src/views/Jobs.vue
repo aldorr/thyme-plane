@@ -15,43 +15,41 @@
                                         <b-field label="Kunde auswählen">
                                             <b-autocomplete
                                                 v-model="kunde"
-                                                ref="autocomplete"
+                                                ref="kunde"
                                                 open-on-focus
                                                 :data="filteredKundenArray"
                                                 placeholder="e.g. Metropolis"
                                                 icon="building"
                                                 @select="option => selected = option">
-                                                <template slot="footer">
+                                                <template slot="empty">
                                                     <a @click="showAddKunde">
-                                                        <span> Neuer Kunde… </span>
-                                                    </a> 
+                                                        <span> Kunde "{{kunde}}" neu Anlegen? </span>
+                                                    </a>
                                                 </template>
-                                                <template slot="empty">Leider keine Kunden namens {{kunde}}</template>
                                             </b-autocomplete>
                                         </b-field>
 
-                                        <b-field label="Bereich hinzufügen" v-if="kunde !== ''">
+                                        <b-field label="Bereich hinzufügen" v-if="kunde !== '' && kundeExists">
                                             <b-field>
                                                 <b-input icon="folder-open" expanded v-model="newbereich"></b-input><p class="control"><b-button type="is-primary" outlined @click="addBereich">Submit</b-button></p>
                                             </b-field>
                                         </b-field>
 
-                                        <b-message v-if="kunde !== ''" class="has-text-left">
-                                            <!-- TODO: add @close to get confirmation, and then delete -->
+                                        <b-message v-if="kunde !== '' && kundeExists" class="has-text-left">
                                             <b-taglist>
-                                                <b-tag v-for="option in getBereicheArray(kunde)" :value="option" :key="option" rounded type="is-dark" closable @close="showDeleteConfirmation(kunde, 'bereiche', option)">{{ option }}</b-tag>
+                                                <b-tag v-for="option in getBereicheArray" :value="option" :key="option" rounded type="is-dark" closable @close="showDeleteConfirmation('bereiche', option)">{{ option }}</b-tag>
                                             </b-taglist>
                                         </b-message>
 
-                                        <b-field label="Job hinzufügen" v-if="kunde !== ''">
+                                        <b-field label="Job hinzufügen" v-if="kunde !== '' && kundeExists">
                                             <b-field>
                                                 <b-input icon="file-alt" expanded v-model="newjob"></b-input><p class="control"><b-button type="is-primary" outlined @click="addJob">Submit</b-button></p>
                                             </b-field>
                                         </b-field>
 
-                                        <b-message v-if="kunde !== ''" class="has-text-left">
+                                        <b-message v-if="kunde !== '' && kundeExists" class="has-text-left">
                                             <b-taglist>
-                                                <b-tag v-for="option in getJobsArray(kunde)" :value="option" :key="option" rounded type="is-dark" closable @close="showDeleteConfirmation(kunde, 'jobs', option)">{{ option }}</b-tag>
+                                                <b-tag v-for="option in getJobsArray" :value="option" :key="option" rounded type="is-dark" closable @close="showDeleteConfirmation('jobs', option)">{{ option }}</b-tag>
                                             </b-taglist>
                                         </b-message>
 
@@ -122,26 +120,62 @@
                 // eslint-disable-next-line no-empty
                 for (keys[i++] in this.customerEntries) {}
                 return keys
+            },
+            getBereicheArray() {
+                let kunde = this.kunde
+                let custObject = this.customerEntries
+                let returnBereiche = {}
+                for (let entry in custObject) {
+                    if (custObject[entry].name === kunde) {
+                        returnBereiche = custObject[entry].bereiche
+                    }
+                }
+                return returnBereiche
+            },
+            getJobsArray() {
+                let kunde = this.kunde
+                let custObject = this.customerEntries
+                let returnJobs = {}
+                for (let entry in custObject) {
+                    if (custObject[entry].name === kunde) {
+                        returnJobs = custObject[entry].jobs
+                    }
+                }
+                return returnJobs
+            },
+            kundeExists() {
+                if (this.filteredKundenArray.length > 0) {
+                    return true
+                } else {
+                    return false
+                }
+            },
+            bereichExists() {       
+                let bereich = this.newbereich
+                let bereicheObj = this.getBereicheArray
+                let bereicheArray = Object.values(bereicheObj)
+                let be = bereicheArray.findIndex(k => k.toLowerCase()==bereich.toLowerCase());
+                if (be !== -1) {
+                    return true
+                } else {
+                    return false
+                }
+            },
+            jobExists() {
+                let job = this.newjob
+                let jobsObj = this.getJobsArray
+                let jobsArray = Object.values(jobsObj)
+                let je = jobsArray.findIndex(k => k.toLowerCase()==job.toLowerCase());
+                if (je !== -1) {
+                    return true
+                } else {
+                    return false
+                }
             }
         },
         methods: {
             loadCustomerData() {
                 this.$store.dispatch('loadCustomerEntries')
-            },
-            getBereicheArray(kunde) {
-                // check in each array if it has that one
-                for (let entry in this.customerEntries) {
-                    if (this.customerEntries[entry].name === kunde) {
-                        return this.customerEntries[entry].bereiche
-                    }
-                }
-            },
-            getJobsArray(kunde) {
-                for (let entry in this.customerEntries) {
-                    if (this.customerEntries[entry].name === kunde) {
-                        return this.customerEntries[entry].jobs
-                    }
-                }
             },
             showAddKunde() {
                 this.$buefy.dialog.prompt({
@@ -154,7 +188,7 @@
                     confirmText: 'Add',
                     onConfirm: (value) => {
                         this.kunden.push(value)
-                        this.$refs.autocomplete.setSelected(value)
+                        this.$refs.kunde.setSelected(value)
                         this.$store.dispatch('addCustomer', {
                             name: value
                         }).then(
@@ -165,54 +199,44 @@
                 })
             },
             getIDXfromCustomer(customer) {
-                // console.log(customer)
                 let myIndex = this.kunden.indexOf(customer)
-                // console.log(myIndex)
                 let myIDX = this.idxs[myIndex]
                 return myIDX
             },
             getIndex(kunde, section, thingToDelete) {
                 let myIndex
                 if (section === 'bereiche') {
-                    let myBereiche = this.getBereicheArray(kunde)
-                    // console.log(myBereiche)
-                    // console.log(thingToDelete)
-
+                    let myBereiche = this.getBereicheArray
                     myIndex = this.getKeyByValue(myBereiche, thingToDelete)
-                    //myBereiche.indexOf(thingToDelete)
-                    // console.log(myIndex)
                 } else if (section === 'jobs') {
-                    let myJobs = this.getJobsArray(kunde)
-                    // console.log(myJobs)
+                    let myJobs = this.getJobsArray
                     myIndex = this.getKeyByValue(myJobs, thingToDelete)
-                    // myJobs.indexOf(thingToDelete)
-                    // console.log(myIndex)
                 }
                 return myIndex
             },
             getKeyByValue(object, value) {
               return Object.keys(object).find(key => object[key] === value);
             },
-            showDeleteConfirmation(kunde, section, thingToDelete) {
+            showDeleteConfirmation(section, thingToDelete) {
                 let myKey
                 if (section === 'bereiche') {
-                    myKey = this.getKeyByValue(this.getBereicheArray(kunde), thingToDelete)
+                    myKey = this.getKeyByValue(this.getBereicheArray, thingToDelete)
                 } else if (section === 'jobs') {
-                    myKey = this.getKeyByValue(this.getJobsArray(kunde), thingToDelete)
+                    myKey = this.getKeyByValue(this.getJobsArray, thingToDelete)
                 }
                 this.$buefy.dialog.confirm({
                     title: 'Löschen?',
-                    message: 'Bist du sicher, du willst ' + kunde + 's "' + thingToDelete + '" <b>löschen</b>? Du kannst es später immer noch wieder neu hinzufügen.',
+                    message: 'Bist du sicher, du willst ' + this.kunde + 's "' + thingToDelete + '" <b>löschen</b>? Du kannst es später immer noch wieder neu hinzufügen.',
                     confirmText: 'Wirklich löschen',
                     type: 'is-danger',
                     hasIcon: true,
                     onConfirm: () => {
                         this.$store.dispatch('removeBereich', {
-                            idx: this.getIDXfromCustomer(kunde),
-                            customer: kunde,
+                            idx: this.getIDXfromCustomer(this.kunde),
+                            customer: this.kunde,
                             section: section,
                             keyToDelete: myKey,
-                            itemToDelete: this.getIndex(kunde, section, thingToDelete)
+                            itemToDelete: this.getIndex(this.kunde, section, thingToDelete)
                         }).then(
                             this.$buefy.toast.open('"' + thingToDelete + '" gelöscht!')
                         )
@@ -220,35 +244,47 @@
                 })
             },
             addBereich() {
-                // console.log("add " + this.newbereich + " bereich?")
-                // first dispatch new bereich to store
-                // we want to send the kunde chosen, as well
-                this.$store.dispatch('addBereich', {
-                    idx: this.getIDXfromCustomer(this.kunde),
-                    bereich: this.newbereich
-                })
-                // then show succes toast
-                .then(
-                    this.$buefy.toast.open('"' + this.newbereich + '" added!')
-                ).then(
-                    this.newbereich = ""
-                )
+                // first make sure we don't already have this bereich
+                if (!this.bereichExists && this.newbereich !== "") {
+                    // dispatch new bereich to store
+                    // we want to send the kunde chosen, as well
+                    this.$store.dispatch('addBereich', {
+                        idx: this.getIDXfromCustomer(this.kunde),
+                        bereich: this.newbereich
+                    })
+                    // then show succes toast
+                    .then(
+                        this.$buefy.toast.open('"' + this.newbereich + '" added!')
+                    ).then(
+                        this.newbereich = ""
+                    )
+                } else if (this.newbereich !== "") {
+                    this.$buefy.toast.open('Bereich "' + this.newbereich + '" gibt es schon.')
+                } else {
+                    this.$buefy.toast.open('Bitte einen neuen Bereich eingeben')
+                }
             },
             addJob() {
-                // console.log("add " + this.newjob + " job?")
-                // first dispatch new job to store
-                // we want to send the kunde chosen, as well
-                this.$store.dispatch('addJob', {
-                    idx: this.getIDXfromCustomer(this.kunde),
-                    job: this.newjob
-                })
-                // then show succes toast
-                .then(
-                    this.$buefy.toast.open('"' + this.newjob + '" added!')
-                ).then(
-                    this.newjob = ""
-                )
-            }
+                // first make sure we don't already have this job
+                if (!this.jobExists && this.newjob !== "") {
+                    // dispatch new job to store
+                    // we want to send the kunde chosen, as well
+                    this.$store.dispatch('addJob', {
+                        idx: this.getIDXfromCustomer(this.kunde),
+                        job: this.newjob
+                    })
+                    // then show succes toast
+                    .then(
+                        this.$buefy.toast.open('"' + this.newjob + '" added!')
+                    ).then(
+                        this.newjob = ""
+                    )
+                } else if (this.newjob !== "") {
+                    this.$buefy.toast.open('Job "' + this.newjob + '" gibt es schon.')
+                } else {
+                    this.$buefy.toast.open('Bitte einen neuen Job eingeben')
+                }
+            },
         },
         mounted() {
             this.loadCustomerData()
