@@ -28,13 +28,13 @@
                                                 </template>
                                             </b-autocomplete>
                                         </b-field>
-
                                         <b-field label="Bereich hinzufügen" v-if="kunde !== '' && kundeExists">
+<form @submit.prevent="addBereich">
                                             <b-field>
                                                 <b-input icon="folder-open" expanded v-model="newbereich"></b-input><p class="control"><b-button type="is-primary" outlined @click="addBereich">Submit</b-button></p>
                                             </b-field>
+</form>
                                         </b-field>
-
                                         <b-message v-if="kunde !== '' && kundeExists" class="has-text-left">
                                             <b-taglist>
                                                 <b-tag v-for="option in getBereicheArray" :value="option" :key="option" rounded type="is-dark" closable @close="showDeleteConfirmation('bereiche', option)">{{ option }}</b-tag>
@@ -42,9 +42,11 @@
                                         </b-message>
 
                                         <b-field label="Job hinzufügen" v-if="kunde !== '' && kundeExists">
+<form @submit.prevent="addJob">
                                             <b-field>
                                                 <b-input icon="file-alt" expanded v-model="newjob"></b-input><p class="control"><b-button type="is-primary" outlined @click="addJob">Submit</b-button></p>
                                             </b-field>
+</form>
                                         </b-field>
 
                                         <b-message v-if="kunde !== '' && kundeExists" class="has-text-left">

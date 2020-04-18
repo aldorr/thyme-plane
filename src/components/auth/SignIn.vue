@@ -17,7 +17,7 @@
 
             <ValidationProvider name="password" rules="required" v-slot="{ errors, valid }">
               <b-field horizontal :type="{'is-danger':errors[0], 'is-success': valid}" :message="errors[0]" label="Password">
-                      <b-input type="password" v-model="password" name="password" key="password" placeholder="something secret" />
+                      <b-input type="password" v-model="password" name="password" key="password" placeholder="something secret" password-reveal />
               </b-field>
             </ValidationProvider>
             </div>
