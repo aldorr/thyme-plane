@@ -13,14 +13,9 @@
                                     <div class="column">
                                         <!-- TODO: These will come from the db -->
                                         <b-field label="Kunde auswählen">
-                                            <b-autocomplete
-                                                v-model="kunde"
-                                                ref="kunde"
-                                                open-on-focus
-                                                :data="filteredKundenArray"
-                                                placeholder="e.g. Metropolis"
-                                                icon="building"
-                                                @select="option => selected = option">
+                                            <b-autocomplete v-model="kunde" ref="kunde" open-on-focus
+                                                :data="filteredKundenArray" placeholder="e.g. Metropolis"
+                                                icon="building" @select="option => selected = option">
                                                 <template slot="empty">
                                                     <a @click="showAddKunde">
                                                         <span> Kunde "{{kunde}}" neu Anlegen? </span>
@@ -29,29 +24,46 @@
                                             </b-autocomplete>
                                         </b-field>
                                         <b-field label="Bereich hinzufügen" v-if="kunde !== '' && kundeExists">
-<form @submit.prevent="addBereich">
-                                            <b-field>
-                                                <b-input icon="folder-open" expanded v-model="newbereich"></b-input><p class="control"><b-button type="is-primary" outlined @click="addBereich">Submit</b-button></p>
-                                            </b-field>
-</form>
+                                            <form @submit.prevent="addBereich">
+                                                <b-field>
+                                                    <b-input icon="folder-open" expanded v-model="newbereich"></b-input>
+                                                    <p class="control">
+                                                        <b-button type="is-primary" outlined @click="addBereich">Submit
+                                                        </b-button>
+                                                    </p>
+                                                </b-field>
+                                            </form>
                                         </b-field>
                                         <b-message v-if="kunde !== '' && kundeExists" class="has-text-left">
                                             <b-taglist>
-                                                <b-tag v-for="option in getBereicheArray" :value="option" :key="option" rounded type="is-dark" closable @close="showDeleteConfirmation('bereiche', option)">{{ option }}</b-tag>
+                                                <b-tag v-for="option in bereicheObject" :value="option" :key="option"
+                                                    rounded type="is-dark" closable size="is-medium"
+                                                    @close="showDeleteConfirmation('bereiche', option)"
+                                                    @click="editItem('bereiche', option)">
+                                                        <b-button class="is-edit" type="is-dark" size="is-small" @click.prevent="editItem('bereiche', option)">{{ option }}</b-button>
+                                                </b-tag>
                                             </b-taglist>
                                         </b-message>
 
                                         <b-field label="Job hinzufügen" v-if="kunde !== '' && kundeExists">
-<form @submit.prevent="addJob">
-                                            <b-field>
-                                                <b-input icon="file-alt" expanded v-model="newjob"></b-input><p class="control"><b-button type="is-primary" outlined @click="addJob">Submit</b-button></p>
-                                            </b-field>
-</form>
+                                            <form @submit.prevent="addJob">
+                                                <b-field>
+                                                    <b-input icon="file-alt" expanded v-model="newjob"></b-input>
+                                                    <p class="control">
+                                                        <b-button type="is-primary" outlined @click="addJob">Submit
+                                                        </b-button>
+                                                    </p>
+                                                </b-field>
+                                            </form>
                                         </b-field>
 
                                         <b-message v-if="kunde !== '' && kundeExists" class="has-text-left">
                                             <b-taglist>
-                                                <b-tag v-for="option in getJobsArray" :value="option" :key="option" rounded type="is-dark" closable @close="showDeleteConfirmation('jobs', option)">{{ option }}</b-tag>
+                                                <b-tag v-for="option in jobsObject" :value="option" :key="option"
+                                                    rounded type="is-dark" closable
+                                                    size="is-medium"
+                                                    @close="showDeleteConfirmation('jobs', option)">
+                                                        <b-button class="is-edit" type="is-dark" size="is-small" @click.prevent="editItem('jobs', option)">{{ option }}</b-button></b-tag>
                                             </b-taglist>
                                         </b-message>
 
@@ -67,24 +79,6 @@
 </template>
 
 <script>
-// This was just test data... now getting from firebase
-    // const data = {
-    //     "entries": {
-    //         "-aLajr3939r": {
-    //             "id": 0,
-    //             "name": "Elbphilharmonie",
-    //             "bereiche": ["Broschure E","Monatsprogramm E"],
-    //             "jobs": ["Something E","Something else E"]
-    //         },
-    //         "-aLjr39489rja": {
-    //             "id": 1,
-    //             "name": "Metropolis Kino",
-    //             "bereiche": ["Broschure M", "Monatsprogramm M"],
-    //             "jobs": ["Something M", "Something else M"]
-    //         }
-    //     }
-    // }
-
     export default {
         data() {
             return {
@@ -123,7 +117,7 @@
                 for (keys[i++] in this.customerEntries) {}
                 return keys
             },
-            getBereicheArray() {
+            bereicheObject() {
                 let kunde = this.kunde
                 let custObject = this.customerEntries
                 let returnBereiche = {}
@@ -134,7 +128,7 @@
                 }
                 return returnBereiche
             },
-            getJobsArray() {
+            jobsObject() {
                 let kunde = this.kunde
                 let custObject = this.customerEntries
                 let returnJobs = {}
@@ -154,7 +148,7 @@
             },
             bereichExists() {       
                 let bereich = this.newbereich
-                let bereicheObj = this.getBereicheArray
+                let bereicheObj = this.bereicheObject
                 let bereicheArray = Object.values(bereicheObj)
                 let be = bereicheArray.findIndex(k => k.toLowerCase()==bereich.toLowerCase());
                 if (be !== -1) {
@@ -165,7 +159,7 @@
             },
             jobExists() {
                 let job = this.newjob
-                let jobsObj = this.getJobsArray
+                let jobsObj = this.jobsObject
                 let jobsArray = Object.values(jobsObj)
                 let je = jobsArray.findIndex(k => k.toLowerCase()==job.toLowerCase());
                 if (je !== -1) {
@@ -181,13 +175,13 @@
             },
             showAddKunde() {
                 this.$buefy.dialog.prompt({
-                    message: `Kunde hinzufügen`,
+                    message: `<p class="label">Kunde hinzufügen</p>`,
                     inputAttrs: {
                         placeholder: 'e.g. fuxpax',
                         maxlength: 20,
                         value: this.kunde
                     },
-                    confirmText: 'Add',
+                    confirmText: 'Hinzufügen',
                     onConfirm: (value) => {
                         this.kunden.push(value)
                         this.$refs.kunde.setSelected(value)
@@ -213,10 +207,10 @@
             getIndex(kunde, section, thingToDelete) {
                 let myIndex
                 if (section === 'bereiche') {
-                    let myBereiche = this.getBereicheArray
+                    let myBereiche = this.bereicheObject
                     myIndex = this.getKeyByValue(myBereiche, thingToDelete)
                 } else if (section === 'jobs') {
-                    let myJobs = this.getJobsArray
+                    let myJobs = this.jobsObject
                     myIndex = this.getKeyByValue(myJobs, thingToDelete)
                 }
                 return myIndex
@@ -227,9 +221,9 @@
             showDeleteConfirmation(section, thingToDelete) {
                 let myKey
                 if (section === 'bereiche') {
-                    myKey = this.getKeyByValue(this.getBereicheArray, thingToDelete)
+                    myKey = this.getKeyByValue(this.bereicheObject, thingToDelete)
                 } else if (section === 'jobs') {
-                    myKey = this.getKeyByValue(this.getJobsArray, thingToDelete)
+                    myKey = this.getKeyByValue(this.jobsObject, thingToDelete)
                 }
                 this.$buefy.dialog.confirm({
                     title: 'Löschen?',
@@ -247,7 +241,7 @@
                         }).then(
                             this.$buefy.toast.open({
                             duration: 5000,
-                            message: '"' + thingToDelete + '" gelöscht!',
+                            message: `"${thingToDelete}" gelöscht!`,
                             position: 'is-bottom',
                             type: 'is-success'
                         })
@@ -268,7 +262,7 @@
                     .then(
                         this.$buefy.toast.open({
                             duration: 5000,
-                            message: '"' + this.newbereich + '" hinzugefügt!',
+                            message: `"${this.newbereich}" hinzugefügt!`,
                             position: 'is-bottom',
                             type: 'is-success'
                         })
@@ -278,14 +272,14 @@
                 } else if (this.newbereich !== "") {
                     this.$buefy.toast.open({
                             duration: 5000,
-                            message: 'Bereich "' + this.newbereich + '" gibt es schon.',
+                            message: `Bereich " ${this.newbereich}" gibt es schon.`,
                             position: 'is-bottom',
                             type: 'is-danger'
                         })
                 } else {
                     this.$buefy.toast.open({
                             duration: 5000,
-                            message: 'Bitte einen neuen Bereich eingeben',
+                            message:`Bitte einen neuen Bereich eingeben`,
                             position: 'is-bottom',
                             type: 'is-danger'
                         })
@@ -304,7 +298,7 @@
                     .then(
                         this.$buefy.toast.open({
                             duration: 5000,
-                            message: '"' + this.newjob + '" hinzugefügt!',
+                            message: `"${this.newjob}" hinzugefügt!`,
                             position: 'is-bottom',
                             type: 'is-success'
                         })
@@ -314,18 +308,64 @@
                 } else if (this.newjob !== "") {
                     this.$buefy.toast.open({
                             duration: 5000,
-                            message: 'Job "' + this.newjob + '" gibt es schon.',
+                            message: `Job "${this.newjob}" gibt es schon.`,
                             position: 'is-bottom',
                             type: 'is-danger'
                         })
                 } else {
                     this.$buefy.toast.open({
                             duration: 5000,
-                            message: 'Bitte einen neuen Job eingeben',
+                            message: `Bitte einen neuen Job eingeben`,
                             position: 'is-bottom',
                             type: 'is-danger'
                         })
                 }
+            },
+            editItem(type, item){
+                // call an edit component
+                let kunde = this.kunde
+                console.log(kunde)
+                console.log(type)
+                console.log(item)
+
+                this.$buefy.dialog.prompt({
+                    message: `<p class="label">Editieren</p>`,
+                    inputAttrs: {
+                        placeholder: item,
+                        maxlength: 20,
+                        value: item
+                    },
+                    confirmText: 'Ändern',
+                    onConfirm: (value) => {
+                        // this.kunden.push(value)
+                        // this.$refs.kunde.setSelected(value)
+                        // this.$store.dispatch('addCustomer', {
+                        //     name: value
+                        // }).then(
+                            this.$buefy.toast.open({
+                            duration: 5000,
+                            message: `"${item}" in "${value}" geändert!`,
+                            position: 'is-bottom',
+                            type: 'is-success'
+                        })
+                            // close dialog
+                        // )
+                    }
+                })
+            },
+            disableItem(type, item){
+                // call an edit component
+                let kunde = this.kunde
+                console.log(kunde)
+                console.log(type)
+                console.log(item)
+            },
+            enableItem(type, item){
+                // call an edit component
+                let kunde = this.kunde
+                console.log(kunde)
+                console.log(type)
+                console.log(item)
             },
         },
         mounted() {
