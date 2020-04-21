@@ -62,8 +62,8 @@
                 <div class="hero-foot has-padding-15em">
                     <nav class="level" v-if="kunde != ''">
                         <div class="level-item has-text-centered">
-                            <b-field label="Datum auswählen" :custom-class="anyTimeEntries?'has-text-dark':'has-text-grey-light'" label-position="on-border">
-                                <b-datepicker placeholder="Klicken..." v-model="dates" range :max-date="now" :mobile-native="false" :disabled="!anyTimeEntries">
+                            <b-field label="Datum auswählen" :custom-class="anyTimeEntries||datesSelected?'has-text-dark':'has-text-grey-light'" label-position="on-border">
+                                <b-datepicker placeholder="Klicken..." v-model="dates" range :max-date="now" :mobile-native="false" :disabled="!anyTimeEntries && !datesSelected">
                                     <div class="buttons is-right">
                                         <button class="button is-danger is-fullwidth" @click.prevent="dates = []">
                                             <b-icon icon="times-circle"></b-icon>
@@ -340,20 +340,20 @@ export default {
             let userNameTimeEntries = this.byUserNameTimeEntries
             // console.log(this.dates)
             if (0 !== this.dates.length) {
-                // console.log(this.dates)
-                // console.log(this.dates[0])
-                // console.log(this.dates[1])
                 // return special List
                 let returnArray = []
                 for (let key in userNameTimeEntries) {
-                    // console.log(userNameTimeEntries[key].date)
-                    let itemDate = new Date(userNameTimeEntries[key].date)
+                    let item = userNameTimeEntries[key].date
+                    let itemArray = item.split(".")
+                    let itemDate = new Date(itemArray[0], itemArray[1]-1, itemArray[2])
                     let itemTime = itemDate.getTime()
                     let selStartDate = new Date(this.dates[0])
                     let selStart = selStartDate.getTime()
                     let selEndDate = new Date(this.dates[1])
                     let selEnd = selEndDate.getTime()
-                    if ( itemTime >= selStart && itemTime <= selEnd + 86400000) {
+                    // console.log(itemDate, selStartDate, selEndDate)
+                    // console.log(itemTime, selStart, selEnd)
+                    if ( itemTime >= selStart && itemTime <= selEnd) {
                         returnArray.push(userNameTimeEntries[key])
                     }
                 }
@@ -382,6 +382,9 @@ export default {
             } else {
                 return false
             }
+        },
+        datesSelected() {
+            return this.dates.length!==0?true:false
         }
     },
     methods: {
