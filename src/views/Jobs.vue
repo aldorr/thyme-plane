@@ -332,7 +332,6 @@
                     message: `<p class="label">Editieren</p>`,
                     inputAttrs: {
                         placeholder: item,
-                        maxlength: 20,
                         value: item
                     },
                     confirmText: 'Ändern',
