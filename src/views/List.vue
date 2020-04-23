@@ -368,10 +368,12 @@ export default {
             return allTimeEntriesArray
         },
         detailed() {
-            let todosArray = this.todosArray
+            let currentTimeEntries = this.currentTimeEntries
             let detailedArray = []
-            for (let i in todosArray) {
-                detailedArray.push(todosArray[i].ID)
+            for (let i in currentTimeEntries) {
+                if (currentTimeEntries[i].note.length !== 0 ) {
+                    detailedArray.push(currentTimeEntries[i].ID)
+                }
             }
             return detailedArray
         },
