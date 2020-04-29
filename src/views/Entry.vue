@@ -257,7 +257,9 @@
                 for (let entry in this.customerEntries) {
                     if (this.customerEntries[entry].name === this.kunde) {
                         for (let bereich in this.customerEntries[entry].bereiche) {
-                            myBereicheReturn.push(this.customerEntries[entry].bereiche[bereich].name)
+                            if (this.customerEntries[entry].bereiche[bereich].archived == false) {
+                                myBereicheReturn.push(this.customerEntries[entry].bereiche[bereich].name)
+                            }
                         }
                     }
                 }
@@ -268,7 +270,9 @@
                 for (let entry in this.customerEntries) {
                     if (this.customerEntries[entry].name === this.kunde) {
                         for (let job in this.customerEntries[entry].jobs) {
-                            myJobsReturn.push(this.customerEntries[entry].jobs[job].name)
+                            if (this.customerEntries[entry].jobs[job].archived == false) {
+                                myJobsReturn.push(this.customerEntries[entry].jobs[job].name)
+                            }
                         }
                     }
                 }

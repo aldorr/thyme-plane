@@ -23,6 +23,7 @@
                                                 </template>
                                             </b-autocomplete>
                                         </b-field>
+
                                         <b-field label="Bereich hinzufügen" v-if="kunde !== '' && kundeExists">
                                             <form @submit.prevent="addBereich">
                                                 <b-field>
@@ -37,25 +38,31 @@
 
                                         <b-message type="is-primary" v-if="kunde !== '' && kundeExists" class="has-text-left">
                                             <b-field grouped group-multiline>
-                                                <b-taglist attached v-for="option in visibleBereicheObject" :value="option" :key="option.name">
-                                                    <b-tag rounded type="is-dark" size="is-medium">
-                                                        <b-button class="is-edit" type="is-dark" size="is-small" @click.prevent="editItem('bereiche', option)">{{ option.name }}</b-button></b-tag>
-                                                    <b-tag rounded type="is-dark" size="is-medium">
-                                                        <a @click.prevent="showToggleArhive('bereiche', option)"><b-button icon-left="angle-down" size="is-small" type="is-dark"></b-button></a></b-tag>
-                                                </b-taglist>
+                                                <div class="control" v-for="option in visibleBereicheObject" :key="option.name">
+                                                    <b-taglist attached>
+                                                        <b-tag rounded type="is-dark" size="is-medium">
+                                                            <b-button class="is-edit" type="is-dark" size="is-small" @click.prevent="editItem('bereiche', option)">{{ option.name }}</b-button></b-tag>
+                                                        <b-tag rounded type="is-dark" size="is-medium">
+                                                            <a @click.prevent="showToggleArhive('bereiche', option)"><b-button icon-left="angle-down" size="is-small" type="is-dark"></b-button></a></b-tag>
+                                                    </b-taglist>
+                                                </div>
                                             </b-field>
                                         </b-message>
-                                        <b-button  v-if="kunde !== '' && kundeExists && !isEmpty(archivedBereicheObject)" type="is-warning" @click="bereicheArchActive=!bereicheArchActive" expanded >Archivierte Bereiche</b-button>
-                                        <b-message v-if="kunde !== '' && kundeExists && !isEmpty(archivedBereicheObject)" class="has-text-left" type="is-warning" :active.sync="bereicheArchActive">
-                                            <b-field grouped group-multiline>
-                                                <b-taglist attached v-for="option in archivedBereicheObject" :value="option" :key="option.name">
-                                                    <b-tag rounded type="is-dark" size="is-medium">
-                                                        <b-button class="is-edit" type="is-dark" size="is-small" @click.prevent="editItem('bereiche', option)">{{ option.name }}</b-button></b-tag>
-                                                    <b-tag rounded type="is-dark" size="is-medium">
-                                                        <a @click.prevent="showToggleArhive('bereiche', option)"><b-button icon-left="angle-up" size="is-small" type="is-dark"></b-button></a></b-tag>
-                                                </b-taglist>
-                                            </b-field>
-                                        </b-message>
+                                        <article class="message is-white">
+                                            <b-button  v-if="kunde !== '' && kundeExists && !isEmpty(archivedBereicheObject)" type="is-warning is-outlined" @click="bereicheArchActive=!bereicheArchActive" expanded >Archivierte Bereiche</b-button>
+                                            <b-message v-if="kunde !== '' && kundeExists && !isEmpty(archivedBereicheObject)" class="has-text-left" type="is-warning" :active.sync="bereicheArchActive">
+                                                <b-field grouped group-multiline>
+                                                    <div class="control" v-for="option in archivedBereicheObject" :key="option.name">
+                                                        <b-taglist attached>
+                                                            <b-tag rounded type="is-dark" size="is-medium">
+                                                                <b-button class="is-edit" type="is-dark" size="is-small" @click.prevent="editItem('bereiche', option)">{{ option.name }}</b-button></b-tag>
+                                                            <b-tag rounded type="is-dark" size="is-medium">
+                                                                <a @click.prevent="showToggleArhive('bereiche', option)"><b-button icon-left="angle-up" size="is-small" type="is-dark"></b-button></a></b-tag>
+                                                        </b-taglist>
+                                                    </div>
+                                                </b-field>
+                                            </b-message>
+                                        </article>
 
                                         <b-field label="Job hinzufügen" v-if="kunde !== '' && kundeExists">
                                             <form @submit.prevent="addJob">
@@ -71,26 +78,32 @@
 
                                         <b-message type="is-primary" v-if="kunde !== '' && kundeExists" class="has-text-left">
                                             <b-field grouped group-multiline>
-                                                <b-taglist attached v-for="option in visibleJobsObject" :value="option" :key="option.name">
-                                                    <b-tag rounded type="is-dark" size="is-medium">
-                                                        <b-button class="is-edit" type="is-dark" size="is-small" @click.prevent="editItem('jobs', option)">{{ option.name }}</b-button></b-tag>
-                                                    <b-tag rounded type="is-dark" size="is-medium">
-                                                        <a @click.prevent="showToggleArhive('jobs', option)"><b-button icon-left="angle-down" size="is-small" type="is-dark"></b-button></a></b-tag>
-                                                </b-taglist>
-                                            </b-field>
-                                        </b-message>
-                                        <b-button  v-if="kunde !== '' && kundeExists && !isEmpty(archivedJobsObject)" type="is-warning" @click="jobsArchActive=!jobsArchActive" expanded >Archivierte Jobs</b-button>
-                                        <b-message v-if="kunde !== '' && kundeExists && !isEmpty(archivedJobsObject)" class="has-text-left" type="is-warning" :active.sync="jobsArchActive">
-                                            <b-field grouped group-multiline>
-                                                <b-taglist attached v-for="option in archivedJobsObject" :value="option" :key="option.name">
-                                                    <b-tag rounded type="is-dark" size="is-medium">
-                                                        <b-button class="is-edit" type="is-dark" size="is-small" @click.prevent="editItem('jobs', option)">{{ option.name }}</b-button></b-tag>
-                                                    <b-tag rounded type="is-dark" size="is-medium">
-                                                        <a @click.prevent="showToggleArhive('jobs', option)"><b-button icon-left="angle-up" size="is-small" type="is-dark"></b-button></a></b-tag>
-                                                </b-taglist>
+                                                <div class="control" v-for="option in visibleJobsObject" :key="option.name">
+                                                    <b-taglist attached>
+                                                        <b-tag rounded type="is-dark" size="is-medium">
+                                                            <b-button class="is-edit" type="is-dark" size="is-small" @click.prevent="editItem('jobs', option)">{{ option.name }}</b-button></b-tag>
+                                                        <b-tag rounded type="is-dark" size="is-medium">
+                                                            <a @click.prevent="showToggleArhive('jobs', option)"><b-button icon-left="angle-down" size="is-small" type="is-dark"></b-button></a></b-tag>
+                                                    </b-taglist>
+                                                </div>
                                             </b-field>
                                         </b-message>
 
+                                        <article class="message is-white">
+                                            <b-button  v-if="kunde !== '' && kundeExists && !isEmpty(archivedJobsObject)" type="is-warning is-outlined" @click="jobsArchActive=!jobsArchActive" expanded >Archivierte Jobs</b-button>
+                                            <b-message v-if="kunde !== '' && kundeExists && !isEmpty(archivedJobsObject)" class="has-text-left" type="is-warning" :active.sync="jobsArchActive">
+                                                <b-field grouped group-multiline>
+                                                    <div class="control" v-for="option in archivedJobsObject" :key="option.name">
+                                                        <b-taglist attached>
+                                                            <b-tag rounded type="is-dark" size="is-medium">
+                                                                <b-button class="is-edit" type="is-dark" size="is-small" @click.prevent="editItem('jobs', option)">{{ option.name }}</b-button></b-tag>
+                                                            <b-tag rounded type="is-dark" size="is-medium">
+                                                                <a @click.prevent="showToggleArhive('jobs', option)"><b-button icon-left="angle-up" size="is-small" type="is-dark"></b-button></a></b-tag>
+                                                        </b-taglist>
+                                                    </div>
+                                                </b-field>
+                                            </b-message>
+                                        </article>
                                     </div>
                                 </div>
                             </div>
@@ -173,7 +186,7 @@
                 let returnBereiche = {}
                 for (let bereich in allBereiche) {
                     if (allBereiche[bereich].archived == true) {
-                        console.log(allBereiche[bereich].archived)
+                        // console.log(allBereiche[bereich].archived)
                         returnBereiche[`${bereich}`] = allBereiche[bereich]
                     }
                 }
@@ -210,7 +223,7 @@
                 let returnJobs = {}
                 for (let job in allJobs) {
                     if (allJobs[job].archived == true) {
-                        console.log(allJobs[job].archived)
+                        // console.log(allJobs[job].archived)
                         returnJobs[`${job}`] = allJobs[job]
                     }
                 }
@@ -227,9 +240,9 @@
             },
             bereichExists() {       
                 let bereich = this.newbereich
-                let bereicheObj = this.bereicheObject
+                let bereicheObj = this.visibleBereicheObject
                 let bereicheArray = Object.values(bereicheObj)
-                let be = bereicheArray.findIndex(k => k.toLowerCase()==bereich.toLowerCase());
+                let be = bereicheArray.findIndex(k => k.name.toLowerCase()==bereich.toLowerCase());
                 if (be !== -1) {
                     return true
                 } else {
@@ -243,7 +256,6 @@
                 // console.log(jobsObj)
                 let jobsArray = Object.values(jobsObj)
                 // console.log(jobsArray)
-                // BLAME: findIndex doesn't work cause now we have object
                 let je = jobsArray.findIndex(k => k.name.toLowerCase()==job.toLowerCase());
                 if (je !== -1) {
                     return true
@@ -305,10 +317,14 @@
               return Object.keys(object).find(key => object[key] === value);
             },
             showToggleArhive(section, thingToToggle) {
-                console.log(thingToToggle)
+                // console.log(thingToToggle)
                 let myKey
                 if (section === 'bereiche') {
-                    myKey = this.getKeyByValue(this.bereicheObject, thingToToggle)
+                    if ( thingToToggle.archived === false) {
+                        myKey = this.getKeyByValue(this.visibleBereicheObject, thingToToggle)
+                    } else {
+                        myKey = this.getKeyByValue(this.archivedBereicheObject, thingToToggle)
+                    }
                 } else if (section === 'jobs') {
                     if ( thingToToggle.archived === false) {
                         myKey = this.getKeyByValue(this.visibleJobsObject, thingToToggle)
@@ -316,7 +332,7 @@
                         myKey = this.getKeyByValue(this.archivedJobsObject, thingToToggle)
                     }
                 }
-                console.log(myKey)
+                // console.log(myKey)
                 let myValue = thingToToggle.archived
                 let myFeedback = myValue?'ktivieren':'rchivieren'
                 // console.log(myFeedback)
@@ -461,12 +477,12 @@
                 this.$buefy.dialog.prompt({
                     message: `<p class="label">Editieren</p>`,
                     inputAttrs: {
-                        placeholder: item,
-                        value: item
+                        placeholder: item.name,
+                        value: item.name
                     },
                     confirmText: 'Ändern',
                     onConfirm: (value) => {
-                        if (item !== value) {
+                        if (item.name !== value) {
                             // this.kunden.push(value)
                             // this.$refs.kunde.setSelected(value)
                             // this.$store.dispatch('addCustomer', {
@@ -474,7 +490,7 @@
                             // }).then(
                                 this.$buefy.toast.open({
                                     duration: 5000,
-                                    message: `Funktion kommt noch! – "${item}" (nicht) in "${value}" geändert!`,
+                                    message: `Funktion kommt noch! – "${item.name}" (nicht) in "${value}" geändert!`,
                                     position: 'is-bottom',
                                     type: 'is-warning'
                                 })
