@@ -257,7 +257,7 @@
                 for (let entry in this.customerEntries) {
                     if (this.customerEntries[entry].name === this.kunde) {
                         for (let bereich in this.customerEntries[entry].bereiche) {
-                            myBereicheReturn.push(this.customerEntries[entry].bereiche[bereich])
+                            myBereicheReturn.push(this.customerEntries[entry].bereiche[bereich].name)
                         }
                     }
                 }
@@ -268,7 +268,7 @@
                 for (let entry in this.customerEntries) {
                     if (this.customerEntries[entry].name === this.kunde) {
                         for (let job in this.customerEntries[entry].jobs) {
-                            myJobsReturn.push(this.customerEntries[entry].jobs[job])
+                            myJobsReturn.push(this.customerEntries[entry].jobs[job].name)
                         }
                     }
                 }

@@ -85,7 +85,8 @@
         </div>
         <div class="container" v-if="kunde != ''">
             <b-table ref="table" :data="currentTimeEntries" striped default-sort-direction="asc" default-sort="date"
-                detailed detail-key="ID" :show-detail-icon=false :opened-detailed="isToggled?detailed:[]">
+                detailed detail-key="ID" :show-detail-icon=false :opened-detailed="isToggled?detailed:[]"
+                    :selected.sync="selected">
                 <template slot-scope="props">
                     <b-table-column field="customer" label="Kunde" sortable>{{ props.row.customer }}</b-table-column>
                     <b-table-column field="area" label="Bereich" sortable>{{ props.row.area }}</b-table-column>
@@ -106,6 +107,9 @@
                             <b-icon icon="angle-right" :class="showRow(props.row)"></b-icon>
                         </a>
                         <b-icon icon="angle-down" type="is-light" v-else></b-icon>
+                    </b-table-column>
+                    <b-table-column labe="Edit">
+                        <b-button icon-left="pen" type="is-primary is-outlined is-inverted" @click="showEditModal" :disabled="selected.ID!==props.row.ID"></b-button>
                     </b-table-column>
                 </template>
                 <template slot="detail" slot-scope="props">
@@ -152,6 +156,8 @@
 
 <script>
 
+import EditItem from '@/components/EditItem.vue'
+
 export default {
     data() {
         return {
@@ -164,7 +170,8 @@ export default {
             myselected: null,
             dates: [],
             now: new Date,
-            isToggled: false
+            isToggled: false,
+            selected: {},
         }
     },
     computed: {
@@ -541,6 +548,17 @@ export default {
             let hrs = Math.floor(mins / 60)
             mins = mins % 60
             return hrs + 'hrs ' + mins + 'mins'
+        },
+        showEditModal() {
+            console.log("Where's the modal?")
+            this.$buefy.modal.open({
+                parent: this,
+                component: EditItem,
+                hasModalCard: true,
+                customClass: 'custom-class custom-class-2',
+                trapFocus: true,
+                props: this.selected
+            })
         },
     },
     filters: {

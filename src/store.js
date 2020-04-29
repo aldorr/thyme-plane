@@ -210,6 +210,19 @@ const store = new Vuex.Store({
                     commit('setError', error)
                 })
         },
+        toggleBereich({ commit }, payload) {
+            let myRef = 'customerentries/' + payload.idx + '/' + payload.section + '/' + payload.keyToArchive + '/archived'
+            console.log(myRef)
+            console.log(payload.myBool)
+            return firebase
+                .database()
+                .ref(myRef)
+                .set(payload.myBool)
+                .then(() => {
+                    commit('setStatus', 'success')
+                    this.dispatch('loadCustomerEntries')
+                })
+        },
         removeBereich({ commit }, payload) {
             let myRef = 'customerentries/' + payload.idx + '/' + payload.section + '/' + payload.itemToDelete
                 // console.log(myRef)
@@ -239,10 +252,14 @@ const store = new Vuex.Store({
             let myRef = 'customerentries/' + payload.idx + '/bereiche/'
                 // console.log(myRef)
                 // let myKey = Math.floor(Date.now() + Math.random())
+            let newBereich = {
+                name: payload.bereich,
+                archived: false
+            }
             return firebase
                 .database()
                 .ref(myRef)
-                .push(payload.bereich)
+                .push(newBereich)
                 .then(() => {
                     commit('setStatus', 'success')
                         // console.log(this.state.customerEntries[payload.idx].bereiche)
@@ -254,10 +271,14 @@ const store = new Vuex.Store({
             let myRef = 'customerentries/' + payload.idx + '/jobs/'
                 // console.log(myRef)
                 // let myKey = Math.floor(Date.now() + Math.random())
+            let newJob = {
+                name: payload.job,
+                archived: false
+            }
             return firebase
                 .database()
                 .ref(myRef)
-                .push(payload.job)
+                .push(newJob)
                 .then(() => {
                     commit('setStatus', 'success')
                         // console.log(this.state.customerEntries[payload.idx].jobs + ": " + myKey)
@@ -265,11 +286,6 @@ const store = new Vuex.Store({
                     this.dispatch('loadCustomerEntries')
                 })
         },
-        /**
-         * TODO: need
-         * load Jobs
-         * load user's entries (per time frame?)
-         */
         // eslint-disable-next-line
         // removeEntry({ state, commit, dispatch }, payload) {
         //     // delete i.e. -LeZ82YdBYt8rfz25bSq
@@ -282,7 +298,6 @@ const store = new Vuex.Store({
         //         .ref(toDelete)
         //         .remove()
         // },
-        // eslint-disable-next-line
         newEntry({ commit }, payload) {
             // let myRef = 'users/' + payload.user + '/timeentries/'
             // console.log(myRef)

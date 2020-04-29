@@ -34,15 +34,27 @@
                                                 </b-field>
                                             </form>
                                         </b-field>
-                                        <b-message v-if="kunde !== '' && kundeExists" class="has-text-left">
-                                            <b-taglist>
-                                                <b-tag v-for="option in bereicheObject" :value="option" :key="option"
-                                                    rounded type="is-dark" closable size="is-medium"
-                                                    @close="showDeleteConfirmation('bereiche', option)"
-                                                    @click="editItem('bereiche', option)">
-                                                        <b-button class="is-edit" type="is-dark" size="is-small" @click.prevent="editItem('bereiche', option)">{{ option }}</b-button>
-                                                </b-tag>
-                                            </b-taglist>
+
+                                        <b-message type="is-primary" v-if="kunde !== '' && kundeExists" class="has-text-left">
+                                            <b-field grouped group-multiline>
+                                                <b-taglist attached v-for="option in visibleBereicheObject" :value="option" :key="option.name">
+                                                    <b-tag rounded type="is-dark" size="is-medium">
+                                                        <b-button class="is-edit" type="is-dark" size="is-small" @click.prevent="editItem('bereiche', option)">{{ option.name }}</b-button></b-tag>
+                                                    <b-tag rounded type="is-dark" size="is-medium">
+                                                        <a @click.prevent="showToggleArhive('bereiche', option)"><b-button icon-left="angle-down" size="is-small" type="is-dark"></b-button></a></b-tag>
+                                                </b-taglist>
+                                            </b-field>
+                                        </b-message>
+                                        <b-button  v-if="kunde !== '' && kundeExists && !isEmpty(archivedBereicheObject)" type="is-warning" @click="bereicheArchActive=!bereicheArchActive" expanded >Archivierte Bereiche</b-button>
+                                        <b-message v-if="kunde !== '' && kundeExists && !isEmpty(archivedBereicheObject)" class="has-text-left" type="is-warning" :active.sync="bereicheArchActive">
+                                            <b-field grouped group-multiline>
+                                                <b-taglist attached v-for="option in archivedBereicheObject" :value="option" :key="option.name">
+                                                    <b-tag rounded type="is-dark" size="is-medium">
+                                                        <b-button class="is-edit" type="is-dark" size="is-small" @click.prevent="editItem('bereiche', option)">{{ option.name }}</b-button></b-tag>
+                                                    <b-tag rounded type="is-dark" size="is-medium">
+                                                        <a @click.prevent="showToggleArhive('bereiche', option)"><b-button icon-left="angle-up" size="is-small" type="is-dark"></b-button></a></b-tag>
+                                                </b-taglist>
+                                            </b-field>
                                         </b-message>
 
                                         <b-field label="Job hinzufügen" v-if="kunde !== '' && kundeExists">
@@ -57,19 +69,32 @@
                                             </form>
                                         </b-field>
 
-                                        <b-message v-if="kunde !== '' && kundeExists" class="has-text-left">
-                                            <b-taglist>
-                                                <b-tag v-for="option in jobsObject" :value="option" :key="option"
-                                                    rounded type="is-dark" closable
-                                                    size="is-medium"
-                                                    @close="showDeleteConfirmation('jobs', option)">
-                                                        <b-button class="is-edit" type="is-dark" size="is-small" @click.prevent="editItem('jobs', option)">{{ option }}</b-button></b-tag>
-                                            </b-taglist>
+                                        <b-message type="is-primary" v-if="kunde !== '' && kundeExists" class="has-text-left">
+                                            <b-field grouped group-multiline>
+                                                <b-taglist attached v-for="option in visibleJobsObject" :value="option" :key="option.name">
+                                                    <b-tag rounded type="is-dark" size="is-medium">
+                                                        <b-button class="is-edit" type="is-dark" size="is-small" @click.prevent="editItem('jobs', option)">{{ option.name }}</b-button></b-tag>
+                                                    <b-tag rounded type="is-dark" size="is-medium">
+                                                        <a @click.prevent="showToggleArhive('jobs', option)"><b-button icon-left="angle-down" size="is-small" type="is-dark"></b-button></a></b-tag>
+                                                </b-taglist>
+                                            </b-field>
+                                        </b-message>
+                                        <b-button  v-if="kunde !== '' && kundeExists && !isEmpty(archivedJobsObject)" type="is-warning" @click="jobsArchActive=!jobsArchActive" expanded >Archivierte Jobs</b-button>
+                                        <b-message v-if="kunde !== '' && kundeExists && !isEmpty(archivedJobsObject)" class="has-text-left" type="is-warning" :active.sync="jobsArchActive">
+                                            <b-field grouped group-multiline>
+                                                <b-taglist attached v-for="option in archivedJobsObject" :value="option" :key="option.name">
+                                                    <b-tag rounded type="is-dark" size="is-medium">
+                                                        <b-button class="is-edit" type="is-dark" size="is-small" @click.prevent="editItem('jobs', option)">{{ option.name }}</b-button></b-tag>
+                                                    <b-tag rounded type="is-dark" size="is-medium">
+                                                        <a @click.prevent="showToggleArhive('jobs', option)"><b-button icon-left="angle-up" size="is-small" type="is-dark"></b-button></a></b-tag>
+                                                </b-taglist>
+                                            </b-field>
                                         </b-message>
 
                                     </div>
                                 </div>
                             </div>
+                            <footer class="card-footer"></footer>
                         </form>
                     </div>
                 </div>
@@ -87,7 +112,9 @@
                 idx: '',
                 todaysdate: new Date(),
                 newbereich: '',
-                newjob: ''
+                newjob: '',
+                bereicheArchActive: false,
+                jobsArchActive: false
             }
         },
         computed: {
@@ -117,7 +144,7 @@
                 for (keys[i++] in this.customerEntries) {}
                 return keys
             },
-            bereicheObject() {
+            allBereicheObject() {
                 let kunde = this.kunde
                 let custObject = this.customerEntries
                 let returnBereiche = {}
@@ -128,15 +155,67 @@
                 }
                 return returnBereiche
             },
-            jobsObject() {
-                let kunde = this.kunde
-                let custObject = this.customerEntries
-                let returnJobs = {}
-                for (let entry in custObject) {
-                    if (custObject[entry].name === kunde) {
-                        returnJobs = custObject[entry].jobs
+            visibleBereicheObject() {
+                let allBereiche = this.allBereicheObject
+                let returnBereiche = {}
+                for (let bereich in allBereiche) {
+                    // console.log(bereich)
+                    if (allBereiche[bereich].archived == false) {
+                        // console.log(allBereiche[bereich].archived)
+                        returnBereiche[`${bereich}`] = allBereiche[bereich]
                     }
                 }
+                // returnBereiche = allBereiche
+                return returnBereiche
+            },
+            archivedBereicheObject() {
+                let allBereiche = this.allBereicheObject
+                let returnBereiche = {}
+                for (let bereich in allBereiche) {
+                    if (allBereiche[bereich].archived == true) {
+                        console.log(allBereiche[bereich].archived)
+                        returnBereiche[`${bereich}`] = allBereiche[bereich]
+                    }
+                }
+                // returnBereiche = allBereiche
+                // console.log(returnBereiche)
+                return returnBereiche
+            },
+            allJobsObject() {
+                let kunde = this.kunde
+                let custObject = this.customerEntries
+                let allJobs = {}
+                for (let entry in custObject) {
+                    if (custObject[entry].name === kunde) {
+                        allJobs = custObject[entry].jobs
+                    }
+                }
+                return allJobs
+            },
+            visibleJobsObject() {
+                let allJobs = this.allJobsObject
+                let returnJobs = {}
+                for (let job in allJobs) {
+                    // console.log(job)
+                    if (allJobs[job].archived == false) {
+                        // console.log(allJobs[job].archived)
+                        returnJobs[`${job}`] = allJobs[job]
+                    }
+                }
+                // returnJobs = allJobs
+                return returnJobs
+            },
+            archivedJobsObject() {
+                let allJobs = this.allJobsObject
+                let returnJobs = {}
+                for (let job in allJobs) {
+                    if (allJobs[job].archived == true) {
+                        console.log(allJobs[job].archived)
+                        returnJobs[`${job}`] = allJobs[job]
+                    }
+                }
+                // returnJobs = allJobs
+                // console.log(returnJobs)
                 return returnJobs
             },
             kundeExists() {
@@ -159,17 +238,24 @@
             },
             jobExists() {
                 let job = this.newjob
-                let jobsObj = this.jobsObject
+                // console.log(job)
+                let jobsObj = this.visibleJobsObject
+                // console.log(jobsObj)
                 let jobsArray = Object.values(jobsObj)
-                let je = jobsArray.findIndex(k => k.toLowerCase()==job.toLowerCase());
+                // console.log(jobsArray)
+                // BLAME: findIndex doesn't work cause now we have object
+                let je = jobsArray.findIndex(k => k.name.toLowerCase()==job.toLowerCase());
                 if (je !== -1) {
                     return true
                 } else {
                     return false
                 }
-            }
+            },
         },
         methods: {
+            migrate() {
+                this.$store.dispatch('migrateDatabase')
+            },
             loadCustomerData() {
                 this.$store.dispatch('loadCustomerEntries')
             },
@@ -210,7 +296,7 @@
                     let myBereiche = this.bereicheObject
                     myIndex = this.getKeyByValue(myBereiche, thingToDelete)
                 } else if (section === 'jobs') {
-                    let myJobs = this.jobsObject
+                    let myJobs = this.visibleJobsObject
                     myIndex = this.getKeyByValue(myJobs, thingToDelete)
                 }
                 return myIndex
@@ -218,12 +304,56 @@
             getKeyByValue(object, value) {
               return Object.keys(object).find(key => object[key] === value);
             },
+            showToggleArhive(section, thingToToggle) {
+                console.log(thingToToggle)
+                let myKey
+                if (section === 'bereiche') {
+                    myKey = this.getKeyByValue(this.bereicheObject, thingToToggle)
+                } else if (section === 'jobs') {
+                    if ( thingToToggle.archived === false) {
+                        myKey = this.getKeyByValue(this.visibleJobsObject, thingToToggle)
+                    } else {
+                        myKey = this.getKeyByValue(this.archivedJobsObject, thingToToggle)
+                    }
+                }
+                console.log(myKey)
+                let myValue = thingToToggle.archived
+                let myFeedback = myValue?'ktivieren':'rchivieren'
+                // console.log(myFeedback)
+                let message1 = 'Bist du sicher, du willst ' + this.kunde + 's "' + thingToToggle.name + '" <b> a' + myFeedback + '</b>? Du kannst das später wieder ändern.'
+                let title = 'A' + myFeedback + '?'
+                let confirmText = myValue?'Wirklich aktivieren':'Wirklich archivieren'
+                let message2 = '"' + thingToToggle.name + '" ' + (myValue?'aktiviert!':'archiviert!')
+                this.$buefy.dialog.confirm({
+                    title: title,
+                    message: message1,
+                    confirmText: confirmText,
+                    type: 'is-warning',
+                    hasIcon: true,
+                    onConfirm: () => {
+                        this.$store.dispatch('toggleBereich', {
+                            idx: this.getIDXfromCustomer(this.kunde),
+                            customer: this.kunde,
+                            section: section,
+                            keyToArchive: myKey,
+                            myBool: !myValue
+                        }).then(
+                            this.$buefy.toast.open({
+                            duration: 5000,
+                            message: message2,
+                            position: 'is-bottom',
+                            type: 'is-success'
+                        })
+                        )
+                    }
+                })
+            },
             showDeleteConfirmation(section, thingToDelete) {
                 let myKey
                 if (section === 'bereiche') {
                     myKey = this.getKeyByValue(this.bereicheObject, thingToDelete)
                 } else if (section === 'jobs') {
-                    myKey = this.getKeyByValue(this.jobsObject, thingToDelete)
+                    myKey = this.getKeyByValue(this.visibleJobsObject, thingToDelete)
                 }
                 this.$buefy.dialog.confirm({
                     title: 'Löschen?',
@@ -323,10 +453,10 @@
             },
             editItem(type, item){
                 // call an edit component
-                let kunde = this.kunde
-                console.log(kunde)
-                console.log(type)
-                console.log(item)
+                // let kunde = this.kunde
+                // console.log(kunde)
+                // console.log(type)
+                // console.log(item)
 
                 this.$buefy.dialog.prompt({
                     message: `<p class="label">Editieren</p>`,
@@ -336,35 +466,51 @@
                     },
                     confirmText: 'Ändern',
                     onConfirm: (value) => {
-                        // this.kunden.push(value)
-                        // this.$refs.kunde.setSelected(value)
-                        // this.$store.dispatch('addCustomer', {
-                        //     name: value
-                        // }).then(
+                        if (item !== value) {
+                            // this.kunden.push(value)
+                            // this.$refs.kunde.setSelected(value)
+                            // this.$store.dispatch('addCustomer', {
+                            //     name: value
+                            // }).then(
+                                this.$buefy.toast.open({
+                                    duration: 5000,
+                                    message: `Funktion kommt noch! – "${item}" (nicht) in "${value}" geändert!`,
+                                    position: 'is-bottom',
+                                    type: 'is-warning'
+                                })
+                                // close dialog
+                            // )
+                        } else {
                             this.$buefy.toast.open({
-                            duration: 5000,
-                            message: `"${item}" in "${value}" geändert!`,
-                            position: 'is-bottom',
-                            type: 'is-success'
-                        })
-                            // close dialog
-                        // )
+                                duration: 5000,
+                                message: `Nichts geändert`,
+                                position: 'is-bottom',
+                                type: 'is-warning'
+                            })
+                        }
                     }
                 })
             },
-            disableItem(type, item){
+            // disableItem(type, item){
                 // call an edit component
-                let kunde = this.kunde
-                console.log(kunde)
-                console.log(type)
-                console.log(item)
-            },
-            enableItem(type, item){
+                // let kunde = this.kunde
+                // console.log(kunde)
+                // console.log(type)
+                // console.log(item)
+            // },
+            // enableItem(type, item){
                 // call an edit component
-                let kunde = this.kunde
-                console.log(kunde)
-                console.log(type)
-                console.log(item)
+                // let kunde = this.kunde
+                // console.log(kunde)
+                // console.log(type)
+                // console.log(item)
+            // },
+            isEmpty(obj) {
+                for(var key in obj) {
+                    if(Object.prototype.hasOwnProperty.call(obj, key))
+                        return false;
+                }
+                return true;
             },
         },
         mounted() {

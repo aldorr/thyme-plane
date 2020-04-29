@@ -42,7 +42,8 @@ import {
   extend
 } from 'vee-validate';
 import {
-  required, email
+  required,
+  email
 } from 'vee-validate/dist/rules';
 
 // Add the rules
@@ -59,10 +60,10 @@ import {
 
 export default {
 
-          components: {
-            ValidationObserver,
-            ValidationProvider
-        },
+  components: {
+    ValidationObserver,
+    ValidationProvider
+  },
 
   data: () => ({
     fullname: '',
@@ -71,7 +72,7 @@ export default {
   }),
 
   computed: {
-    username () {
+    username() {
       // let atsignpos = this.fullname.indexOf("@")
       // let username = this.fullname.slice(atsignpos, )
       let username = this.fullname.toLowerCase();
@@ -91,10 +92,10 @@ export default {
 
   methods: {
 
-    validate () {
+    validate() {
       // this.$validator.validateAll().then((result) => {
       //   if (result) {
-          this.addUserToFirebase()
+      this.addUserToFirebase()
       //   } else {
       //     this.$buefy.toast.open({
       //       message: 'It seems your form is missing something! Please check the fields.',
@@ -105,24 +106,27 @@ export default {
       // })
     },
 
-    reset () {
+    reset() {
       this.$refs.form.reset()
     },
 
-    addUserToFirebase () {
+    addUserToFirebase() {
       const user = {
-        newuser:
-          { fullname: this.fullname, username: this.username, email: this.email },
+        newuser: {
+          fullname: this.fullname,
+          username: this.username,
+          email: this.email
+        },
         email: this.email,
         password: this.password
       }
       // console.log(user)
       this.$store.dispatch('newUserAction', user).then(
-            this.$buefy.toast.open({
-              message: 'New user: ' + user.email +' added!',
-              type: 'is-success',
-              position: 'is-bottom'
-            })
+        this.$buefy.toast.open({
+          message: 'New user: ' + user.email + ' added!',
+          type: 'is-success',
+          position: 'is-bottom'
+        })
       );
       this.$parent.close()
       return;
