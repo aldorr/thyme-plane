@@ -550,14 +550,18 @@ export default {
             return hrs + 'hrs ' + mins + 'mins'
         },
         showEditModal() {
-            console.log("Where's the modal?")
+            // console.log("Where's the modal?")
             this.$buefy.modal.open({
                 parent: this,
                 component: EditItem,
                 hasModalCard: true,
                 customClass: 'custom-class custom-class-2',
                 trapFocus: true,
-                props: this.selected
+                props: {
+                    userList: this.userList,
+                    userIdList: this.userIdList,
+                    selected: this.selected
+                }
             })
         },
     },

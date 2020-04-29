@@ -7,10 +7,10 @@
       </header>
       <section class="modal-card-body">
         <b-field label="Name">
-          <b-input type="text" :value="user" required disabled></b-input>
+          <b-input type="text" :value="user" required disabled icon="user"></b-input>
         </b-field>
         <b-field label="Kunde">
-          <b-input type="text" :value="customer" required disabled></b-input>
+          <b-input type="text" :value="customer" required disabled icon="building"></b-input>
         </b-field>
         <ValidationProvider name="area" rules="required"
             v-slot="{ errors, valid }">
@@ -41,7 +41,7 @@
         <ValidationProvider name="date" rules="required" v-slot="{ errors, valid }">
           <b-field label="Datum ändern"
               :type="{'is-danger': errors[0], 'is-success': valid}"
-              :message="'Original: ' + $attrs.date">
+              :message="'Original: ' + dateToHuman($attrs.selected.date)">
               <b-datepicker placeholder="Click to select..." icon="calendar"
                   class="is-small" v-model="date" expanded :max-date="maxDate"
                   key="date">
@@ -59,10 +59,15 @@
             v-slot="{ errors, valid }">
             <b-field label="Zeitspanne eingeben"
                 :type="{'is-danger':errors[0], 'is-success': valid}"
-                :message="{[errors]: errors[0], 'Im Format: 01h 05m': !errors[0]}">
-            <b-input type="text" :value="time | durationFilter" required v-cleave="masks.duration" class="duration"></b-input>
+                :message="{[errors]: errors[0], 'Im Format:  01h 05m': !errors[0]}">
+            <b-input type="text" :value="duration | durationFilter" required v-cleave="masks.duration" class="duration" v-on:keyup.native="onInput" icon="clock" key="duration"></b-input>
           </b-field>
         </ValidationProvider>
+
+        <b-field label="Notiz">
+            <b-input type="textarea" v-model="note"></b-input>
+        </b-field>
+
       </section>
       <footer class="modal-card-foot">
         <button class="button" type="button" @click="$parent.close()">Abbrechen</button>
@@ -106,13 +111,14 @@ export default {
   data() {
     const today = new Date()
     return {
-      ID: this.$attrs.ID,
-      user: this.$attrs.user,
-      customer: this.$attrs.customer,
-      job: this.$attrs.job,
-      area: this.$attrs.area,
-      date: new Date(this.$attrs.date),
-      time: "01h 15m",
+      ID: this.$attrs.selected.ID,
+      user: this.$attrs.selected.user,
+      customer: this.$attrs.selected.customer,
+      job: this.$attrs.selected.job,
+      area: this.$attrs.selected.area,
+      date: new Date(this.$attrs.selected.date),
+      duration: 0,
+      note: this.$attrs.selected.note,
       maxDate: new Date(today.getFullYear(), today.getMonth(), today.getDate()),
       masks: {
           duration: {
@@ -126,6 +132,10 @@ export default {
     }
   },
   computed: {
+    userID() {
+      let userIndex = this.$attrs.userList.indexOf(this.user)
+      return this.$attrs.userIdList[userIndex - 1]
+    },
     filteredBereicheArray() {
         return this.bereiche.filter((option) => {
             return option
@@ -151,7 +161,9 @@ export default {
         for (let entry in this.customerEntries) {
             if (this.customerEntries[entry].name === this.customer) {
                 for (let bereich in this.customerEntries[entry].bereiche) {
+                  if (this.customerEntries[entry].bereiche[bereich].archived == false) {
                     myBereicheReturn.push(this.customerEntries[entry].bereiche[bereich].name)
+                  }
                 }
             }
         }
@@ -162,18 +174,89 @@ export default {
         for (let entry in this.customerEntries) {
             if (this.customerEntries[entry].name === this.customer) {
                 for (let job in this.customerEntries[entry].jobs) {
+                  if (this.customerEntries[entry].jobs[job].archived == false) {
                     myJobsReturn.push(this.customerEntries[entry].jobs[job].name)
+                  }
                 }
             }
         }
         return myJobsReturn
     },
+    dateToString() {
+        // This format is better for sorting
+        // 2016.10.15
+        let date = this.date
+        let dateString
+        let year    = date.getFullYear();
+        let month   = date.getMonth() + 1;
+        let day     = date.getDate();
+        dateString = year + '.' + month + '.' + day
+        return dateString
+    },
+    rawDuration() {
+        let mins = this.duration.slice(4, 6)
+        let hrs = this.duration.slice(0, 2)
+        return hrs * 60 * 60 + mins * 60
+    },
+    anyChanges() {
+      if (this.area !== this.$attrs.selected.area || this.job !== this.$attrs.selected.job || this.dateToString !== this.$attrs.selected.date || this.rawDuration !== this.$attrs.selected.time || this.note !== this.$attrs.selected.note) {
+        return true
+      } else {
+        return false
+      }
+    },
   },
   methods: {
     changeEntry() {
-      // console.log(this)
-      console.log("Changing Entry?")
-      this.$parent.close()
+      if (this.anyChanges) {
+
+        this.$buefy.dialog.confirm({
+          title: 'Wirklich?',
+          message: 'Hiermit überschreibst du mit deinen Änderungen.',
+          confirmText: 'Überschreiben',
+          type: 'is-warning',
+          trapFocus: true,
+          hasIcon: true,
+          icon: 'pen',
+          cancelText: 'Bearbeiten',
+          onConfirm: () => {
+            let userID = this.userID
+            let ID = this.ID
+            let sendObject = {
+              customer: this.customer,
+              area: this.area,
+              job: this.job,
+              date: this.dateToString,
+              time: this.rawDuration,
+              note: this.note,
+            }
+            // console.log("Changing Entry?")
+            // console.log(userID, ID, sendObject)
+            this.$store.dispatch('updateEntry', {
+                user: userID,
+                entryID: ID,
+                updatedEntry: sendObject
+            })
+            .then(
+                this.$buefy.toast.open({duration: 5000,
+                    message: `Geändert!`,
+                    position: 'is-bottom',
+                    type: 'is-success'
+                }),
+              this.$parent.close()
+            )
+          }
+        })
+      } else {
+        this.$buefy.toast.open({
+          message: 'Keine Änderungen?!',
+          type: 'is-warning',
+          position: 'is-bottom'
+        })
+      }
+    },
+    onInput(event) {
+        this.duration = event.target._vCleave.getFormattedValue()
     },
     dateToHuman(dateString) {
         // Make date into string based on locale
@@ -223,8 +306,14 @@ export default {
     }
   },
   mounted() {
-    console.log(this.secondsToHMs(this.$attrs.time))
-    this.time = this.secondsToHMs(this.$attrs.time)
+    // console.log(this.secondsToHMs(this.$attrs.time))
+    this.duration = this.secondsToHMs(this.$attrs.selected.time)
   }
 }
 </script>
+
+<style>
+.table tbody tr:last-child td, .table tbody tr:last-child th, table td:not([align]), table th:not([align]) {
+  vertical-align: middle;
+}
+</style>

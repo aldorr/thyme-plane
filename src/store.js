@@ -212,8 +212,8 @@ const store = new Vuex.Store({
         },
         toggleBereich({ commit }, payload) {
             let myRef = 'customerentries/' + payload.idx + '/' + payload.section + '/' + payload.keyToArchive + '/archived'
-            console.log(myRef)
-            console.log(payload.myBool)
+                // console.log(myRef)
+                // console.log(payload.myBool)
             return firebase
                 .database()
                 .ref(myRef)
@@ -310,8 +310,22 @@ const store = new Vuex.Store({
                 .push(payload.newEntry)
                 .then(() => {
                     commit('setStatus', 'success')
+                    this.dispatch('loadTimeEntries')
                 })
         },
+        updateEntry({ commit }, payload) {
+            return firebase
+                .database()
+                .ref('users')
+                .child(payload.user)
+                .child('timeentries')
+                .child(payload.entryID)
+                .set(payload.updatedEntry)
+                .then(() => {
+                    commit('setStatus', 'success')
+                    this.dispatch('loadTimeEntries')
+                })
+        }
     },
 
     getters: {
