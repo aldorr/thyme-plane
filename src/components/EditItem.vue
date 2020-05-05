@@ -1,81 +1,84 @@
 <template>
-    <ValidationObserver ref="observer" v-slot="{ passes }">
-  <form @submit.prevent="passes(changeEntry)">
-    <div class="modal-card">
-      <header class="modal-card-head">
-        <p class="modal-card-title">Eintrag ändern</p>
-      </header>
-      <section class="modal-card-body">
-        <b-field label="Name">
-          <b-input type="text" :value="user" required disabled icon="user"></b-input>
-        </b-field>
-        <b-field label="Kunde">
-          <b-input type="text" :value="customer" required disabled icon="building"></b-input>
-        </b-field>
-        <ValidationProvider name="area" rules="required"
-            v-slot="{ errors, valid }">
+  <ValidationObserver ref="observer" v-slot="{ passes }">
+    <form @submit.prevent="passes(changeEntry)">
+      <div class="modal-card">
+        <header class="modal-card-head">
+          <p class="modal-card-title">Eintrag ändern</p>
+        </header>
+        <section class="modal-card-body">
+          <b-field label="Name">
+            <b-input type="text" :value="user" required disabled icon="user"></b-input>
+          </b-field>
+          <b-field label="Kunde">
+            <b-input type="text" :value="customer" required disabled icon="building"></b-input>
+          </b-field>
+          <ValidationProvider name="area" rules="required" v-slot="{ errors, valid }">
             <b-field label="Bereich ändern"
-                :type="{'is-danger': errors[0] && customer, 'is-success': valid, 'is-unselectable': !customer}"
-                :message="customer?errors:''">
-                <b-autocomplete expanded :disabled="!customer" v-model="area"
-                    open-on-focus :data="filteredBereicheArray"
-                    placeholder="Bereich Wählen" icon="folder-open"
-                    @select="option => selected = option" key="bereich">
-                    <template slot="empty">Noch keinen Bereich namens
-                        "{{area}}"</template>
-                </b-autocomplete>
+              :type="{'is-danger': errors[0] && customer, 'is-success': valid, 'is-unselectable': !customer}"
+              :message="customer?errors:''">
+              <b-autocomplete expanded :disabled="!customer" v-model="area" open-on-focus :data="filteredBereicheArray"
+                placeholder="Bereich Wählen" icon="folder-open" @select="option => selected = option" key="bereich">
+                <template slot="empty">Noch keinen Bereich namens
+                  "{{area}}"</template>
+              </b-autocomplete>
             </b-field>
-        </ValidationProvider>
-        <ValidationProvider name="job" rules="required" v-slot="{ errors, valid }">
-            <b-field label="Job ändern"
-                :type="{'is-danger': errors[0] && customer, 'is-success': valid}"
-                :message="customer?errors:''">
-                <b-autocomplete expanded :disabled="!customer" v-model="job"
-                    open-on-focus :data="filteredJobsArray" placeholder="Job Wählen"
-                    icon="file-alt" @select="option => selected = option" key="job">
-                    <template slot="empty">Noch keinen Job namens
-                        "{{job}}"</template>
-                </b-autocomplete>
+          </ValidationProvider>
+          <ValidationProvider name="job" rules="required" v-slot="{ errors, valid }">
+            <b-field label="Job ändern" :type="{'is-danger': errors[0] && customer, 'is-success': valid}"
+              :message="customer?errors:''">
+              <b-autocomplete expanded :disabled="!customer" v-model="job" open-on-focus :data="filteredJobsArray"
+                placeholder="Job Wählen" icon="file-alt" @select="option => selected = option" key="job">
+                <template slot="empty">Noch keinen Job namens
+                  "{{job}}"</template>
+              </b-autocomplete>
             </b-field>
-        </ValidationProvider>
-        <ValidationProvider name="date" rules="required" v-slot="{ errors, valid }">
-          <b-field label="Datum ändern"
-              :type="{'is-danger': errors[0], 'is-success': valid}"
+          </ValidationProvider>
+          <ValidationProvider name="date" rules="required" v-slot="{ errors, valid }">
+            <b-field label="Datum ändern" :type="{'is-danger': errors[0], 'is-success': valid}"
               :message="'Original: ' + dateToHuman($attrs.selected.date)">
-              <b-datepicker placeholder="Click to select..." icon="calendar"
-                  class="is-small" v-model="date" expanded :max-date="maxDate"
-                  key="date">
-                  <div class="buttons is-right">
-                      <button class="button is-primary is-fullwidth"
-                          @click.prevent="date = new Date()">
-                          <b-icon icon="calendar-alt"></b-icon>
-                          <span>Heute</span>
-                      </button>
-                  </div>
+              <b-datepicker placeholder="Click to select..." icon="calendar" class="is-small" v-model="date" expanded
+                :max-date="maxDate" key="date">
+                <div class="buttons is-right">
+                  <button class="button is-primary is-fullwidth" @click.prevent="date = maxDate">
+                    <b-icon icon="calendar-alt"></b-icon>
+                    <span>Heute</span>
+                  </button>
+                </div>
               </b-datepicker>
-          </b-field>
-        </ValidationProvider>
-        <ValidationProvider name="duration" rules="required"
-            v-slot="{ errors, valid }">
-            <b-field label="Zeitspanne eingeben"
-                :type="{'is-danger':errors[0], 'is-success': valid}"
-                :message="{[errors]: errors[0], 'Im Format:  01h 05m': !errors[0]}">
-            <b-input type="text" :value="duration | durationFilter" required v-cleave="masks.duration" class="duration" v-on:keyup.native="onInput" icon="clock" key="duration"></b-input>
-          </b-field>
-        </ValidationProvider>
+            </b-field>
+          </ValidationProvider>
+          <ValidationProvider name="duration" rules="required" v-slot="{ errors, valid }">
+            <b-field label="Zeitspanne eingeben" :type="{'is-danger':errors[0], 'is-success': valid}"
+              :message="{[errors]: errors[0], 'Im Format:  01h 05m': !errors[0]}">
+              <b-input type="text" :value="duration | durationFilter" required v-cleave="masks.duration"
+                class="duration" v-on:keyup.native="onInput" icon="clock" key="duration"></b-input>
+            </b-field>
+          </ValidationProvider>
 
-        <b-field label="Notiz">
+          <b-field label="Notiz">
             <b-input type="textarea" v-model="note"></b-input>
-        </b-field>
+          </b-field>
 
-      </section>
-      <footer class="modal-card-foot">
-        <button class="button" type="button" @click="$parent.close()">Abbrechen</button>
-        <button class="button is-primary">Ändern</button>
-      </footer>
-    </div>
-  </form>
-    </ValidationObserver>
+        </section>
+        <footer class="modal-card-foot level">
+            <!-- Left side -->
+            <div class="level-left">
+              <div class="level-item">
+              <button class="button" type="button" @click="$parent.close()" ref="cancel">Abbrechen</button>
+              </div>
+              <div class="level-item">
+              <button class="button is-primary">Ändern</button>
+              </div>
+            </div>
+            <div class="level-right">
+              <div class="level-item">
+              <button class="button is-danger" @click.prevent="deleteEntry()">Löschen</button>
+              </div>
+            </div>
+        </footer>
+      </div>
+    </form>
+  </ValidationObserver>
 </template>
 
 <script>
@@ -116,7 +119,8 @@ export default {
       customer: this.$attrs.selected.customer,
       job: this.$attrs.selected.job,
       area: this.$attrs.selected.area,
-      date: new Date(this.$attrs.selected.date),
+      date: this.dateToObj(this.$attrs.selected.date),
+      origDate: this.dateToObj(this.$attrs.selected.date),
       duration: 0,
       note: this.$attrs.selected.note,
       maxDate: new Date(today.getFullYear(), today.getMonth(), today.getDate()),
@@ -189,8 +193,10 @@ export default {
         let dateString
         let year    = date.getFullYear();
         let month   = date.getMonth() + 1;
+        let month0  = month<10?"0" + month:month
         let day     = date.getDate();
-        dateString = year + '.' + month + '.' + day
+        let day0    = day<10?"0" + day:day
+        dateString = year + '.' + month0 + '.' + day0
         return dateString
     },
     rawDuration() {
@@ -255,6 +261,53 @@ export default {
         })
       }
     },
+    deleteEntry() {
+
+        this.$buefy.dialog.confirm({
+          title: 'Endgültig löschen?',
+          message: 'Hiermit löscht du den Eintrag.',
+          confirmText: 'Löschen',
+          type: 'is-danger',
+          trapFocus: true,
+          hasIcon: true,
+          icon: 'trash',
+          cancelText: 'Abbrechen',
+          focusOn: 'cancel',
+          onConfirm: () => {
+            this.$buefy.dialog.confirm({
+              title: 'Wirklich löschen?',
+              message: 'Sicher? Das kannst du nicht rückgängig machen!',
+              confirmText: 'Löschen',
+              type: 'is-danger',
+              trapFocus: true,
+              hasIcon: true,
+              icon: 'trash',
+              cancelText: 'Abbrechen',
+              focusOn: 'cancel',
+              onConfirm: () => {
+                let userID = this.userID
+                let ID = this.ID
+                // console.log("deleting Entry?")
+                // console.log(userID, ID, sendObject)
+                this.$store.dispatch('deleteEntry', {
+                    user: userID,
+                    entryID: ID,
+                })
+                .then(
+                    this.$buefy.toast.open({duration: 5000,
+                        message: `Gelöscht!`,
+                        position: 'is-bottom',
+                        type: 'is-success'
+                    }),
+                  this.$parent.close()
+                )
+              }
+            })
+            this.$parent.close()
+          }
+        })
+
+    },
     onInput(event) {
         this.duration = event.target._vCleave.getFormattedValue()
     },
@@ -267,6 +320,14 @@ export default {
         let date = new Date(year,month,day)
         let dateHuman = date.toLocaleDateString()
         return dateHuman
+    },
+    dateToObj(dateString) {
+        let dateArray = dateString.split(".")
+        let day = dateArray[2]
+        let month = dateArray[1] - 1
+        let year = dateArray[0]
+        let date = new Date(year,month,day)
+        return date
     },
     secondsToHMs: function(seconds) {
         if (!seconds) return '0 h 0 m'
@@ -315,5 +376,8 @@ export default {
 <style>
 .table tbody tr:last-child td, .table tbody tr:last-child th, table td:not([align]), table th:not([align]) {
   vertical-align: middle;
+}
+.modal-card-foot.level {
+  justify-content: space-between;
 }
 </style>

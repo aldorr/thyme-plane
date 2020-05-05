@@ -16,7 +16,7 @@
         "buefy": "^0.8.13",
         "cleave.js": "^1.5.8",
         "core-js": "^3.6.4",
-        "firebase": "^7.12.0",
+        "firebase": "^7.14.2",
         "vee-validate": "^3.2.5",
         "vue": "^2.6.11",
         "vue-router": "^3.1.6",

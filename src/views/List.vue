@@ -192,8 +192,11 @@ export default {
             // get all users' names and ids
             let userList = ["Alle Nutzer"]
             let timeEntries = this.timeEntries
-            for (let [id] of Object.entries(timeEntries)) {
-                userList.push(timeEntries[id].fullname)
+            // console.log(timeEntries)
+            if (timeEntries !== null) {
+                for (let [id] of Object.entries(timeEntries)) {
+                    userList.push(timeEntries[id].fullname)
+                }
             }
             return userList
         },
@@ -238,7 +241,7 @@ export default {
             for (let entry in this.customerEntries) {
                 if (this.customerEntries[entry].name === this.kunde) {
                     for (let job in this.customerEntries[entry].jobs) {
-                        myJobsReturn.push(this.customerEntries[entry].jobs[job])
+                        myJobsReturn.push(this.customerEntries[entry].jobs[job].name)
                     }
                 }
             }
@@ -258,7 +261,7 @@ export default {
             for (let entry in this.customerEntries) {
                 if (this.customerEntries[entry].name === this.kunde) {
                     for (let area in this.customerEntries[entry].bereiche) {
-                        myBereicheReturn.push(this.customerEntries[entry].bereiche[area])
+                        myBereicheReturn.push(this.customerEntries[entry].bereiche[area].name)
                     }
                 }
             }
@@ -564,6 +567,24 @@ export default {
                 }
             })
         },
+        dateToObj(dateString) {
+            let dateArray = dateString.split(".")
+            let day = dateArray[2]
+            let month = dateArray[1] - 1
+            let year = dateArray[0]
+            let date = new Date(year,month,day)
+            return date
+        },
+        dateToOrder(dateString) {
+            let dateArray = dateString.split(".")
+            let day = dateArray[2]
+            let day0 = day<10?"0"+day:day
+            let month = dateArray[1] - 1
+            let month0 = month<10?"0"+month:month
+            let year = dateArray[0]
+            let date = year + "." + month0 + "." + day0
+            return date
+        }
     },
     filters: {
         secondsToHrsMins(seconds) {

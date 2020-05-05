@@ -43,7 +43,7 @@
                                                         <b-tag rounded type="is-dark" size="is-medium">
                                                             <b-button class="is-edit" type="is-dark" size="is-small" @click.prevent="editItem('bereiche', option)">{{ option.name }}</b-button></b-tag>
                                                         <b-tag rounded type="is-dark" size="is-medium">
-                                                            <a @click.prevent="showToggleArhive('bereiche', option)"><b-button icon-left="angle-down" size="is-small" type="is-dark"></b-button></a></b-tag>
+                                                            <a @click.prevent="showToggleArchive('bereiche', option)"><b-button icon-left="angle-down" size="is-small" type="is-dark"></b-button></a></b-tag>
                                                     </b-taglist>
                                                 </div>
                                             </b-field>
@@ -57,7 +57,7 @@
                                                             <b-tag rounded type="is-dark" size="is-medium">
                                                                 <b-button class="is-edit" type="is-dark" size="is-small" @click.prevent="editItem('bereiche', option)">{{ option.name }}</b-button></b-tag>
                                                             <b-tag rounded type="is-dark" size="is-medium">
-                                                                <a @click.prevent="showToggleArhive('bereiche', option)"><b-button icon-left="angle-up" size="is-small" type="is-dark"></b-button></a></b-tag>
+                                                                <a @click.prevent="showToggleArchive('bereiche', option)"><b-button icon-left="angle-up" size="is-small" type="is-dark"></b-button></a></b-tag>
                                                         </b-taglist>
                                                     </div>
                                                 </b-field>
@@ -83,7 +83,7 @@
                                                         <b-tag rounded type="is-dark" size="is-medium">
                                                             <b-button class="is-edit" type="is-dark" size="is-small" @click.prevent="editItem('jobs', option)">{{ option.name }}</b-button></b-tag>
                                                         <b-tag rounded type="is-dark" size="is-medium">
-                                                            <a @click.prevent="showToggleArhive('jobs', option)"><b-button icon-left="angle-down" size="is-small" type="is-dark"></b-button></a></b-tag>
+                                                            <a @click.prevent="showToggleArchive('jobs', option)"><b-button icon-left="angle-down" size="is-small" type="is-dark"></b-button></a></b-tag>
                                                     </b-taglist>
                                                 </div>
                                             </b-field>
@@ -98,7 +98,7 @@
                                                             <b-tag rounded type="is-dark" size="is-medium">
                                                                 <b-button class="is-edit" type="is-dark" size="is-small" @click.prevent="editItem('jobs', option)">{{ option.name }}</b-button></b-tag>
                                                             <b-tag rounded type="is-dark" size="is-medium">
-                                                                <a @click.prevent="showToggleArhive('jobs', option)"><b-button icon-left="angle-up" size="is-small" type="is-dark"></b-button></a></b-tag>
+                                                                <a @click.prevent="showToggleArchive('jobs', option)"><b-button icon-left="angle-up" size="is-small" type="is-dark"></b-button></a></b-tag>
                                                         </b-taglist>
                                                     </div>
                                                 </b-field>
@@ -240,7 +240,7 @@
             },
             bereichExists() {       
                 let bereich = this.newbereich
-                let bereicheObj = this.visibleBereicheObject
+                let bereicheObj = this.allBereicheObject
                 let bereicheArray = Object.values(bereicheObj)
                 let be = bereicheArray.findIndex(k => k.name.toLowerCase()==bereich.toLowerCase());
                 if (be !== -1) {
@@ -252,7 +252,7 @@
             jobExists() {
                 let job = this.newjob
                 // console.log(job)
-                let jobsObj = this.visibleJobsObject
+                let jobsObj = this.allJobsObject
                 // console.log(jobsObj)
                 let jobsArray = Object.values(jobsObj)
                 // console.log(jobsArray)
@@ -305,10 +305,10 @@
             getIndex(kunde, section, thingToDelete) {
                 let myIndex
                 if (section === 'bereiche') {
-                    let myBereiche = this.bereicheObject
+                    let myBereiche = this.allBereicheObject
                     myIndex = this.getKeyByValue(myBereiche, thingToDelete)
                 } else if (section === 'jobs') {
-                    let myJobs = this.visibleJobsObject
+                    let myJobs = this.allJobsObject
                     myIndex = this.getKeyByValue(myJobs, thingToDelete)
                 }
                 return myIndex
@@ -316,21 +316,13 @@
             getKeyByValue(object, value) {
               return Object.keys(object).find(key => object[key] === value);
             },
-            showToggleArhive(section, thingToToggle) {
+            showToggleArchive(section, thingToToggle) {
                 // console.log(thingToToggle)
                 let myKey
                 if (section === 'bereiche') {
-                    if ( thingToToggle.archived === false) {
-                        myKey = this.getKeyByValue(this.visibleBereicheObject, thingToToggle)
-                    } else {
-                        myKey = this.getKeyByValue(this.archivedBereicheObject, thingToToggle)
-                    }
+                        myKey = this.getKeyByValue(this.allBereicheObject, thingToToggle)
                 } else if (section === 'jobs') {
-                    if ( thingToToggle.archived === false) {
-                        myKey = this.getKeyByValue(this.visibleJobsObject, thingToToggle)
-                    } else {
-                        myKey = this.getKeyByValue(this.archivedJobsObject, thingToToggle)
-                    }
+                        myKey = this.getKeyByValue(this.allJobsObject, thingToToggle)
                 }
                 // console.log(myKey)
                 let myValue = thingToToggle.archived
@@ -367,9 +359,9 @@
             showDeleteConfirmation(section, thingToDelete) {
                 let myKey
                 if (section === 'bereiche') {
-                    myKey = this.getKeyByValue(this.bereicheObject, thingToDelete)
+                    myKey = this.getKeyByValue(this.allBereicheObject, thingToDelete)
                 } else if (section === 'jobs') {
-                    myKey = this.getKeyByValue(this.visibleJobsObject, thingToDelete)
+                    myKey = this.getKeyByValue(this.allJobsObject, thingToDelete)
                 }
                 this.$buefy.dialog.confirm({
                     title: 'Löschen?',
@@ -473,6 +465,12 @@
                 // console.log(kunde)
                 // console.log(type)
                 // console.log(item)
+                let ID
+                if (type == 'jobs') {
+                    ID = this.getKeyByValue(this.allJobsObject, item)
+                } else if (type == 'bereiche') {
+                    ID = this.getKeyByValue(this.allBereicheObject, item)
+                }
 
                 this.$buefy.dialog.prompt({
                     message: `<p class="label">Editieren</p>`,
@@ -485,17 +483,21 @@
                         if (item.name !== value) {
                             // this.kunden.push(value)
                             // this.$refs.kunde.setSelected(value)
-                            // this.$store.dispatch('addCustomer', {
-                            //     name: value
-                            // }).then(
+
+                            this.$store.dispatch('editBereich', {
+                                customer: this.kunde,
+                                type: type,
+                                ID: ID,
+                                name: value
+                            }).then(
                                 this.$buefy.toast.open({
                                     duration: 5000,
-                                    message: `Funktion kommt noch! – "${item.name}" (nicht) in "${value}" geändert!`,
+                                    message: `"${item.name}" in "${value}" geändert!`,
                                     position: 'is-bottom',
                                     type: 'is-warning'
                                 })
                                 // close dialog
-                            // )
+                            )
                         } else {
                             this.$buefy.toast.open({
                                 duration: 5000,

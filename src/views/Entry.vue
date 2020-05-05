@@ -297,8 +297,10 @@
                 let dateString
                 let year    = date.getFullYear();
                 let month   = date.getMonth() + 1;
+                let month0  = month<10?"0" + month:month
                 let day     = date.getDate();
-                dateString = year + '.' + month + '.' + day
+                let day0    = day<10?"0" + day:day
+                dateString = year + '.' + month0 + '.' + day0
                 return dateString
                 // return this.date.toString()
             },

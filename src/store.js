@@ -127,6 +127,7 @@ const store = new Vuex.Store({
                     commit('setStatus', 'success')
                     commit('setError', null)
                     commit('setTimeEntries', null)
+                    commit('setCustomerEntries', null)
                     router.push({ name: 'home' })
                 })
                 .catch((error) => {
@@ -192,6 +193,7 @@ const store = new Vuex.Store({
                 .ref('users')
                 .once('value', snapshot => {
                     let result = snapshot.val()
+                        // console.log(result)
                     commit('setTimeEntries', result)
                         // get username from timeEntries based on the UID
                         // i.e. here from Component... not working
@@ -286,6 +288,23 @@ const store = new Vuex.Store({
                     this.dispatch('loadCustomerEntries')
                 })
         },
+        editBereich({ commit }, payload) {
+            // console.log(payload)
+            return firebase
+                .database()
+                .ref('customerentries')
+                .child(payload.customer)
+                .child(payload.type)
+                .child(payload.ID)
+                .set({
+                    "name": payload.name,
+                    "archived": false
+                })
+                .then(() => {
+                    commit('setStatus', 'success')
+                    this.dispatch('loadCustomerEntries')
+                })
+        },
         // eslint-disable-next-line
         // removeEntry({ state, commit, dispatch }, payload) {
         //     // delete i.e. -LeZ82YdBYt8rfz25bSq
@@ -298,7 +317,7 @@ const store = new Vuex.Store({
         //         .ref(toDelete)
         //         .remove()
         // },
-        newEntry({ commit }, payload) {
+        newEntry({ commit, dispatch }, payload) {
             // let myRef = 'users/' + payload.user + '/timeentries/'
             // console.log(myRef)
             // console.log(payload.newEntry)
@@ -321,6 +340,19 @@ const store = new Vuex.Store({
                 .child('timeentries')
                 .child(payload.entryID)
                 .set(payload.updatedEntry)
+                .then(() => {
+                    commit('setStatus', 'success')
+                    this.dispatch('loadTimeEntries')
+                })
+        },
+        deleteEntry({ commit }, payload) {
+            return firebase
+                .database()
+                .ref('users')
+                .child(payload.user)
+                .child('timeentries')
+                .child(payload.entryID)
+                .remove()
                 .then(() => {
                     commit('setStatus', 'success')
                     this.dispatch('loadTimeEntries')
