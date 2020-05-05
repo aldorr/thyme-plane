@@ -106,7 +106,7 @@
                         <a @click="toggle(props.row)" v-if="props.row.note">
                             <b-icon icon="angle-right" :class="showRow(props.row)"></b-icon>
                         </a>
-                        <b-icon icon="angle-down" type="is-light" v-else></b-icon>
+                        <b-icon icon="minus" type="is-light" v-else></b-icon>
                     </b-table-column>
                     <b-table-column labe="Edit">
                         <b-button icon-left="pen" type="is-primary is-outlined is-inverted" @click="showEditModal" :disabled="selected.ID!==props.row.ID"></b-button>
