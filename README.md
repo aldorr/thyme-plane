@@ -31,9 +31,19 @@ npm install
 npm run serve
 ```
 
-* To log in, you will need to have an account.
-* Shoot me a mail, if you'd like one. [thyme-dev@aldorr.net](mailto:thyme-dev@aldorr.net)
-* Or try it out with your own firebase setup.
+______
+
+### Try it out with your own firebase setup.
+
+* First set up a Firebase rtdb.
+
+* Then copy the .env.sample to .env
+
+* Add the appropriate variables to the .env file.
+
+* You may need to add the appropriate tables as well.
+
+______
 
 ### Compile and minify for production
 
@@ -62,7 +72,8 @@ npm run deploy
 ```
 
 * Make your own `deploy.sh` script
-* Mine is something like `surge ./dist`
+* or use the one with your own surge account
+* make sure to add your domain to the /public/CNAME
 
 ### Customize configuration
 
