@@ -23,5 +23,4 @@ yarn-error.log*
 *.sw?
 
 # Deploy script
-deploy.sh
 /public/CNAME
