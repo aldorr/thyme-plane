@@ -65,15 +65,15 @@ TODO: write tests
 npm run lint
 ```
 
-### Deploy script not included
+### Deploy script included
 
 ```bash
 npm run deploy
 ```
 
-* Make your own `deploy.sh` script
-* or use the one with your own surge account
-* make sure to add your domain to the /public/CNAME
+* You can also make your own `deploy.sh` script
+* or use the one provided with your own surge account
+* add your domain to /public/CNAME
 
 ### Customize configuration
 
