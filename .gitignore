@@ -5,6 +5,8 @@ node_modules
 # local env files
 .env.local
 .env.*.local
+.env
+.env.development
 
 # Log files
 npm-debug.log*
@@ -22,3 +24,4 @@ yarn-error.log*
 
 # Deploy script
 deploy.sh
+/public/CNAME
