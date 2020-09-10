@@ -33,9 +33,22 @@ npm run serve
 
 ______
 
-### Try it out with your own firebase setup.
+### Try it out with your own firebase setup
 
 * First set up a Firebase rtdb.
+
+  * Rules
+  
+  ``` json
+  {
+    "rules": {
+        ".read": "auth.uid !== null && data.child('users').child(auth.uid) !== null",
+        ".write": "auth.uid !== null && data.child('users').child(auth.uid) !== null"
+    }
+  }
+  ```
+  
+  * Add Authorized User and make user in Database with same UID (so above rules work)
 
 * Then copy the .env.sample to .env
 
