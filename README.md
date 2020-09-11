@@ -1,10 +1,12 @@
 # thyme plane
 
-[![thyme plane](https://github.com/aldorr/thyme-plane/raw/master/src/assets/logo.png)](https://github.com/aldorr/thyme-plane)
+[![thyme plane](src/assets/logo.png)](https://github.com/aldorr/thyme-plane)
 
 **thyme plane** is a PWA created with [vue.js](https://vuejs.org/)  & [buefy](https://buefy.org/) for making time entry and calculation easier. Adding clients, adding projects, and time for each project is simple. Then doing monthly calculations with filters by client and project makes creating reports a cinch.
 
-[![npm](https://img.shields.io/badge/npm-v6.12.1-success?)](https://github.com/npm/cli)
+[![Build Status](https://img.shields.io/badge/build-passing-passing?)](https://thyme-demo.surge.sh)
+[![npm](https://img.shields.io/badge/npm-v6.14.6-success?)](https://github.com/npm/cli)
+[![node](https://img.shields.io/badge/node-v12.18.3-success?)](https://github.com/nodejs/node)
 [![license](https://img.shields.io/badge/license-MIT-informational?")](https://github.com/aldorr/thyme-plane/blob/master/LICENSE)
 
 ## Project setup
