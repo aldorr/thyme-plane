@@ -22,7 +22,7 @@
                             <b-field label="Kunde:">
                                 <b-autocomplete expanded name="kunde" v-model="kunde" ref="kunde" open-on-focus
                                     :data="filteredKundenArray" placeholder="e.g. Metropolis" icon="building"
-                                    @select="option => selected = option" @input="clearJobs" key="kunde">
+                                    @select="option => selectedKunde = option" @input="clearJobs" key="kunde">
                                     <template slot="empty">Keine Kunden namens {{kunde}}</template>
                                 </b-autocomplete>
                             </b-field>
@@ -31,7 +31,7 @@
                             <b-field label="Bereich:">
                                 <b-autocomplete expanded name="area" v-model="area" open-on-focus
                                     :data="filteredBereicheArray" placeholder="Bereich Wählen" icon="folder-open"
-                                    @select="option => selected = option" key="bereich" :disabled="!kunde||kunde=='Alle Kunden'">
+                                    @select="option => selectedBereich = option" key="bereich" :disabled="!kunde||kunde=='Alle Kunden'">
                                     <template slot="empty">Keine Bereiche namens "{{area}}"</template>
                                 </b-autocomplete>
                             </b-field>
@@ -40,7 +40,7 @@
                             <b-field label="Job:">
                                 <b-autocomplete expanded name="job" v-model="job" open-on-focus
                                     :data="filteredJobsArray" placeholder="Job Wählen" icon="file-alt"
-                                    @select="option => selected = option" key="job" :disabled="!kunde||kunde=='Alle Kunden'">
+                                    @select="option => selectedJob = option" key="job" :disabled="!kunde||kunde=='Alle Kunden'">
                                     <template slot="empty">Keine Jobs namens "{{job}}"</template>
                                 </b-autocomplete>
                             </b-field>
