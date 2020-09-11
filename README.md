@@ -103,7 +103,13 @@ Code released under [MIT](https://github.com/buefy/buefy/blob/master/LICENSE) li
 
 ## Version
 
-* Version 0.2.0
+* Version 0.5.0
+
+## Demo
+
+Try it out here: [https://thyme-demo.surge.sh/](https://thyme-demo.surge.sh/)
+User: demo-user@aldorr.net
+PW: Easy-T0-Guess-Passw0rds
 
 ## Communication
 
