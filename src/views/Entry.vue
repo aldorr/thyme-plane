@@ -29,7 +29,7 @@
                                         <div class="column">
                                             <ValidationProvider name="kunde" rules="required"
                                                 v-slot="{ errors, valid }">
-                                                <b-field label="Choose client"
+                                                <b-field label="Choose Client"
                                                     :type="{'is-danger': errors[0], 'is-success': valid}"
                                                     :message="errors">
                                                     <b-autocomplete expanded v-model="kunde" open-on-focus
@@ -44,7 +44,7 @@
 
                                             <ValidationProvider name="bereich" rules="required"
                                                 v-slot="{ errors, valid }">
-                                                <b-field label="Choose area"
+                                                <b-field label="Choose Area"
                                                     :type="{'is-danger': errors[0] && kunde, 'is-success': valid, 'is-unselectable': !kunde}"
                                                     :message="kunde?errors:''">
                                                     <b-autocomplete expanded :disabled="!kunde" v-model="bereich"
@@ -58,7 +58,7 @@
                                             </ValidationProvider>
 
                                             <ValidationProvider name="job" rules="required" v-slot="{ errors, valid }">
-                                                <b-field label="Choose job"
+                                                <b-field label="Choose Job"
                                                     :type="{'is-danger': errors[0] && kunde, 'is-success': valid}"
                                                     :message="kunde?errors:''">
                                                     <b-autocomplete expanded :disabled="!kunde" v-model="job"
@@ -73,7 +73,7 @@
 
                                         <div class="column">
                                             <ValidationProvider name="date" rules="required" v-slot="{ errors, valid }">
-                                                <b-field label="Range"
+                                                <b-field label="Choose Date Range"
                                                     :type="{'is-danger': errors[0], 'is-success': valid}"
                                                     message="Default: Today">
                                                     <b-datepicker placeholder="Click to select..." icon="calendar"
@@ -96,7 +96,7 @@
                                             </ValidationProvider>
                                             <ValidationProvider name="duration" rules="required"
                                                 v-slot="{ errors, valid }">
-                                                <b-field label="Choose date range"
+                                                <b-field label="Add Duration"
                                                     :type="{'is-danger':errors[0], 'is-success': valid}"
                                                     :message="{[errors]: errors[0], 'Format: 01h 05m': !errors[0]}">
                                                     <b-input placeholder='01h 05m' class="duration"

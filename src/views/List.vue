@@ -10,8 +10,8 @@
                             <h1 class="title has-text-left">Filter:</h1>
                         </div>
                         <div class="column is-one-fifth-desktop is-full-mobile is-half-tablet">
-                            <b-field label="Nutzer:">
-                                <b-select expanded placeholder="Name auswählen" name="userName" v-model="userName">
+                            <b-field label="User:">
+                                <b-select expanded placeholder="Choose Name" name="userName" v-model="userName">
                                     <option v-for="option in userList" :value="option" :key="option">
                                         {{ option }}
                                     </option>
@@ -19,19 +19,19 @@
                             </b-field>
                         </div>
                         <div class="column is-one-fifth-desktop is-full-mobile is-half-tablet">
-                            <b-field label="Kunde:">
+                            <b-field label="Client:">
                                 <b-autocomplete expanded name="kunde" v-model="kunde" ref="kunde" open-on-focus
-                                    :data="filteredKundenArray" placeholder="e.g. Metropolis" icon="building"
+                                    :data="filteredKundenArray" placeholder="e.g. Forest Inc" icon="building"
                                     @select="option => selectedKunde = option" @input="clearJobs" key="kunde">
                                     <template slot="empty">No Client named {{kunde}}.</template>
                                 </b-autocomplete>
                             </b-field>
                         </div>
                         <div class="column is-one-fifth-desktop is-full-mobile is-half-tablet">
-                            <b-field label="Bereich:">
+                            <b-field label="Area:">
                                 <b-autocomplete expanded name="area" v-model="area" open-on-focus
-                                    :data="filteredBereicheArray" placeholder="Bereich Wählen" icon="folder-open"
-                                    @select="option => selectedBereich = option" key="bereich" :disabled="!kunde||kunde=='Alle Kunden'">
+                                    :data="filteredBereicheArray" placeholder="Choose Area" icon="folder-open"
+                                    @select="option => selectedBereich = option" key="bereich" :disabled="!kunde||kunde=='All Clients'">
                                     <template slot="empty">No Area named "{{area}}".</template>
                                 </b-autocomplete>
                             </b-field>
@@ -39,8 +39,8 @@
                         <div class="column is-one-fifth-desktop is-full-mobile is-half-tablet">
                             <b-field label="Job:">
                                 <b-autocomplete expanded name="job" v-model="job" open-on-focus
-                                    :data="filteredJobsArray" placeholder="Job Wählen" icon="file-alt"
-                                    @select="option => selectedJob = option" key="job" :disabled="!kunde||kunde=='Alle Kunden'">
+                                    :data="filteredJobsArray" placeholder="Choose Job" icon="file-alt"
+                                    @select="option => selectedJob = option" key="job" :disabled="!kunde||kunde=='All Clients'">
                                     <template slot="empty">No Jobs named "{{job}}".</template>
                                 </b-autocomplete>
                             </b-field>
