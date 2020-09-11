@@ -1,18 +1,23 @@
-# thyme expert
+# thyme plane
 
-[![thyme expert](https://thyme-expert.surge.sh/img/logo.4aa43e67.png)](https://github.com/aldorr/thyme-expert)
+[![thyme plane](https://github.com/aldorr/thyme-plane/raw/master/src/assets/logo.png)](https://github.com/aldorr/thyme-plane)
 
-**thyme expert** is a PWA created with [vue.js](https://vuejs.org/)  & [buefy](https://buefy.org/) for making time entry and calculation easier. Adding clients, adding projects, and time for each project is simple. Then doing monthly calculations with filters by client and project makes creating reports a cinch.
+**thyme plane** is a PWA created with [vue.js](https://vuejs.org/)  & [buefy](https://buefy.org/) for making time entry and calculation easier. Adding clients, adding projects, and time for each project is simple. Then doing monthly calculations with filters by client and project makes creating reports a cinch.
 
 [![npm](https://img.shields.io/badge/npm-v6.12.1-success?)](https://github.com/npm/cli)
-[![license](https://img.shields.io/badge/license-MIT-informational?")](https://github.com/aldorr/thyme-expert/blob/master/LICENSE)
+[![license](https://img.shields.io/badge/license-MIT-informational?")](https://github.com/aldorr/thyme-plane/blob/master/LICENSE)
 
 ## Project setup
 
 ## git steps
 
 * make new branch
-* clone repository (i.e.): `bash git clone https://github.com/aldorr/thyme-expert.git`
+* clone repository (i.e.):
+
+    ```bash
+    git clone https://github.com/aldorr/thyme-plane.git
+    ```
+
 * make changes
 * submit changes
 * submit pull request
