@@ -62,8 +62,8 @@
                 <div class="hero-foot has-padding-15em">
                     <nav class="level" v-if="kunde != ''">
                         <div class="level-item has-text-centered">
-                            <b-field label="Datum auswählen" :custom-class="anyTimeEntries||datesSelected?'has-text-dark':'has-text-grey-light'" label-position="on-border">
-                                <b-datepicker placeholder="Klicken..." v-model="dates" range :max-date="now" :mobile-native="false" :disabled="!anyTimeEntries && !datesSelected">
+                            <b-field label="Choose dates" :custom-class="anyTimeEntries||datesSelected?'has-text-dark':'has-text-grey-light'" label-position="on-border">
+                                <b-datepicker placeholder="Click..." v-model="dates" range :max-date="now" :mobile-native="false" :disabled="!anyTimeEntries && !datesSelected">
                                     <div class="buttons is-right">
                                         <button class="button is-danger is-fullwidth" @click.prevent="dates = []">
                                             <b-icon icon="times-circle"></b-icon>
