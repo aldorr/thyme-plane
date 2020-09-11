@@ -4,19 +4,19 @@
         <div class="modal-card">
             <header class="modal-card-head">
                 <p class="modal-card-title">
-                Neuer User hinzufügen
+                Add New User
                 </p>
                 <b-icon icon="lock"></b-icon>
             </header>
             <div class="modal-card-body">
             <ValidationProvider name="email" rules="required" v-slot="{ errors, valid }">
               <b-field horizontal :type="{'is-danger':errors[0], 'is-success':valid}" :message="errors" label="Name">
-                      <b-input type="text" v-model="fullname" name="fullname" value="fullname@domain.com" key="fullname" placeholder="Regula Pfeiffer"  ref="name"/>
+                      <b-input type="text" v-model="fullname" name="fullname" value="fullname@domain.com" key="fullname" placeholder="Chucky Armbruster"  ref="name"/>
               </b-field>
             </ValidationProvider>
             <ValidationProvider name="email" rules="required|email" v-slot="{ errors, valid }">
               <b-field horizontal :type="{'is-danger':errors[0], 'is-success':valid}" :message="errors" label="Email">
-                      <b-input type="email" v-model="email" name="email" value="email@domain.com" key="email" placeholder="neuernutzer@breeder.de" />
+                      <b-input type="email" v-model="email" name="email" value="email@domain.com" key="email" placeholder="newuser@aldorr.net" />
               </b-field>
             </ValidationProvider>
             <ValidationProvider name="password" rules="required" v-slot="{ errors, valid }">
@@ -30,7 +30,7 @@
                     <b-button
                     type="is-success"
                     icon-right="lock"
-                    @click.prevent="passes(validate)">Hinzufügen</b-button>
+                    @click.prevent="passes(validate)">Add</b-button>
             </footer>
         </div>
   </ValidationObserver>
@@ -50,7 +50,7 @@ import {
 extend('email', email);
 extend('required', {
   ...required,
-  message: 'Nicht vergessen…'
+  message: 'Don\'t forget…'
 });
 
 import {

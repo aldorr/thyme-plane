@@ -6,25 +6,25 @@
                     <div class="card">
                         <form action="#">
                             <header class="card-header">
-                                <p class="card-header-title">Kunden, Bereiche &amp; Jobs bearbeiten</p>
+                                <p class="card-header-title">Edit Client, Area &amp; Jobs</p>
                             </header>
                             <div class="card-content">
                                 <div class="columns">
                                     <div class="column">
                                         <!-- TODO: These will come from the db -->
-                                        <b-field label="Kunde auswählen">
+                                        <b-field label="Choose or Add Client">
                                             <b-autocomplete v-model="kunde" ref="kunde" open-on-focus
-                                                :data="filteredKundenArray" placeholder="e.g. Metropolis"
+                                                :data="filteredKundenArray" placeholder="e.g. Forest Inc"
                                                 icon="building" @select="option => selected = option">
                                                 <template slot="empty">
                                                     <a @click="showAddKunde">
-                                                        <span> Kunde "{{kunde}}" neu Anlegen? </span>
+                                                        <span> Add new client "{{kunde}}" </span>
                                                     </a>
                                                 </template>
                                             </b-autocomplete>
                                         </b-field>
 
-                                        <b-field label="Bereich hinzufügen" v-if="kunde !== '' && kundeExists">
+                                        <b-field label="Add Area" v-if="kunde !== '' && kundeExists">
                                             <form @submit.prevent="addBereich">
                                                 <b-field>
                                                     <b-input icon="folder-open" expanded v-model="newbereich"></b-input>
@@ -49,7 +49,7 @@
                                             </b-field>
                                         </b-message>
                                         <article class="message is-white">
-                                            <b-button  v-if="kunde !== '' && kundeExists && !isEmpty(archivedBereicheObject)" type="is-warning is-outlined" @click="bereicheArchActive=!bereicheArchActive" expanded >Archivierte Bereiche</b-button>
+                                            <b-button  v-if="kunde !== '' && kundeExists && !isEmpty(archivedBereicheObject)" type="is-warning is-outlined" @click="bereicheArchActive=!bereicheArchActive" expanded >Archived areas</b-button>
                                             <b-message v-if="kunde !== '' && kundeExists && !isEmpty(archivedBereicheObject)" class="has-text-left" type="is-warning" :active.sync="bereicheArchActive">
                                                 <b-field grouped group-multiline>
                                                     <div class="control" v-for="option in archivedBereicheObject" :key="option.name">
@@ -64,7 +64,7 @@
                                             </b-message>
                                         </article>
 
-                                        <b-field label="Job hinzufügen" v-if="kunde !== '' && kundeExists">
+                                        <b-field label="Add Job" v-if="kunde !== '' && kundeExists">
                                             <form @submit.prevent="addJob">
                                                 <b-field>
                                                     <b-input icon="file-alt" expanded v-model="newjob"></b-input>
@@ -90,7 +90,7 @@
                                         </b-message>
 
                                         <article class="message is-white">
-                                            <b-button  v-if="kunde !== '' && kundeExists && !isEmpty(archivedJobsObject)" type="is-warning is-outlined" @click="jobsArchActive=!jobsArchActive" expanded >Archivierte Jobs</b-button>
+                                            <b-button  v-if="kunde !== '' && kundeExists && !isEmpty(archivedJobsObject)" type="is-warning is-outlined" @click="jobsArchActive=!jobsArchActive" expanded >Archived Jobs</b-button>
                                             <b-message v-if="kunde !== '' && kundeExists && !isEmpty(archivedJobsObject)" class="has-text-left" type="is-warning" :active.sync="jobsArchActive">
                                                 <b-field grouped group-multiline>
                                                     <div class="control" v-for="option in archivedJobsObject" :key="option.name">
@@ -326,12 +326,12 @@
                 }
                 // console.log(myKey)
                 let myValue = thingToToggle.archived
-                let myFeedback = myValue?'ktivieren':'rchivieren'
+                let myFeedback = myValue?'ctivate':'rchive'
                 // console.log(myFeedback)
-                let message1 = 'Bist du sicher, du willst ' + this.kunde + 's "' + thingToToggle.name + '" <b> a' + myFeedback + '</b>? Du kannst das später wieder ändern.'
+                let message1 = 'Are you sure you want to <b> a' + myFeedback + '</b> customer ' + this.kunde + '\'s "' + thingToToggle.name + '"? You have the ability to unarchive at a later date.'
                 let title = 'A' + myFeedback + '?'
-                let confirmText = myValue?'Wirklich aktivieren':'Wirklich archivieren'
-                let message2 = '"' + thingToToggle.name + '" ' + (myValue?'aktiviert!':'archiviert!')
+                let confirmText = myValue?'Really reactivate':'Really archive'
+                let message2 = '"' + thingToToggle.name + '" ' + (myValue?'activated!':'archived!')
                 this.$buefy.dialog.confirm({
                     title: title,
                     message: message1,
@@ -364,9 +364,9 @@
                     myKey = this.getKeyByValue(this.allJobsObject, thingToDelete)
                 }
                 this.$buefy.dialog.confirm({
-                    title: 'Löschen?',
-                    message: 'Bist du sicher, du willst ' + this.kunde + 's "' + thingToDelete + '" <b>löschen</b>? Du kannst es später immer noch wieder neu hinzufügen.',
-                    confirmText: 'Wirklich löschen',
+                    title: 'Delete?',
+                    message: 'Are you sure you want to delete ' + this.kunde + "'s " + thingToDelete + '"? You can re-add this later.',
+                    confirmText: 'Really delete',
                     type: 'is-danger',
                     hasIcon: true,
                     onConfirm: () => {
@@ -379,7 +379,7 @@
                         }).then(
                             this.$buefy.toast.open({
                             duration: 5000,
-                            message: `"${thingToDelete}" gelöscht!`,
+                            message: `"${thingToDelete}" deleted!`,
                             position: 'is-bottom',
                             type: 'is-success'
                         })
@@ -400,7 +400,7 @@
                     .then(
                         this.$buefy.toast.open({
                             duration: 5000,
-                            message: `"${this.newbereich}" hinzugefügt!`,
+                            message: `"${this.newbereich}" added!`,
                             position: 'is-bottom',
                             type: 'is-success'
                         })
@@ -410,14 +410,14 @@
                 } else if (this.newbereich !== "") {
                     this.$buefy.toast.open({
                             duration: 5000,
-                            message: `Bereich " ${this.newbereich}" gibt es schon.`,
+                            message: `Arera " ${this.newbereich}" already exists.`,
                             position: 'is-bottom',
                             type: 'is-danger'
                         })
                 } else {
                     this.$buefy.toast.open({
                             duration: 5000,
-                            message:`Bitte einen neuen Bereich eingeben`,
+                            message:`Please enter a new Area name.`,
                             position: 'is-bottom',
                             type: 'is-danger'
                         })
@@ -436,7 +436,7 @@
                     .then(
                         this.$buefy.toast.open({
                             duration: 5000,
-                            message: `"${this.newjob}" hinzugefügt!`,
+                            message: `"${this.newjob}" added!`,
                             position: 'is-bottom',
                             type: 'is-success'
                         })
@@ -446,14 +446,14 @@
                 } else if (this.newjob !== "") {
                     this.$buefy.toast.open({
                             duration: 5000,
-                            message: `Job "${this.newjob}" gibt es schon.`,
+                            message: `Job "${this.newjob}" already exists.`,
                             position: 'is-bottom',
                             type: 'is-danger'
                         })
                 } else {
                     this.$buefy.toast.open({
                             duration: 5000,
-                            message: `Bitte einen neuen Job eingeben`,
+                            message: `Please enter a new Job name.`,
                             position: 'is-bottom',
                             type: 'is-danger'
                         })
@@ -473,12 +473,12 @@
                 }
 
                 this.$buefy.dialog.prompt({
-                    message: `<p class="label">Editieren</p>`,
+                    message: `<p class="label">Edit</p>`,
                     inputAttrs: {
                         placeholder: item.name,
                         value: item.name
                     },
-                    confirmText: 'Ändern',
+                    confirmText: 'Change',
                     onConfirm: (value) => {
                         if (item.name !== value) {
                             // this.kunden.push(value)
@@ -492,7 +492,7 @@
                             }).then(
                                 this.$buefy.toast.open({
                                     duration: 5000,
-                                    message: `"${item.name}" in "${value}" geändert!`,
+                                    message: `"${item.name}" in "${value}" changed!`,
                                     position: 'is-bottom',
                                     type: 'is-warning'
                                 })
@@ -501,7 +501,7 @@
                         } else {
                             this.$buefy.toast.open({
                                 duration: 5000,
-                                message: `Nichts geändert`,
+                                message: `Nothing changed.`,
                                 position: 'is-bottom',
                                 type: 'is-warning'
                             })

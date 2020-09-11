@@ -1,5 +1,5 @@
 <template>
-        <HelloWorld v-bind:msg="`Willkommen ` + userName" v-bind:text="`Du bist als ` + userEmail + ` eingeloggt`"/>
+        <HelloWorld v-bind:msg="`Welcome ` + userName" v-bind:text="`You are logged in as ` + userEmail"/>
 </template>
 
 <script>

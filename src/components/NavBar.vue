@@ -9,9 +9,9 @@
 
                 <div class="navbar-item navbar-meta">
                     <div class="buttons is-right">
-                        <b-button icon-left="user" class="button is-light" @click="openLogin()" v-if="!userLoggedIn">Anmelden</b-button>
-                        <b-button icon-left="user-slash" class="button is-warning" outlined @click="logoutFromFirebase" v-if="userLoggedIn"></b-button>
-                        <b-button icon-left="user-plus" class="button is-success" inverted @click="addNewUser" v-if="userLoggedIn"></b-button>
+                        <b-button icon-left="user" class="button is-light" @click="openLogin()" v-if="!userLoggedIn">Login</b-button>
+                        <b-button icon-left="user-slash" class="button is-warning" outlined @click="logoutFromFirebase" v-if="userLoggedIn" />
+                        <b-button icon-left="user-plus" class="button is-success" inverted @click="addNewUser" v-if="userLoggedIn" />
 <!-- TODO: Disabled - needs work -->
                         <!-- <b-button icon-left="tools" class="button" tag="router-link" to="/admin" type="is-default" v-if="userLoggedIn"></b-button> -->
                     </div>
@@ -37,8 +37,8 @@
                 <div class="navbar-end">
                     <div class="navbar-item">
                         <div class="buttons is-right">
-                            <b-button icon-left="user" class="button is-light" @click="openLogin()" v-if="!userLoggedIn">Anmelden</b-button>
-                            <b-button icon-left="user-slash" class="button is-warning" outlined @click="logoutFromFirebase" v-if="userLoggedIn">Abmelden</b-button>
+                            <b-button icon-left="user" class="button is-light" @click="openLogin()" v-if="!userLoggedIn">Login</b-button>
+                            <b-button icon-left="user-slash" class="button is-warning" outlined @click="logoutFromFirebase" v-if="userLoggedIn">Logout</b-button>
                             <b-button icon-left="user-plus" class="button is-success" inverted @click="addNewUser" v-if="userLoggedIn"></b-button>
 <!-- TODO: Disabled - needs work -->
                             <!-- <b-button icon-left="tools" class="button" tag="router-link" to="/admin" type="is-default" v-if="userLoggedIn"></b-button> -->
@@ -72,19 +72,19 @@ export default {
         navitems () {
             let menuItems = [
             {
-                title: 'Kunden editieren',
+                title: 'Edit Customer',
                 icon: 'pen',
                 link: '/jobs',
                 type: 'is-danger'
             },
             {
-                title: 'Zeiteingabe',
+                title: 'Time Entry',
                 icon: 'plus',
                 link: '/entry',
                 type: 'is-success'
             },
             {
-                title: 'Zeitübersicht',
+                title: 'Time Overview',
                 icon: 'calendar',
                 link: '/list',
                 type: 'is-primary'
@@ -108,18 +108,18 @@ export default {
             // first show a confirmation thing
 
             this.$buefy.dialog.confirm({
-                title: 'Komm bald wieder',
-                message: 'Kein Problem. <br>Wir warten hier auf dich.',
-                confirmText: 'Tschüß',
+                title: 'Are you leaving?',
+                message: 'No problem. <br>We\'ll be waiting here for you when you get back.',
+                confirmText: 'Bye',
                 type: 'is-warning',
                 hasIcon: true,
                 icon: 'hand-paper',
-                cancelText: 'Bleib hier',
+                cancelText: 'Stay',
                 onConfirm: () => {
                     this.$store.dispatch('signOutAction')
                     .then(() => {
                         this.$buefy.toast.open({
-                            message: 'Komm bald wieder!',
+                            message: 'Come back soon!',
                             type: 'is-primary',
                             position: 'is-bottom'
                         })

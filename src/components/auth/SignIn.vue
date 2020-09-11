@@ -4,7 +4,7 @@
         <div class="modal-card">
             <header class="modal-card-head">
                 <p class="modal-card-title">
-                In Thyme-Expert eingloggen
+                Log in to Thyme Plan
                 </p>
                 <b-icon icon="lock"></b-icon>
             </header>
@@ -23,11 +23,11 @@
             </div>
             <footer class="modal-card-foot">
               <b-button @click="openPasswordReset()" @mouseover="forgot='I forgot'" @mouseout="forgot='I'" style="margin-right:auto; width=32px;" type="is-danger" icon-right="heart-broken">{{forgot}}</b-button>
-                    <b-button @click="$parent.close()" style="margin-left:auto;">Abbrechen</b-button>
+                    <b-button @click="$parent.close()" style="margin-left:auto;">Cancel</b-button>
                     <b-button
                     type="is-success"
                     icon-right="lock"
-                    @click.prevent="passes(validate)">Einloggen</b-button>
+                    @click.prevent="passes(validate)">Log In</b-button>
             </footer>
         </div>
   </ValidationObserver>
@@ -46,7 +46,7 @@ import {
 extend('email', email);
 extend('required', {
   ...required,
-  message: 'Nicht vergessen…'
+  message: 'Don\'t forget…'
 });
 
 import {
@@ -89,7 +89,7 @@ export default {
       this.$store.dispatch('signInAction', user)
       .then(response => {
           this.$buefy.toast.open({
-            message: 'Du hast dich erfolgreich eingeloggt mit der Email Adresse: ' + response.user.email,
+            message: 'You have successfully logged in with the following email address: ' + response.user.email,
             type: 'is-success',
             position: 'is-bottom',
             duration: 3000

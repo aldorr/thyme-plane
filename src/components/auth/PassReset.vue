@@ -39,7 +39,7 @@ import {
 extend('email', email);
 extend('required', {
   ...required,
-  message: 'Nicht vergessen…'
+  message: 'Don\'t forget…'
 });
 
 import {

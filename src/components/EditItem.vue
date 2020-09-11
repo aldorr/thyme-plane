@@ -3,7 +3,7 @@
     <form @submit.prevent="passes(changeEntry)">
       <div class="modal-card">
         <header class="modal-card-head">
-          <p class="modal-card-title">Eintrag ändern</p>
+          <p class="modal-card-title">Edit Entry</p>
         </header>
         <section class="modal-card-body">
           <b-field label="Name">
@@ -17,8 +17,8 @@
               :type="{'is-danger': errors[0] && customer, 'is-success': valid, 'is-unselectable': !customer}"
               :message="customer?errors:''">
               <b-autocomplete expanded :disabled="!customer" v-model="area" open-on-focus :data="filteredBereicheArray"
-                placeholder="Bereich Wählen" icon="folder-open" @select="option => selected = option" key="bereich">
-                <template slot="empty">Noch keinen Bereich namens
+                placeholder="Choose Area" icon="folder-open" @select="option => selected = option" key="bereich">
+                <template slot="empty">No Area named: 
                   "{{area}}"</template>
               </b-autocomplete>
             </b-field>
@@ -27,21 +27,21 @@
             <b-field label="Job ändern" :type="{'is-danger': errors[0] && customer, 'is-success': valid}"
               :message="customer?errors:''">
               <b-autocomplete expanded :disabled="!customer" v-model="job" open-on-focus :data="filteredJobsArray"
-                placeholder="Job Wählen" icon="file-alt" @select="option => selected = option" key="job">
-                <template slot="empty">Noch keinen Job namens
+                placeholder="Choose Job" icon="file-alt" @select="option => selected = option" key="job">
+                <template slot="empty">No Job named:
                   "{{job}}"</template>
               </b-autocomplete>
             </b-field>
           </ValidationProvider>
           <ValidationProvider name="date" rules="required" v-slot="{ errors, valid }">
-            <b-field label="Datum ändern" :type="{'is-danger': errors[0], 'is-success': valid}"
+            <b-field label="Change date" :type="{'is-danger': errors[0], 'is-success': valid}"
               :message="'Original: ' + dateToHuman($attrs.selected.date)">
               <b-datepicker placeholder="Click to select..." icon="calendar" class="is-small" v-model="date" expanded
                 :max-date="maxDate" key="date">
                 <div class="buttons is-right">
                   <button class="button is-primary is-fullwidth" @click.prevent="date = maxDate">
                     <b-icon icon="calendar-alt"></b-icon>
-                    <span>Heute</span>
+                    <span>Today</span>
                   </button>
                 </div>
               </b-datepicker>
@@ -64,15 +64,15 @@
             <!-- Left side -->
             <div class="level-left">
               <div class="level-item">
-              <button class="button" type="button" @click="$parent.close()" ref="cancel">Abbrechen</button>
+              <button class="button" type="button" @click="$parent.close()" ref="cancel">Cancel</button>
               </div>
               <div class="level-item">
-              <button class="button is-primary">Ändern</button>
+              <button class="button is-primary">Submit Changes</button>
               </div>
             </div>
             <div class="level-right">
               <div class="level-item">
-              <button class="button is-danger" @click.prevent="deleteEntry()">Löschen</button>
+              <button class="button is-danger" @click.prevent="deleteEntry()">Delete</button>
               </div>
             </div>
         </footer>
@@ -83,12 +83,12 @@
 
 <script>
     import Cleave from 'cleave.js'
-    import { extend } from 'vee-validate';
-    import { required } from 'vee-validate/dist/rules';
+    import { extend } from 'vee-validate'
+    import { required } from 'vee-validate/dist/rules'
     // Add the required rule
     extend('required', {
         ...required,
-        message: 'Nicht vergessen…'
+        message: 'Don\'t forget…'
     });
 
     import { ValidationObserver, ValidationProvider } from 'vee-validate'
@@ -217,14 +217,14 @@ export default {
       if (this.anyChanges) {
 
         this.$buefy.dialog.confirm({
-          title: 'Wirklich?',
-          message: 'Hiermit überschreibst du mit deinen Änderungen.',
-          confirmText: 'Überschreiben',
+          title: 'Really?',
+          message: 'This will overwrite the data with your changes!',
+          confirmText: 'Submit Changes',
           type: 'is-warning',
           trapFocus: true,
           hasIcon: true,
           icon: 'pen',
-          cancelText: 'Bearbeiten',
+          cancelText: 'Edit',
           onConfirm: () => {
             let userID = this.userID
             let ID = this.ID
@@ -245,7 +245,7 @@ export default {
             })
             .then(
                 this.$buefy.toast.open({duration: 5000,
-                    message: `Geändert!`,
+                    message: `Changed!`,
                     position: 'is-bottom',
                     type: 'is-success'
                 }),
@@ -255,7 +255,7 @@ export default {
         })
       } else {
         this.$buefy.toast.open({
-          message: 'Keine Änderungen?!',
+          message: 'No changes?!',
           type: 'is-warning',
           position: 'is-bottom'
         })
@@ -264,25 +264,25 @@ export default {
     deleteEntry() {
 
         this.$buefy.dialog.confirm({
-          title: 'Endgültig löschen?',
-          message: 'Hiermit löscht du den Eintrag.',
+          title: 'Really Delete?',
+          message: 'This will completely delete the entry… forever!',
           confirmText: 'Löschen',
           type: 'is-danger',
           trapFocus: true,
           hasIcon: true,
           icon: 'trash',
-          cancelText: 'Abbrechen',
+          cancelText: 'Cancel',
           focusOn: 'cancel',
           onConfirm: () => {
             this.$buefy.dialog.confirm({
-              title: 'Wirklich löschen?',
-              message: 'Sicher? Das kannst du nicht rückgängig machen!',
+              title: 'Really really?',
+              message: 'Are you really really sure? You can not undo this!',
               confirmText: 'Löschen',
               type: 'is-danger',
               trapFocus: true,
               hasIcon: true,
               icon: 'trash',
-              cancelText: 'Abbrechen',
+              cancelText: 'Cancel',
               focusOn: 'cancel',
               onConfirm: () => {
                 let userID = this.userID
@@ -295,7 +295,7 @@ export default {
                 })
                 .then(
                     this.$buefy.toast.open({duration: 5000,
-                        message: `Gelöscht!`,
+                        message: `Deleted!`,
                         position: 'is-bottom',
                         type: 'is-success'
                     }),

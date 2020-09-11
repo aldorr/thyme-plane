@@ -23,7 +23,7 @@
                                 <b-autocomplete expanded name="kunde" v-model="kunde" ref="kunde" open-on-focus
                                     :data="filteredKundenArray" placeholder="e.g. Metropolis" icon="building"
                                     @select="option => selectedKunde = option" @input="clearJobs" key="kunde">
-                                    <template slot="empty">Keine Kunden namens {{kunde}}</template>
+                                    <template slot="empty">No Client named {{kunde}}.</template>
                                 </b-autocomplete>
                             </b-field>
                         </div>
@@ -32,7 +32,7 @@
                                 <b-autocomplete expanded name="area" v-model="area" open-on-focus
                                     :data="filteredBereicheArray" placeholder="Bereich Wählen" icon="folder-open"
                                     @select="option => selectedBereich = option" key="bereich" :disabled="!kunde||kunde=='Alle Kunden'">
-                                    <template slot="empty">Keine Bereiche namens "{{area}}"</template>
+                                    <template slot="empty">No Area named "{{area}}".</template>
                                 </b-autocomplete>
                             </b-field>
                         </div>
@@ -41,7 +41,7 @@
                                 <b-autocomplete expanded name="job" v-model="job" open-on-focus
                                     :data="filteredJobsArray" placeholder="Job Wählen" icon="file-alt"
                                     @select="option => selectedJob = option" key="job" :disabled="!kunde||kunde=='Alle Kunden'">
-                                    <template slot="empty">Keine Jobs namens "{{job}}"</template>
+                                    <template slot="empty">No Jobs named "{{job}}".</template>
                                 </b-autocomplete>
                             </b-field>
                         </div>
@@ -52,7 +52,7 @@
                             <div class="level-item has-text-centered">
                                 <div>
                                     <!-- <p class="heading"><b-button icon-left="clipboard" class="button is-link" @click.prevent="addHours">Berechne Stunden</b-button></p> -->
-                                    <p class="title">Zeit Gesamt: {{hoursAll | secondsToHrsMins}}</p>
+                                    <p class="title">Total time: {{hoursAll | secondsToHrsMins}}</p>
                                 </div>
                             </div>
                         </nav>
@@ -67,7 +67,7 @@
                                     <div class="buttons is-right">
                                         <button class="button is-danger is-fullwidth" @click.prevent="dates = []">
                                             <b-icon icon="times-circle"></b-icon>
-                                            <span>Zurücksetzen</span>
+                                            <span>Reset</span>
                                         </button>
                                     </div>
                                 </b-datepicker>
@@ -76,7 +76,7 @@
                         <div class="level-item has-text-centered">
                             <div class="buttons">
                                 <b-button expanded icon-left="file-alt" class="button is-info"
-                                    @click.prevent="exportTableToCSV" :disabled="!anyTimeEntries">Exportieren</b-button>
+                                    @click.prevent="exportTableToCSV" :disabled="!anyTimeEntries">Export</b-button>
                             </div>
                         </div>
                     </nav>
@@ -141,10 +141,10 @@
                 <div class="hero-body">
                     <div class="container">
                         <h1 class="title">
-                            Zeitberechnung…
+                            Time calculation…
                         </h1>
                         <h2 class="subtitle">
-                            Zum loslegen, oben bitte einen Benutzer und einen Kunden auswählen.
+                            To start, please choose at least a User and a Client.
                         </h2>
                     </div>
                 </div>
@@ -161,7 +161,7 @@ import EditItem from '@/components/EditItem.vue'
 export default {
     data() {
         return {
-            kunde: 'Alle Kunden',
+            kunde: 'All Clients',
             defaultFilter: 0,
             job: '',
             area: '',
@@ -190,7 +190,7 @@ export default {
         },
         userList() {
             // get all users' names and ids
-            let userList = ["Alle Nutzer"]
+            let userList = ["All Users"]
             let timeEntries = this.timeEntries
             // console.log(timeEntries)
             if (timeEntries !== null) {
@@ -222,7 +222,7 @@ export default {
             })
         },
         kunden() {
-            let myKundenReturn = ["Alle Kunden"]
+            let myKundenReturn = ["All Clients"]
             for (let entry in this.customerEntries) {
                 myKundenReturn.push(this.customerEntries[entry].name)
             }
@@ -285,7 +285,7 @@ export default {
         // byKundeTimeEntries -- if kunde !== '' return filtered list, otherwise return value,
         byKundeTimeEntries() {
             let allTimeEntries = this.getAllTimeEntries()
-            if (this.kunde !== '' && this.kunde !== 'Alle Kunden') {
+            if (this.kunde !== '' && this.kunde !== 'All Clients') {
                 // return list only from customer chosen
                 let returnArray = []
                 for (let key in allTimeEntries) {
@@ -333,7 +333,7 @@ export default {
         // byUserNameTimeEntries -- if userName !== '' return filtered list, otherwise return value
         byUserNameTimeEntries() {
             let areaTimeEntries = this.byAreaTimeEntries
-            if (this.userName !== 'Alle Nutzer') {
+            if (this.userName !== 'All Users') {
                 // return special List
                 let returnArray = []
                 for (let key in areaTimeEntries) {
@@ -528,7 +528,7 @@ export default {
 
                     csv.push(row.join(","));
                 }
-                let lastrow = "Zeit Gesamt,,,,," + this.secondsToHrsMins(this.hoursAll) + ","
+                let lastrow = "Total Time,,,,," + this.secondsToHrsMins(this.hoursAll) + ","
                 // add last row with total time
                 csv.push(lastrow)
 
@@ -536,7 +536,7 @@ export default {
                 this.downloadCSV(csv.join("\n"), filename);
             } else {
                 this.$buefy.toast.open({
-                message: 'Macht das Sinn, etwas leeres zu exportieren?!',
+                message: 'Does it really make any sense exporting an empty table?!',
                 type: 'is-warning',
                 position: 'is-bottom'
                 })
