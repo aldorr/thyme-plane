@@ -125,3 +125,7 @@ PW
 
 * notify about issues here
 * or directly on discord: https://discord.gg/2U8EmG
+
+## Donate
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/H2H354CTG)
