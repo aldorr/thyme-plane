@@ -87,31 +87,39 @@
             <b-table ref="table" :data="currentTimeEntries" striped default-sort-direction="asc" default-sort="date"
                 detailed detail-key="ID" :show-detail-icon=false :opened-detailed="isToggled?detailed:[]"
                     :selected.sync="selected">
-                <template slot-scope="props">
-                    <b-table-column field="customer" label="Kunde" sortable>{{ props.row.customer }}</b-table-column>
-                    <b-table-column field="area" label="Bereich" sortable>{{ props.row.area }}</b-table-column>
-                    <b-table-column field="job" label="Job" sortable>{{ props.row.job }}</b-table-column>
-                    <b-table-column field="user" label="Nutzer" sortable>{{ props.row.user }} </b-table-column>
-                    <b-table-column field="date" label="Datum" sortable>{{ props.row.date | dateToHuman }}
+                <!-- <template v-slot="props"> -->
+                    <b-table-column field="customer" label="Kunde" sortable>
+                        <template v-slot="props">{{ props.row.customer }}</template>
                     </b-table-column>
-                    <b-table-column field="time" label="Zeit">{{ props.row.time | secondsToHrsMins }}</b-table-column>
+                    <b-table-column field="area" label="Bereich" sortable>
+                        <template v-slot="props">{{ props.row.area }}</template>
+                    </b-table-column>
+                    <b-table-column field="job" label="Job" sortable><template v-slot="props">{{ props.row.job }}</template></b-table-column>
+                    <b-table-column field="user" label="Nutzer" sortable><template v-slot="props">{{ props.row.user }} </template></b-table-column>
+                    <b-table-column field="date" label="Datum" sortable><template v-slot="props">{{ props.row.date | dateToHuman }}</template>
+                    </b-table-column>
+                    <b-table-column field="time" label="Zeit"><template v-slot="props">{{ props.row.time | secondsToHrsMins }}</template></b-table-column>
                     <b-table-column field="ID" label="Notiz">
-                        <template slot="header" slot-scope="{ column }">
+                        <template v-slot:header="{ column }">
                             <b-tooltip
                                 :label="isToggled?'Schließe ' + column.label + 'en':'Öffne ' + column.label + 'en'">
                                 <a @click="toggleAll()"> {{ column.label }} <b-icon icon="angle-right"
                                         :class="isToggled?'open':'closed'" size="is-small"></b-icon></a>
                             </b-tooltip>
                         </template>
-                        <a @click="toggle(props.row)" v-if="props.row.note">
-                            <b-icon icon="angle-right" :class="showRow(props.row)"></b-icon>
-                        </a>
-                        <b-icon icon="minus" type="is-light" v-else></b-icon>
+                        <template v-slot="props">
+                            <a @click="toggle(props.row)" v-if="props.row.note">
+                                <b-icon icon="angle-right" :class="showRow(props.row)"></b-icon>
+                            </a>
+                            <b-icon icon="minus" type="is-light" v-else></b-icon>
+                        </template>
                     </b-table-column>
-                    <b-table-column labe="Edit">
-                        <b-button icon-left="pen" type="is-primary is-outlined is-inverted" @click="showEditModal" :disabled="selected.ID!==props.row.ID"></b-button>
+                    <b-table-column label="Edit">
+                        <template v-slot="props">
+                            <b-button icon-left="pen" type="is-primary is-outlined is-inverted" @click="showEditModal" :disabled="selected.ID!==props.row.ID"></b-button>
+                        </template>
                     </b-table-column>
-                </template>
+                <!-- </template> -->
                 <template slot="detail" slot-scope="props">
                     <article class="media">
                         <div class="media-content">
