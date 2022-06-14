@@ -241,8 +241,12 @@
             bereichExists() {       
                 let bereich = this.newbereich
                 let bereicheObj = this.allBereicheObject
-                let bereicheArray = Object.values(bereicheObj)
-                let be = bereicheArray.findIndex(k => k.name.toLowerCase()==bereich.toLowerCase());
+                let be = -1;
+                // console.log(bereicheObj);
+                if (bereicheObj!==null && bereicheObj !== undefined) {
+                    let bereicheArray = Object.values(bereicheObj)
+                    be = bereicheArray.findIndex(k => k.name.toLowerCase()==bereich.toLowerCase());
+                }
                 if (be !== -1) {
                     return true
                 } else {
@@ -254,9 +258,12 @@
                 // console.log(job)
                 let jobsObj = this.allJobsObject
                 // console.log(jobsObj)
-                let jobsArray = Object.values(jobsObj)
+                let je = -1;
                 // console.log(jobsArray)
-                let je = jobsArray.findIndex(k => k.name.toLowerCase()==job.toLowerCase());
+                if (jobsObj !== null && jobsObj !== undefined) {
+                    let jobsArray = Object.values(jobsObj)
+                    je = jobsArray.findIndex(k => k.name.toLowerCase()==job.toLowerCase());
+                }
                 if (je !== -1) {
                     return true
                 } else {
