@@ -13,7 +13,7 @@
         "@fortawesome/fontawesome-svg-core": "^1.2.27",
         "@fortawesome/free-solid-svg-icons": "^5.12.1",
         "@fortawesome/vue-fontawesome": "^0.1.9",
-        "buefy": "^0.8.13",
+        "buefy": "^0.9.21",
         "cleave.js": "^1.5.8",
         "core-js": "^3.6.5",
         "firebase": "^8.0.2",

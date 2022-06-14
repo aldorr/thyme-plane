@@ -21,7 +21,8 @@
             </ValidationProvider>
             <ValidationProvider name="password" rules="required" v-slot="{ errors, valid }">
               <b-field horizontal :type="{'is-danger':errors[0], 'is-success':valid}" :message="errors" label="Password">
-                      <b-input type="password" v-model="password" name="password" key="password" placeholder="something-secret-and-maybe-funny" />
+              <!-- TODO: Make password revealer... -->
+                      <b-input type="password" v-model="password" name="password" key="password" placeholder="something-secret-and-maybe-funny" password-reveal />
               </b-field>
             </ValidationProvider>
             </div>
@@ -93,17 +94,17 @@ export default {
   methods: {
 
     validate() {
-      // this.$validator.validateAll().then((result) => {
-      //   if (result) {
+      this.$validator.validateAll().then((result) => {
+        if (result) {
       this.addUserToFirebase()
-      //   } else {
-      //     this.$buefy.toast.open({
-      //       message: 'It seems your form is missing something! Please check the fields.',
-      //       type: 'is-danger',
-      //       position: 'is-bottom'
-      //     })
-      //   }
-      // })
+        } else {
+          this.$buefy.toast.open({
+            message: 'It seems your form is missing something! Please check the fields.',
+            type: 'is-danger',
+            position: 'is-bottom'
+          })
+        }
+      })
     },
 
     reset() {
@@ -127,6 +128,13 @@ export default {
           type: 'is-success',
           position: 'is-bottom'
         })
+        .catch(
+          this.$buefy.toast.open({
+          message: 'New user: ' + user.email + ' unsuccesful!',
+          type: 'is-danger',
+          position: 'is-bottom'
+        })
+        )
       );
       this.$parent.close()
       return;
