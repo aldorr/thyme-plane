@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <HelloWorld msg="Get ready to become a Thyme Expert." text="Please sign in to continue."/>
+    <HelloWorld msg="Get ready to board the Thyme Plane." text="Please sign in to continue."/>
   </div>
 </template>
 
