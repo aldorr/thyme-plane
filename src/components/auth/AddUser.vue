@@ -1,6 +1,6 @@
 <template>
-    <form>
-  <ValidationObserver ref="observer" v-slot="{ passes }">
+  <ValidationObserver ref="observer" v-slot="{ handleSubmit }">
+    <form @submit.prevent="handleSubmit(submit)">
         <div class="modal-card">
             <header class="modal-card-head">
                 <p class="modal-card-title">
@@ -31,11 +31,11 @@
                     <b-button
                     type="is-success"
                     icon-right="lock"
-                    @click.prevent="passes(validate)">Add</b-button>
+                    @click.prevent="handleSubmit(submit)">Add</b-button>
             </footer>
         </div>
-  </ValidationObserver>
     </form>
+  </ValidationObserver>
 </template>
 
 <script>
@@ -46,6 +46,7 @@ import {
   required,
   email
 } from 'vee-validate/dist/rules';
+import { ToastProgrammatic as Toast } from 'buefy'
 
 // Add the rules
 extend('email', email);
@@ -98,13 +99,17 @@ export default {
         if (result) {
       this.addUserToFirebase()
         } else {
-          this.$buefy.toast.open({
+          Toast.open({
             message: 'It seems your form is missing something! Please check the fields.',
             type: 'is-danger',
             position: 'is-bottom'
           })
         }
       })
+    },
+
+    submit() {
+      this.addUserToFirebase()
     },
 
     reset() {
@@ -123,13 +128,13 @@ export default {
       }
       // console.log(user)
       this.$store.dispatch('newUserAction', user).then(
-        this.$buefy.toast.open({
+        Toast.open({
           message: 'New user: ' + user.email + ' added!',
           type: 'is-success',
           position: 'is-bottom'
         })
         .catch(
-          this.$buefy.toast.open({
+          Toast.open({
           message: 'New user: ' + user.email + ' unsuccesful!',
           type: 'is-danger',
           position: 'is-bottom'
