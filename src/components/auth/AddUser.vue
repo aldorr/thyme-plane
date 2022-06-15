@@ -133,13 +133,13 @@ export default {
           type: 'is-success',
           position: 'is-bottom'
         })
+      )
         .catch(
           Toast.open({
           message: 'New user: ' + user.email + ' unsuccesful!',
           type: 'is-danger',
           position: 'is-bottom'
         })
-        )
       );
       this.$parent.close()
       return;
