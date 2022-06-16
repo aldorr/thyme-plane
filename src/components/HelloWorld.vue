@@ -46,6 +46,7 @@ h1.title.title-w-image {
     display: flex;
     width: 100%;
     justify-content: center;
+    align-items: center;
     text-shadow: 0px 0px 2px #000c;
     gap: 1rem;
 }
@@ -53,7 +54,7 @@ h1.title.title-w-image {
 h1 svg {
   max-width: 50vw;
   width: auto;
-  max-height: 36px;
+  max-height: 40px;
   text-shadow: 0px 0px 2px #fffc;
 }
 
