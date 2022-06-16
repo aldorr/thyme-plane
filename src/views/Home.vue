@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <HelloWorld msg="Get ready to board the Thyme Plane." text="Please sign in to continue."/>
+    <HelloWorld msg="Get on board with Thyme Plane." text="Please sign in."/>
   </div>
 </template>
 
@@ -14,6 +14,7 @@ export default {
   components: {
     HelloWorld
   },
+  // TODO: Make Welcome Message dynamic
   mounted() {
     // kind of a reverse route protection.
     // seems like this should happen in the router, but hey, it works.
