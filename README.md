@@ -2,124 +2,88 @@
 
 [![thyme plane](src/assets/logo.png)](https://github.com/aldorr/thyme-plane)
 
-**thyme plane** is a PWA created with [vue.js](https://vuejs.org/)  & [buefy](https://buefy.org/) for making time entry and calculation easier. Adding clients, adding projects, and time for each project is simple. Then doing monthly calculations with filters by client and project makes creating reports a cinch.
+**thyme plane** is a PWA created with [Vue.js](https://vuejs.org/) 3, [Vite](https://vitejs.dev/), and [Buefy](https://buefy.org/) (Bulma 1) for making time entry and calculation easier. Adding clients, adding projects, and time for each project is simple. Then doing monthly calculations with filters by client and project makes creating reports a cinch.
 
 [![Build Status](https://img.shields.io/badge/build-passing-passing?)](https://thyme.aldorr.net)
-[![npm](https://img.shields.io/badge/npm-v6.14.6-success?)](https://github.com/npm/cli)
-[![node](https://img.shields.io/badge/node-v12.18.3-success?)](https://github.com/nodejs/node)
-[![license](https://img.shields.io/badge/license-MIT-informational?")](https://github.com/aldorr/thyme-plane/blob/master/LICENSE)
+[![node](https://img.shields.io/badge/node-v20.19+-success?)](https://github.com/nodejs/node)
+[![license](https://img.shields.io/badge/license-MIT-informational?)](https://github.com/aldorr/thyme-plane/blob/master/LICENSE)
+
+## Requirements
+
+- Node.js **20.19+** (see [`.tool-versions`](.tool-versions))
 
 ## Project setup
 
-## git steps
-
-* make new branch
-* clone repository (i.e.):
-
-    ```bash
-    git clone https://github.com/aldorr/thyme-plane.git
-    ```
-
-* make changes
-* submit changes
-* submit pull request
-
-## npm steps
-
-### Install Dependencies
+### Install dependencies
 
 ```bash
 npm install
 ```
 
-### Compile and serve hot-reloading for development
+### Environment
+
+Copy [`.env.sample`](.env.sample) to `.env` and fill in your Firebase project values (`VITE_FIREBASE_*`).
+
+### Develop (Vite)
 
 ```bash
-npm run serve
+npm run dev
+# or: npm run serve
 ```
 
-______
-
-### Try it out with your own firebase setup
-
-* First set up a Firebase rtdb.
-
-  * Rules
-  
-  ``` json
-  {
-    "rules": {
-        ".read": "auth.uid !== null && data.child('users').child(auth.uid) !== null",
-        ".write": "auth.uid !== null && data.child('users').child(auth.uid) !== null"
-    }
-  }
-  ```
-  
-  * Add Authorized User and make user in Database with same UID (so above rules work)
-
-* Then copy the .env.sample to .env
-
-* Add the appropriate variables to the .env file.
-
-* You may need to add the appropriate tables as well.
-
-______
-
-### Compile and minify for production
+### Production build
 
 ```bash
 npm run build
 ```
 
-### Run your tests
+Preview the production build locally:
 
 ```bash
-npm run test
+npm run preview
 ```
 
-TODO: write tests
-
-### Lints and fixes files
+### Lint
 
 ```bash
 npm run lint
 ```
 
-### Deploy script included
+### Deploy (Surge)
 
 ```bash
 npm run deploy
 ```
 
-* You can also make your own `deploy.sh` script
-* or use the one provided with your own surge account
-* add your domain to /public/CNAME
+This builds the app, copies `dist/index.html` to `dist/200.html` for SPA fallback, then publishes with Surge. Optionally add your domain to `/public/CNAME`.
+
+---
+
+### Try it with your own Firebase setup
+
+1. Create a Firebase Realtime Database.
+2. Apply security rules from [`firebase-rules.json`](firebase-rules.json) (or equivalent in the Firebase console).
+3. Add an authorized Auth user and a matching `users/{uid}` record in the database.
+4. Copy `.env.sample` → `.env` and set the `VITE_FIREBASE_*` variables.
+5. Run `npm run dev`.
+
+---
 
 ### Customize configuration
 
-See vue.js CLI [Configuration Reference](https://cli.vuejs.org/config/).
+See the [Vite configuration reference](https://vitejs.dev/config/). App theme/colors live in [`src/assets/scss/main.scss`](src/assets/scss/main.scss).
 
 ## License
 
-Code released under [MIT](https://github.com/buefy/buefy/blob/master/LICENSE) license.
+Code released under [MIT](LICENSE) license.
 
 ## Version
 
 * Version 0.5.0
 
-## Full Demo
-
-Try it out here
+## Live demo
 
 * [https://thyme.aldorr.net/](https://thyme.aldorr.net/)
-
-User
-
-* demo-user@aldorr.net
-
-PW
-
-* Easy-T0-Guess-Passw0rds
 
 ## Communication
 

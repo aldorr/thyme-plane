@@ -136,7 +136,6 @@ export default {
         },
         openLogin() {
             this.$buefy.modal.open({
-                parent: this,
                 component: SigninVue,
                 hasModalCard: true,
                 trapFocus: true
@@ -145,7 +144,6 @@ export default {
         },
         addNewUser() {
             this.$buefy.modal.open({
-                parent: this,
                 component: AdduserVue,
                 hasModalCard: true,
                 trapFocus: true

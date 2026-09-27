@@ -9,17 +9,17 @@
                 <b-icon icon="lock"></b-icon>
             </header>
             <div class="modal-card-body">
-            <ValidationProvider name="email" rules="required" v-slot="slotProps">
+            <ValidationProvider v-model="fullname" name="fullname" rules="required" v-slot="slotProps">
               <b-field horizontal :type="getFieldType(slotProps)" :message="getErrorMessage(slotProps)" label="Name">
-                      <b-input type="text" v-model="fullname" name="fullname" value="fullname@domain.com" key="fullname" placeholder="Chucky Armbruster"  ref="name"/>
+                      <b-input type="text" v-model="fullname" name="fullname" key="fullname" placeholder="Chucky Armbruster"  ref="name"/>
               </b-field>
             </ValidationProvider>
-            <ValidationProvider name="email" rules="required|email" v-slot="slotProps">
+            <ValidationProvider v-model="email" name="email" rules="required|email" v-slot="slotProps">
               <b-field horizontal :type="getFieldType(slotProps)" :message="getErrorMessage(slotProps)" label="Email">
-                      <b-input type="email" v-model="email" name="email" value="email@domain.com" key="email" placeholder="newuser@aldorr.net" />
+                      <b-input type="email" v-model="email" name="email" key="email" placeholder="newuser@aldorr.net" />
               </b-field>
             </ValidationProvider>
-            <ValidationProvider name="password" rules="required" v-slot="slotProps">
+            <ValidationProvider v-model="password" name="password" rules="required" v-slot="slotProps">
               <b-field horizontal :type="getFieldType(slotProps)" :message="getErrorMessage(slotProps)" label="Password">
               <!-- TODO: Make password revealer... -->
                       <b-input type="password" v-model="password" name="password" key="password" placeholder="something-secret-and-maybe-funny" password-reveal />
@@ -27,7 +27,7 @@
             </ValidationProvider>
             </div>
             <footer class="modal-card-foot">
-                    <b-button @click="$parent.close()" style="margin-left:auto;">Cancel</b-button>
+                    <b-button @click="closeModal" style="margin-left:auto;">Cancel</b-button>
                     <b-button
                     type="is-success"
                     icon-right="lock"
@@ -47,6 +47,8 @@ import {
   email
 } from '@vee-validate/rules';
 import { ToastProgrammatic as Toast } from 'buefy'
+import ValidationObserver from '@/components/ValidationObserver.vue'
+import ValidationProvider from '@/components/ValidationProvider.vue'
 
 // Add the rules
 defineRule('email', email);
@@ -56,11 +58,6 @@ defineRule('required', (value) => {
   }
   return true;
 });
-
-import {
-  ValidationObserver,
-  ValidationProvider
-} from 'vee-validate'
 
 export default {
 
@@ -170,8 +167,11 @@ export default {
         //   position: 'is-bottom'
         // })
       // );
-      this.$parent.close()
+      this.$emit('close')
       return;
+    },
+    closeModal() {
+      this.$emit('close')
     },
     focusInput() {
       this.$refs.name.focus()

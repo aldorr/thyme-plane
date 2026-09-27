@@ -12,7 +12,7 @@
           <b-field label="Kunde">
             <b-input type="text" :value="customer" required disabled icon="building"></b-input>
           </b-field>
-          <ValidationProvider name="area" rules="required" v-slot="slotProps">
+          <ValidationProvider v-model="area" name="area" rules="required" v-slot="slotProps">
             <b-field label="Bereich ändern"
               :type="{'is-danger': !!(slotProps?.errors?.[0] && customer), 'is-success': !!slotProps?.valid, 'is-unselectable': !customer}"
               :message="customer ? String(slotProps?.errors?.[0] || '') : ''">
@@ -23,7 +23,7 @@
               </b-autocomplete>
             </b-field>
           </ValidationProvider>
-          <ValidationProvider name="job" rules="required" v-slot="slotProps">
+          <ValidationProvider v-model="job" name="job" rules="required" v-slot="slotProps">
             <b-field label="Job ändern" :type="{'is-danger': !!(slotProps?.errors?.[0] && customer), 'is-success': !!slotProps?.valid}"
               :message="customer ? String(slotProps?.errors?.[0] || '') : ''">
               <b-autocomplete expanded :disabled="!customer" v-model="job" open-on-focus :data="filteredJobsArray"
@@ -33,7 +33,7 @@
               </b-autocomplete>
             </b-field>
           </ValidationProvider>
-          <ValidationProvider name="date" rules="required" v-slot="slotProps">
+          <ValidationProvider v-model="date" name="date" rules="required" v-slot="slotProps">
             <b-field label="Change date" :type="{'is-danger': !!slotProps?.errors?.[0], 'is-success': !!slotProps?.valid}"
               :message="'Original: ' + dateToHuman($attrs.selected.date)">
               <b-datepicker placeholder="Click to select..." icon="calendar" class="is-small" v-model="date" expanded
@@ -47,11 +47,11 @@
               </b-datepicker>
             </b-field>
           </ValidationProvider>
-          <ValidationProvider name="duration" rules="required" v-slot="slotProps">
+          <ValidationProvider v-model="duration" name="duration" rules="required" v-slot="slotProps">
             <b-field label="Zeitspanne eingeben" :type="{'is-danger': !!slotProps?.errors?.[0], 'is-success': !!slotProps?.valid}"
               :message="String(slotProps?.errors?.[0] || 'Im Format:  01h 05m')">
-              <b-input type="text" :value="duration | durationFilter" required v-cleave="masks.duration"
-                class="duration" v-on:keyup.native="onInput" icon="clock" key="duration"></b-input>
+              <b-input type="text" :value="formatDuration(duration)" required v-cleave="masks.duration"
+                class="duration" @keyup="onInput" icon="clock" key="duration"></b-input>
             </b-field>
           </ValidationProvider>
 
@@ -64,7 +64,7 @@
             <!-- Left side -->
             <div class="level-left">
               <div class="level-item">
-              <button class="button" type="button" @click="$parent.close()" ref="cancel">Cancel</button>
+              <button class="button" type="button" @click="closeModal" ref="cancel">Cancel</button>
               </div>
               <div class="level-item">
               <button class="button is-primary">Submit Changes</button>
@@ -82,9 +82,13 @@
 </template>
 
 <script>
-    import Cleave from 'cleave.js'
     import { defineRule } from 'vee-validate'
     import { required } from '@vee-validate/rules'
+    import ValidationObserver from '@/components/ValidationObserver.vue'
+    import ValidationProvider from '@/components/ValidationProvider.vue'
+    import { cleaveDirective as cleave } from '@/utils/cleave-directive'
+    import { durationFilter } from '@/utils/formatters'
+
     // Add the required rule
     defineRule('required', (value) => {
         if (!required(value)) {
@@ -92,20 +96,6 @@
         }
         return true;
     });
-
-    import { ValidationObserver, ValidationProvider } from 'vee-validate'
-
-  const cleave = {
-      name: 'cleave',
-      bind(el, binding) {
-          const duration = el.querySelector('.duration input')
-          duration._vCleave = new Cleave(duration, binding.value)
-      },
-      unbind(el) {
-          const duration = el.querySelector('.duration input')
-          duration._vCleave.destroy()
-      }
-  }
 export default {
   name: 'EditItem',
   directives: { cleave },
@@ -262,7 +252,7 @@ export default {
                     position: 'is-bottom',
                     type: 'is-success'
                 }),
-              this.$parent.close()
+              this.$emit('close')
             )
           }
         })
@@ -312,11 +302,11 @@ export default {
                         position: 'is-bottom',
                         type: 'is-success'
                     }),
-                  this.$parent.close()
+                  this.$emit('close')
                 )
               }
             })
-            this.$parent.close()
+            this.$emit('close')
           }
         })
 
@@ -324,6 +314,10 @@ export default {
     onInput(event) {
         this.duration = event.target._vCleave.getFormattedValue()
     },
+    closeModal() {
+      this.$emit('close')
+    },
+    formatDuration: durationFilter,
     dateToHuman(dateString) {
         // Make date into string based on locale
         let dateArray = dateString.split(".")
@@ -353,32 +347,6 @@ export default {
     },
   },
 
-  filters: {
-    durationFilter: function (value) {
-      let hrs, mins
-      if (value.length === 4) {
-        hrs = value.slice(0, 2)
-        if (hrs > 12) {
-          hrs = 12
-        }
-        return hrs + "h "
-      }
-      if (value.length >= 6) {
-        mins = value.slice(4, 6)
-        hrs = value.slice(0, 2)
-        if (hrs > 12) {
-          hrs = 12
-        }
-        if (mins > 59) {
-          mins = 59
-        }
-        return hrs + "h " + mins + "m"
-      } else {
-        return value
-      }
-
-    }
-  },
   mounted() {
     // console.log(this.secondsToHMs(this.$attrs.time))
     this.duration = this.secondsToHMs(this.$attrs.selected.time)

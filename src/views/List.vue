@@ -61,7 +61,7 @@
                             <div class="level-item has-text-centered">
                                 <div>
                                     <!-- <p class="heading"><b-button icon-left="clipboard" class="button is-link" @click.prevent="addHours">Berechne Stunden</b-button></p> -->
-                                    <p class="title">Total time: {{hoursAll | secondsToHrsMins}}</p>
+                                    <p class="title">Total time: {{ formatSeconds(hoursAll) }}</p>
                                 </div>
                             </div>
                         </nav>
@@ -105,9 +105,9 @@
                     </b-table-column>
                     <b-table-column field="job" label="Job" sortable><template v-slot="props">{{ props?.row?.job }}</template></b-table-column>
                     <b-table-column field="user" label="Nutzer" sortable><template v-slot="props">{{ props?.row?.user }} </template></b-table-column>
-                    <b-table-column field="date" label="Datum" sortable><template v-slot="props">{{ props?.row?.date | dateToHuman }}</template>
+                    <b-table-column field="date" label="Datum" sortable><template v-slot="props">{{ formatDate(props?.row?.date) }}</template>
                     </b-table-column>
-                    <b-table-column field="time" label="Zeit"><template v-slot="props">{{ props?.row?.time | secondsToHrsMins }}</template></b-table-column>
+                    <b-table-column field="time" label="Zeit"><template v-slot="props">{{ formatSeconds(props?.row?.time) }}</template></b-table-column>
                     <b-table-column field="ID" label="Notiz">
                         <template v-slot:header="{ column }">
                             <b-tooltip
@@ -174,6 +174,7 @@
 <script>
 
 import EditItem from '@/components/EditItem.vue'
+import { secondsToHrsMins, dateToHuman } from '@/utils/formatters'
 
 export default {
     name: 'listView',
@@ -561,7 +562,7 @@ export default {
 
                     csv.push(row.join(","));
                 }
-                let lastrow = "Total Time,,,,," + this.secondsToHrsMins(this.hoursAll) + ","
+                let lastrow = "Total Time,,,,," + this.formatSeconds(this.hoursAll) + ","
                 // add last row with total time
                 csv.push(lastrow)
 
@@ -588,7 +589,6 @@ export default {
         showEditModal() {
             // console.log("Where's the modal?")
             this.$buefy.modal.open({
-                parent: this,
                 component: EditItem,
                 hasModalCard: true,
                 customClass: 'custom-class custom-class-2',
@@ -617,26 +617,9 @@ export default {
             let year = dateArray[0]
             let date = year + "." + month0 + "." + day0
             return date
-        }
-    },
-    filters: {
-        secondsToHrsMins(seconds) {
-            if (!seconds) return '0 hrs 0 mins'
-            let mins = seconds / 60
-            let hrs = Math.floor(mins / 60)
-            mins = mins % 60
-            return hrs + 'hrs ' + mins + 'mins'
         },
-        dateToHuman(dateString) {
-            // Make date into string based on locale
-            let dateArray = dateString.split(".")
-            let day = dateArray[2]
-            let month = dateArray[1] - 1
-            let year = dateArray[0]
-            let date = new Date(year,month,day)
-            let dateHuman = date.toLocaleDateString()
-            return dateHuman
-        },
+        formatSeconds: secondsToHrsMins,
+        formatDate: dateToHuman
     },
     mounted() {
         this.loadAllData()

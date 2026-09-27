@@ -1,0 +1,39 @@
+// Brand colors (Bulma 1 Sass customization)
+@use "bulma/sass" with (
+  $primary: #8c67ef,
+  $link: #8c67ef
+);
+
+@use "buefy/src/scss/buefy";
+
+#app {
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+}
+
+#nav {
+  padding: 30px;
+}
+
+#nav a {
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+#nav a.router-link-exact-active {
+  color: #42b983;
+}
+
+div.is-view {
+  margin-top: 3.25rem;
+}
+
+// Field layout tweak retained from prior Bulma 1 migration
+.field.has-addons,
+.field-body > .field:not(.is-narrow) {
+  align-items: center;
+  justify-content: space-between;
+}

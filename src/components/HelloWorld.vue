@@ -43,7 +43,6 @@ export default {
   methods: {
     openLogin() {
       this.$buefy.modal.open({
-        parent: this,
         component: SigninVue,
         hasModalCard: true,
         trapFocus: true

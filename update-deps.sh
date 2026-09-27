@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Ensure we're using the correct Node.js version
-asdf local nodejs 18.19.0
+asdf set nodejs 20.19.6
 
 # Remove old dependencies
 rm -rf node_modules package-lock.json
@@ -10,4 +10,4 @@ rm -rf node_modules package-lock.json
 npm install
 
 # Start the development server
-npm run serve 
+npm run serve

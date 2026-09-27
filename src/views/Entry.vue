@@ -32,7 +32,7 @@
                                 <div class="card-content">
                                     <div class="columns">
                                         <div class="column">
-                                            <ValidationProvider name="kunde" rules="required"
+                                            <ValidationProvider v-model="kunde" name="kunde" rules="required"
                                                 v-slot="slotProps">
                                                 <b-field label="Choose Client"
                                                     :type="{ 'is-danger': !!slotProps?.errors?.[0], 'is-success': !!slotProps?.valid }"
@@ -50,7 +50,7 @@
                                                 </b-field>
                                             </ValidationProvider>
 
-                                            <ValidationProvider name="bereich" rules="required"
+                                            <ValidationProvider v-model="bereich" name="bereich" rules="required"
                                                 v-slot="slotProps">
                                                 <b-field label="Choose Area"
                                                     :type="{ 'is-danger': !!(slotProps?.errors?.[0] && kunde), 'is-success': !!slotProps?.valid, 'is-unselectable': !kunde }"
@@ -68,7 +68,7 @@
                                                 </b-field>
                                             </ValidationProvider>
 
-                                            <ValidationProvider name="job" rules="required" v-slot="slotProps">
+                                            <ValidationProvider v-model="job" name="job" rules="required" v-slot="slotProps">
                                                 <b-field label="Choose Job"
                                                     :type="{ 'is-danger': !!(slotProps?.errors?.[0] && kunde), 'is-success': !!slotProps?.valid }"
                                                     :message="kunde ? String(slotProps?.errors?.[0] || '') : ''">
@@ -86,7 +86,7 @@
                                         </div>
 
                                         <div class="column">
-                                            <ValidationProvider name="date" rules="required" v-slot="slotProps">
+                                            <ValidationProvider v-model="date" name="date" rules="required" v-slot="slotProps">
                                                 <b-field label="Choose Date Range"
                                                     :type="{ 'is-danger': !!slotProps?.errors?.[0], 'is-success': !!slotProps?.valid }"
                                                     message="Default: Today">
@@ -108,14 +108,14 @@
                                                     </b-datepicker>
                                                 </b-field>
                                             </ValidationProvider>
-                                            <ValidationProvider name="duration" rules="required"
+                                            <ValidationProvider v-model="duration" name="duration" rules="required"
                                                 v-slot="slotProps">
                                                 <b-field label="Add Duration"
                                                     :type="{ 'is-danger': !!slotProps?.errors?.[0], 'is-success': !!slotProps?.valid }"
                                                     :message="String(slotProps?.errors?.[0] || 'Format: 01h 05m')">
                                                     <b-input placeholder='01h 05m' class="duration"
-                                                        :value="duration | durationFilter" v-cleave="masks.duration"
-                                                        v-on:keyup.native="onInput" icon="clock" key="time-input" />
+                                                        :value="formatDuration(duration)" v-cleave="masks.duration"
+                                                        @keyup="onInput" icon="clock" key="time-input" />
                                                 </b-field>
                                             </ValidationProvider>
                                             <b-field label="Note">
@@ -147,10 +147,13 @@
 
 <script>
 
-import Cleave from 'cleave.js'
-
 import { defineRule } from 'vee-validate';
 import { required } from '@vee-validate/rules';
+import ValidationObserver from '@/components/ValidationObserver.vue'
+import ValidationProvider from '@/components/ValidationProvider.vue'
+import { cleaveDirective as cleave } from '@/utils/cleave-directive'
+import { durationFilter } from '@/utils/formatters'
+
 // Add the required rule
 defineRule('required', (value) => {
     if (!required(value)) {
@@ -158,20 +161,6 @@ defineRule('required', (value) => {
     }
     return true;
 });
-
-import { ValidationObserver, ValidationProvider } from 'vee-validate'
-
-const cleave = {
-    name: 'cleave',
-    bind(el, binding) {
-        const duration = el.querySelector('.duration input')
-        duration._vCleave = new Cleave(duration, binding.value)
-    },
-    unbind(el) {
-        const duration = el.querySelector('.duration input')
-        duration._vCleave.destroy()
-    }
-}
 
 export default {
     name: 'entryEditor',
@@ -555,33 +544,8 @@ export default {
             if (this.$refs.kunde && this.$refs.kunde.focus) {
                 this.$refs.kunde.focus()
             }
-        }
-    },
-    filters: {
-        durationFilter: function (value) {
-            let hrs, mins
-            if (value.length === 4) {
-                hrs = value.slice(0, 2)
-                if (hrs > 12) {
-                    hrs = 12
-                }
-                return hrs + "h "
-            }
-            if (value.length >= 6) {
-                mins = value.slice(4, 6)
-                hrs = value.slice(0, 2)
-                if (hrs > 12) {
-                    hrs = 12
-                }
-                if (mins > 59) {
-                    mins = 59
-                }
-                return hrs + "h " + mins + "m"
-            } else {
-                return value
-            }
-
-        }
+        },
+        formatDuration: durationFilter
     },
     created() {
         console.log('Entry view created');
