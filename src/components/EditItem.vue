@@ -1,6 +1,6 @@
 <template>
-  <ValidationObserver ref="observer" v-slot="{ passes }">
-    <form @submit.prevent="passes(changeEntry)">
+  <ValidationObserver ref="observer">
+    <form @submit.prevent="validateForm">
       <div class="modal-card">
         <header class="modal-card-head">
           <p class="modal-card-title">Edit Entry</p>
@@ -12,10 +12,10 @@
           <b-field label="Kunde">
             <b-input type="text" :value="customer" required disabled icon="building"></b-input>
           </b-field>
-          <ValidationProvider name="area" rules="required" v-slot="{ errors, valid }">
+          <ValidationProvider name="area" rules="required" v-slot="slotProps">
             <b-field label="Bereich ändern"
-              :type="{'is-danger': errors[0] && customer, 'is-success': valid, 'is-unselectable': !customer}"
-              :message="customer?errors:''">
+              :type="{'is-danger': !!(slotProps?.errors?.[0] && customer), 'is-success': !!slotProps?.valid, 'is-unselectable': !customer}"
+              :message="customer ? String(slotProps?.errors?.[0] || '') : ''">
               <b-autocomplete expanded :disabled="!customer" v-model="area" open-on-focus :data="filteredBereicheArray"
                 placeholder="Choose Area" icon="folder-open" @select="option => selected = option" key="bereich">
                 <template slot="empty">No Area named: 
@@ -23,9 +23,9 @@
               </b-autocomplete>
             </b-field>
           </ValidationProvider>
-          <ValidationProvider name="job" rules="required" v-slot="{ errors, valid }">
-            <b-field label="Job ändern" :type="{'is-danger': errors[0] && customer, 'is-success': valid}"
-              :message="customer?errors:''">
+          <ValidationProvider name="job" rules="required" v-slot="slotProps">
+            <b-field label="Job ändern" :type="{'is-danger': !!(slotProps?.errors?.[0] && customer), 'is-success': !!slotProps?.valid}"
+              :message="customer ? String(slotProps?.errors?.[0] || '') : ''">
               <b-autocomplete expanded :disabled="!customer" v-model="job" open-on-focus :data="filteredJobsArray"
                 placeholder="Choose Job" icon="file-alt" @select="option => selected = option" key="job">
                 <template slot="empty">No Job named:
@@ -33,8 +33,8 @@
               </b-autocomplete>
             </b-field>
           </ValidationProvider>
-          <ValidationProvider name="date" rules="required" v-slot="{ errors, valid }">
-            <b-field label="Change date" :type="{'is-danger': errors[0], 'is-success': valid}"
+          <ValidationProvider name="date" rules="required" v-slot="slotProps">
+            <b-field label="Change date" :type="{'is-danger': !!slotProps?.errors?.[0], 'is-success': !!slotProps?.valid}"
               :message="'Original: ' + dateToHuman($attrs.selected.date)">
               <b-datepicker placeholder="Click to select..." icon="calendar" class="is-small" v-model="date" expanded
                 :max-date="maxDate" key="date">
@@ -47,9 +47,9 @@
               </b-datepicker>
             </b-field>
           </ValidationProvider>
-          <ValidationProvider name="duration" rules="required" v-slot="{ errors, valid }">
-            <b-field label="Zeitspanne eingeben" :type="{'is-danger':errors[0], 'is-success': valid}"
-              :message="{[errors]: errors[0], 'Im Format:  01h 05m': !errors[0]}">
+          <ValidationProvider name="duration" rules="required" v-slot="slotProps">
+            <b-field label="Zeitspanne eingeben" :type="{'is-danger': !!slotProps?.errors?.[0], 'is-success': !!slotProps?.valid}"
+              :message="String(slotProps?.errors?.[0] || 'Im Format:  01h 05m')">
               <b-input type="text" :value="duration | durationFilter" required v-cleave="masks.duration"
                 class="duration" v-on:keyup.native="onInput" icon="clock" key="duration"></b-input>
             </b-field>
@@ -83,12 +83,14 @@
 
 <script>
     import Cleave from 'cleave.js'
-    import { extend } from 'vee-validate'
-    import { required } from 'vee-validate/dist/rules'
+    import { defineRule } from 'vee-validate'
+    import { required } from '@vee-validate/rules'
     // Add the required rule
-    extend('required', {
-        ...required,
-        message: 'Don\'t forget…'
+    defineRule('required', (value) => {
+        if (!required(value)) {
+            return 'Don\'t forget…';
+        }
+        return true;
     });
 
     import { ValidationObserver, ValidationProvider } from 'vee-validate'
@@ -213,6 +215,17 @@ export default {
     },
   },
   methods: {
+    validateForm() {
+      if (this.$refs.observer && this.$refs.observer.validate) {
+        this.$refs.observer.validate().then(({ valid }) => {
+          if (valid) {
+            this.changeEntry();
+          }
+        });
+      } else {
+        this.changeEntry();
+      }
+    },
     changeEntry() {
       if (this.anyChanges) {
 

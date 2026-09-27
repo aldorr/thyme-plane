@@ -3,15 +3,50 @@
  * States, mutations and actions that should be available to multiple components 
  * 
  */
-import Vue from 'vue'
-import Vuex from 'vuex'
-import firebase from 'firebase/app'
+import { createStore } from 'vuex'
+import { getApp } from 'firebase/app'
+import { getAuth, signInWithEmailAndPassword, setPersistence, browserLocalPersistence, signOut, createUserWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth'
+import { getDatabase, ref, set, get, remove, onValue, push, update, child } from 'firebase/database'
 import router from '@/router';
 import createPersistedState from 'vuex-persistedstate'
+import { sanitizePath } from '@/utils/firebase-helpers'
 
-Vue.use(Vuex)
+// Try to import firebaseApp from main.js, fallback to getApp() if not available
+let firebaseApp = null;
+try {
+    // Try to get the app instance that was initialized in main.js
+    firebaseApp = getApp();
+} catch (e) {
+    // App not initialized yet, will be set when store actions are called
+    console.warn('Firebase app not available at module load time, will be retrieved lazily');
+}
 
-const store = new Vuex.Store({
+// Helper function to get Firebase app instance (lazy loading)
+function getFirebaseApp() {
+    if (!firebaseApp) {
+        try {
+            firebaseApp = getApp();
+        } catch (e) {
+            console.error('Firebase app not available:', e);
+            throw new Error('Firebase app not initialized. Make sure Firebase is initialized in main.js before using store actions.');
+        }
+    }
+    return firebaseApp;
+}
+
+// Helper function to get database instance with app
+function getDb() {
+    const app = getFirebaseApp();
+    return getDatabase(app);
+}
+
+// Helper function to get auth instance with app
+function getAuthWithApp() {
+    const app = getFirebaseApp();
+    return getAuth(app);
+}
+
+const store = createStore({
 
     state: {
         user: null,
@@ -65,61 +100,88 @@ const store = new Vuex.Store({
     },
 
     actions: {
-        signInAction({ commit }, payload) {
+        checkAuth({ commit, dispatch }) {
+            const auth = getAuthWithApp();
+            const user = auth.currentUser;
+            
+            console.log("Checking auth state...");
+            if (user) {
+                // User is already signed in
+                console.log('User already authenticated:', user.email);
+                commit('setUser', user.uid);
+                commit('setuserEmail', user.email);
+                commit('setStatus', 'success');
+                
+                // Load data
+                console.log('Loading data after authentication check');
+                return Promise.all([
+                    dispatch('loadCustomerEntries'),
+                    dispatch('loadTimeEntries')
+                ]).then(() => {
+                    console.log('All data loaded in checkAuth');
+                    return user;
+                });
+            } else {
+                console.log('No user authenticated');
+                return Promise.resolve(null);
+            }
+        },
+
+        signInAction({ commit, dispatch }, payload) {
             return new Promise((resolve, reject) => {
-                firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(function() {
-                    firebase
-                        .auth()
-                        .signInWithEmailAndPassword(payload.email, payload.password)
+                const auth = getAuthWithApp();
+                setPersistence(auth, browserLocalPersistence).then(() => {
+                    signInWithEmailAndPassword(auth, payload.email, payload.password)
                         .then((response) => {
-                            commit('setUser', response.user.uid)
-                            commit('setuserEmail', response.user.email)
-                            commit('setStatus', 'success')
-                            commit('setError', null)
+                            console.log('Sign in successful:', response.user.email);
+                            commit('setUser', response.user.uid);
+                            commit('setuserEmail', response.user.email);
+                            commit('setStatus', 'success');
+                            commit('setError', null);
                             localStorage.user = true;
-                            // this.dispatch('loadCustomerEntries')
-                            // this.dispatch('loadTimeEntries')
-                            // router.push('about')
-                            router.push({ name: 'about' })
-                            resolve(response)
+                            
+                            // Load data after successful login
+                            dispatch('loadCustomerEntries').then(() => {
+                                dispatch('loadTimeEntries').then(() => {
+                                    // Explicitly navigate to entry page after all data is loaded
+                                    console.log('Data loaded - redirecting to entry page');
+                                    router.replace({ name: 'entry' });
+                                    
+                                    // Make sure to resolve with the full response to get user info
+                                    resolve(response);
+                                });
+                            });
                         })
                         .catch((error) => {
-                            commit('setStatus', 'failure')
-                            commit('setError', error.message)
-                                // router.push('/')
-                            reject(error.message)
-                        })
-                })
-            })
-
+                            console.error('Sign in error:', error.message);
+                            commit('setStatus', 'failure');
+                            commit('setError', error.message);
+                            reject(error.message);
+                        });
+                });
+            });
         },
 
         passwordResetAction({ commit }, payload) {
-            // return new Promise((resolve, reject) => {
-            //         resolve("success")
-            //     })
             return new Promise((resolve, reject) => {
-                firebase
-                    .auth()
-                    .sendPasswordResetEmail(payload.email)
+                const auth = getAuthWithApp();
+                sendPasswordResetEmail(auth, payload.email)
                     .then(() => {
                         commit('setStatus', 'success')
                         commit('setError', null)
-                            // Email sent.
                         resolve("success")
                     })
                     .catch(function(error) {
                         commit('setStatus', 'failure')
                         commit('setError', error.message)
-                            // router.push('/')
                         reject(error.message)
                     });
-
             })
         },
 
         signOutAction({ commit }) {
-            firebase.auth().signOut()
+            const auth = getAuthWithApp();
+            signOut(auth)
                 .then(() => {
                     commit('setUser', null)
                     commit('setuserEmail', null)
@@ -135,228 +197,349 @@ const store = new Vuex.Store({
                     commit('setError', error.message)
                     commit('setUser', null);
                     commit('setIsAuthenticated', false);
-                    // router.push('/');
                 })
         },
 
         newUserAction({ commit }, payload) {
-            firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password)
-                .then(function(result) {
-                    // result.user.tenantId should be ‘TENANT_PROJECT_ID’.
-                    // console.log(result.user)
-                    // console.log(result.user.uid)
+            const auth = getAuthWithApp();
+            createUserWithEmailAndPassword(auth, payload.email, payload.password)
+                .then((result) => {
                     commit('setNewUID', result.user.uid)
 
-                    // do we get something in return, that we can then use in the database path to create new user
-                    // that way we can associate logged in user with their own data
-                    firebase
-                        .database()
-                        .ref('users/' + result.user.uid)
-                        .set(payload.newuser)
+                    const db = getDb();
+                    set(ref(db, 'users/' + result.user.uid), payload.newuser)
                         .then(() => {
                             commit('setStatus', 'success')
                             commit('setError', null)
                             this.dispatch('loadTimeEntries')
                         })
                         .catch((error) => {
-                            // Handle Errors here.
                             let errorCode = error.code;
                             let errorMessage = error.message;
                             commit('setStatus', 'failure')
                             commit('setError', errorCode + '\r' + errorMessage)
                         });
                 }).catch(function(error) {
-                    // Handle error.
                     commit('setError', error)
                 });
         },
 
         loadCustomerEntries({ commit }) {
-            return firebase
-                .database()
-                .ref('customerentries')
-                .once('value', snapshot => {
-                    commit('setCustomerEntries', snapshot.val());
-                })
-                .then(() => {
-                    commit('setStatus', 'success')
+            const db = getDb();
+            return get(ref(db, 'customerentries'))
+                .then((snapshot) => {
+                    const data = snapshot.val();
+                    console.log('Customer entries loaded:', data ? Object.keys(data).length : 0, 'customers');
+                    commit('setCustomerEntries', data);
+                    commit('setStatus', 'success');
+                    return data; // Return data so promise chain continues
                 })
                 .catch((error) => {
-                    commit('setStatus', 'failure')
-                    commit('setError', error)
-                })
+                    console.error("Error loading customer entries:", error);
+                    commit('setStatus', 'failure');
+                    commit('setError', error);
+                    throw error; // Re-throw so promise chain can handle error
+                });
         },
+        
         loadTimeEntries({ commit }) {
-            // get all of the customer entries
-            return firebase
-                .database()
-                .ref('users')
-                .once('value', snapshot => {
-                    let result = snapshot.val()
-                        // console.log(result)
-                    commit('setTimeEntries', result)
-                        // get username from timeEntries based on the UID
-                        // i.e. here from Component... not working
-                })
-                .then(() => {
-                    let userID = this.state.user
-                    let userTimeEntries = this.state.userTimeEntries
-                        // console.log(userID)
-                        // console.log(userTimeEntries)
-                        // console.log(userTimeEntries[userID])
-                    commit('setUserName', userTimeEntries[userID].fullname)
-                    commit('setStatus', 'success')
+            console.log('Loading time entries from Firebase...');
+            const db = getDb();
+            return get(ref(db, 'users'))
+                .then((snapshot) => {
+                    const result = snapshot.val();
+                    console.log('Time entries loaded, snapshot exists:', !!snapshot.exists());
+                    
+                    if (result) {
+                        console.log('Users found:', Object.keys(result).length);
+                        Object.keys(result).forEach(userId => {
+                            console.log('User:', userId, 'Name:', result[userId].fullname || 'No name');
+                        });
+                    } else {
+                        console.warn('No users found in database');
+                    }
+                    
+                    commit('setTimeEntries', result);
+                    
+                    // Only set the username if we have a user and data
+                    const userID = this.state.user;
+                    if (userID && result && result[userID]) {
+                        console.log('Setting username to:', result[userID].fullname);
+                        commit('setUserName', result[userID].fullname);
+                    } else {
+                        console.warn('Could not set username:', userID ? 'User ID exists' : 'No user ID', 
+                                                           result ? 'Result exists' : 'No result',
+                                                           (result && userID) ? (result[userID] ? 'User found' : 'User not found') : 'N/A');
+                    }
+                    
+                    commit('setStatus', 'success');
                 })
                 .catch((error) => {
-                    commit('setStatus', 'failure')
-                    commit('setError', error)
-                })
+                    console.error("Error loading time entries:", error);
+                    commit('setStatus', 'failure');
+                    commit('setError', error);
+                });
         },
+        
         toggleBereich({ commit }, payload) {
             let myRef = 'customerentries/' + payload.idx + '/' + payload.section + '/' + payload.keyToArchive + '/archived'
-                // console.log(myRef)
-                // console.log(payload.myBool)
-            return firebase
-                .database()
-                .ref(myRef)
-                .set(payload.myBool)
+            const db = getDb();
+            return set(ref(db, myRef), payload.myBool)
                 .then(() => {
                     commit('setStatus', 'success')
                     this.dispatch('loadCustomerEntries')
                 })
         },
+        
         removeBereich({ commit }, payload) {
             let myRef = 'customerentries/' + payload.idx + '/' + payload.section + '/' + payload.itemToDelete
-                // console.log(myRef)
-                // console.log(state.customerEntries);
-            return firebase
-                .database()
-                .ref(myRef)
-                .remove()
-                .then(() => {
-                    commit('setStatus', 'success')
-                        // just reload customers after committing to firebase
-                    this.dispatch('loadCustomerEntries')
-                })
-                // console.log(payload)
-        },
-        addCustomer({ commit }, payload) {
-            firebase
-                .database()
-                .ref('customerentries/' + payload.name)
-                .set(payload)
+            const db = getDb();
+            return remove(ref(db, myRef))
                 .then(() => {
                     commit('setStatus', 'success')
                     this.dispatch('loadCustomerEntries')
                 })
         },
-        addBereich({ commit }, payload) {
+        
+        addCustomer({ commit, dispatch, state }, payload) {
+            console.log('addCustomer action called with payload:', payload);
+            console.log('Current user:', state.user);
+            const auth = getAuthWithApp();
+            console.log('Current auth state:', auth.currentUser);
+            console.log('Auth current user UID:', auth.currentUser?.uid);
+            
+            if (!state.user || !auth.currentUser) {
+                const error = new Error('User not authenticated');
+                console.error('Cannot add customer - user not authenticated');
+                commit('setStatus', 'failure')
+                commit('setError', error.message)
+                return Promise.reject(error);
+            }
+            
+            let db;
+            try {
+                db = getDb();
+                console.log('Database instance obtained:', db ? 'Yes' : 'No');
+                console.log('Database type:', typeof db);
+            } catch (dbError) {
+                console.error('Error getting database:', dbError);
+                commit('setStatus', 'failure')
+                commit('setError', 'Database connection failed: ' + dbError.message)
+                return Promise.reject(dbError);
+            }
+            
+            // Sanitize the customer name for use in Firebase path
+            const sanitizedName = sanitizePath(payload.name);
+            console.log('Original name:', payload.name);
+            console.log('Sanitized name:', sanitizedName);
+            
+            const customerData = {
+                name: payload.name
+            };
+            console.log('Customer data to save:', customerData);
+            const firebasePath = 'customerentries/' + sanitizedName;
+            console.log('Firebase path:', firebasePath);
+            
+            let customerRef;
+            try {
+                customerRef = ref(db, firebasePath);
+                console.log('Firebase reference created successfully');
+                console.log('Reference key:', customerRef.key);
+                console.log('Reference parent:', customerRef.parent?.key);
+            } catch (refError) {
+                console.error('Error creating Firebase reference:', refError);
+                commit('setStatus', 'failure')
+                commit('setError', 'Failed to create reference: ' + refError.message)
+                return Promise.reject(refError);
+            }
+            
+            console.log('About to call set() with ref:', customerRef);
+            console.log('About to call set() with data:', customerData);
+            console.log('Database instance:', db);
+            
+            // Use set() directly - Firebase 12 modular API
+            // According to https://firebase.google.com/docs/web/modular-upgrade
+            // set() should work correctly when using getDatabase(firebaseApp)
+            const writePromise = set(customerRef, customerData);
+            const timeoutPromise = new Promise((_, reject) => {
+                setTimeout(() => {
+                    reject(new Error('Firebase write timed out after 15s. Check: 1) Security rules, 2) Network, 3) Database URL'));
+                }, 15000);
+            });
+            
+            return Promise.race([writePromise, timeoutPromise])
+                .then(() => {
+                    console.log('Customer successfully saved to Firebase');
+                    commit('setStatus', 'success')
+                    return dispatch('loadCustomerEntries')
+                })
+                .then(() => {
+                    console.log('Customer entries reloaded after adding customer');
+                })
+                .catch(error => {
+                    console.error('Error in addCustomer action:', error);
+                    console.error('Error name:', error.name);
+                    console.error('Error code:', error.code);
+                    console.error('Error message:', error.message);
+                    
+                    if (error.code === 'PERMISSION_DENIED') {
+                        console.error('PERMISSION DENIED: Check Firebase security rules for customerentries');
+                        commit('setError', 'Permission denied. Check Firebase security rules.')
+                    } else if (error.message.includes('timeout')) {
+                        console.error('TIMEOUT: Check security rules, network, and database URL');
+                        commit('setError', 'Write timed out. Check security rules and network.')
+                    }
+                    
+                    commit('setStatus', 'failure')
+                    throw error;
+                })
+        },
+        
+        addBereich({ commit, dispatch }, payload) {
             let myRef = 'customerentries/' + payload.idx + '/bereiche/'
-                // console.log(myRef)
-                // let myKey = Math.floor(Date.now() + Math.random())
             let newBereich = {
                 name: payload.bereich,
                 archived: false
             }
-            return firebase
-                .database()
-                .ref(myRef)
-                .push(newBereich)
+            const db = getDb();
+            const newBereichRef = push(ref(db, myRef));
+            return set(newBereichRef, newBereich)
                 .then(() => {
                     commit('setStatus', 'success')
-                        // console.log(this.state.customerEntries[payload.idx].bereiche)
-                        // this.state.customerEntries[payload.idx].bereiche[myKey]=payload.bereich
-                    this.dispatch('loadCustomerEntries')
+                    return dispatch('loadCustomerEntries')
+                })
+                .catch(error => {
+                    commit('setStatus', 'failure')
+                    commit('setError', error)
+                    throw error;
                 })
         },
-        addJob({ commit }, payload) {
+        
+        addJob({ commit, dispatch }, payload) {
+            console.log('addJob action called with payload:', payload);
             let myRef = 'customerentries/' + payload.idx + '/jobs/'
-                // console.log(myRef)
-                // let myKey = Math.floor(Date.now() + Math.random())
+            console.log('Firebase reference path:', myRef);
             let newJob = {
                 name: payload.job,
                 archived: false
             }
-            return firebase
-                .database()
-                .ref(myRef)
-                .push(newJob)
+            console.log('New job object:', newJob);
+            const db = getDb();
+            const newJobRef = push(ref(db, myRef));
+            console.log('Pushing to Firebase...');
+            return set(newJobRef, newJob)
                 .then(() => {
+                    console.log('Job successfully added to Firebase');
                     commit('setStatus', 'success')
-                        // console.log(this.state.customerEntries[payload.idx].jobs + ": " + myKey)
-                        // this.state.customerEntries[payload.idx].jobs[myKey]=payload.job
-                    this.dispatch('loadCustomerEntries')
+                    console.log('Reloading customer entries...');
+                    return dispatch('loadCustomerEntries')
+                })
+                .then(() => {
+                    console.log('Customer entries reloaded successfully');
+                })
+                .catch(error => {
+                    console.error('Error in addJob action:', error);
+                    commit('setStatus', 'failure')
+                    commit('setError', error)
+                    throw error;
                 })
         },
+        
         editBereich({ commit }, payload) {
-            // console.log(payload)
-            return firebase
-                .database()
-                .ref('customerentries')
-                .child(payload.customer)
-                .child(payload.type)
-                .child(payload.ID)
-                .set({
-                    "name": payload.name,
-                    "archived": false
-                })
+            const db = getDb();
+            
+            // Get the right index if we're coming from the old editItem method
+            let idx = payload.idx;
+            if (!idx && payload.customer) {
+                // Find the index by customer name
+                const customerEntries = this.state.customerEntries;
+                for (let key in customerEntries) {
+                    if (customerEntries[key].name === payload.customer) {
+                        idx = key;
+                        break;
+                    }
+                }
+            }
+
+            // Get the right section and key
+            let section = payload.section || payload.type;
+            let key = payload.key || payload.ID;
+            let newName = payload.newName || payload.name;
+            
+            console.log('Editing:', idx, section, key, 'New name:', newName);
+            
+            const updates = {};
+            updates['customerentries/' + idx + '/' + section + '/' + key + '/name'] = newName;
+            
+            return update(ref(db), updates)
                 .then(() => {
-                    commit('setStatus', 'success')
-                    this.dispatch('loadCustomerEntries')
+                    console.log('Item updated successfully');
+                    commit('setStatus', 'success');
+                    return this.dispatch('loadCustomerEntries');
                 })
+                .catch((error) => {
+                    console.error('Error updating item:', error);
+                    commit('setStatus', 'failure');
+                    commit('setError', error);
+                });
         },
-        // eslint-disable-next-line
-        // removeEntry({ state, commit, dispatch }, payload) {
-        //     // delete i.e. -LeZ82YdBYt8rfz25bSq
-        //     let toDelete = payload.idx
-        //     // console.log(toDelete);
-        //     firebase
-        //         .database()
-        //         .ref('users')
-        //         .child(state.user.user.uid)
-        //         .ref(toDelete)
-        //         .remove()
-        // },
+        
         newEntry({ commit, dispatch }, payload) {
-            // let myRef = 'users/' + payload.user + '/timeentries/'
-            // console.log(myRef)
-            // console.log(payload.newEntry)
-            return firebase
-                .database()
-                .ref('users')
-                .child(payload.user)
-                .child('timeentries')
-                .push(payload.newEntry)
+            const db = getDb();
+            const newEntryRef = push(ref(db, 'users/' + payload.user + '/timeentries/'));
+            set(newEntryRef, payload.newEntry)
                 .then(() => {
                     commit('setStatus', 'success')
                     this.dispatch('loadTimeEntries')
                 })
+                .catch((error) => {
+                    commit('setStatus', 'failure')
+                    commit('setError', error)
+                })
         },
+        
         updateEntry({ commit }, payload) {
-            return firebase
-                .database()
-                .ref('users')
-                .child(payload.user)
-                .child('timeentries')
-                .child(payload.entryID)
-                .set(payload.updatedEntry)
+            const db = getDb();
+            set(ref(db, 'users/' + payload.user + '/timeentries/' + payload.id), payload.entry)
                 .then(() => {
                     commit('setStatus', 'success')
                     this.dispatch('loadTimeEntries')
+                })
+                .catch((error) => {
+                    commit('setStatus', 'failure')
+                    commit('setError', error)
                 })
         },
+        
         deleteEntry({ commit }, payload) {
-            return firebase
-                .database()
-                .ref('users')
-                .child(payload.user)
-                .child('timeentries')
-                .child(payload.entryID)
-                .remove()
+            const db = getDb();
+            remove(ref(db, 'users/' + payload.user + '/timeentries/' + payload.id))
                 .then(() => {
                     commit('setStatus', 'success')
                     this.dispatch('loadTimeEntries')
                 })
+                .catch((error) => {
+                    commit('setStatus', 'failure')
+                    commit('setError', error)
+                })
+        },
+
+        checkDatabaseConnection({ commit }) {
+            console.log('Checking database connection...');
+            const db = getDb();
+            
+            // Firebase Realtime Database handles connection automatically
+            // We can't reliably check connection status with get() on .info paths
+            // Instead, just verify the database instance was created successfully
+            if (db) {
+                console.log('Firebase database instance created successfully');
+                // Firebase will automatically reconnect when needed
+                return Promise.resolve(true);
+            } else {
+                console.error('Failed to get database instance');
+                commit('setError', 'Failed to initialize database');
+                return Promise.resolve(false);
+            }
         }
     },
 

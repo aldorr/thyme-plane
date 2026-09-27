@@ -1,0 +1,342 @@
+{
+  "customerentries": {
+    "Friendly People": {
+      "bereiche": {
+        "-N4X0WbcX375fzux5sP0": {
+          "archived": false,
+          "name": "Friendly Area"
+        },
+        "-N4X1nRuxEOnNTp-jWYc": {
+          "archived": false,
+          "name": "More friendly stuff to do"
+        }
+      },
+      "jobs": {
+        "-N4X0dNTL5-YH56ybwuO": {
+          "archived": false,
+          "name": "Friendly Job"
+        },
+        "-N4X1qiV4y8EA4JRVDJO": {
+          "archived": false,
+          "name": "Fix Job and Areas"
+        }
+      },
+      "name": "Friendly People"
+    },
+    "Hausverwaltung": {
+      "bereiche": {
+        "-N4X6j3otUIpT2jMjSsx": {
+          "archived": false,
+          "name": "IT"
+        },
+        "-N4bkNMxeMk1w3gr-PRZ": {
+          "archived": false,
+          "name": "Schrauben"
+        }
+      },
+      "jobs": {
+        "-N4X6l1Ij8KoEEyxLI48": {
+          "archived": false,
+          "name": "Kabel verlegen"
+        },
+        "-N4bkOV1VxwHHytQ_TiL": {
+          "archived": false,
+          "name": "Drehen"
+        }
+      },
+      "name": "Hausverwaltung"
+    },
+    "Irena": {
+      "bereiche": {
+        "-Nkfjs3bT2rXgAuhU9eY": {
+          "archived": false,
+          "name": "Firma1"
+        }
+      },
+      "jobs": {
+        "-NkfjsVynfXQ6Dhjn-Hu": {
+          "archived": false,
+          "name": "Redno delo"
+        }
+      },
+      "name": "Irena"
+    },
+    "Janko": {
+      "bereiche": {
+        "-NkfjEE9mobA3sz3Hj2j": {
+          "archived": false,
+          "name": "Firma 1"
+        }
+      },
+      "jobs": {
+        "-NkfjEfdUorzFfMUMgWv": {
+          "archived": true,
+          "name": "priced"
+        }
+      },
+      "name": "Janko"
+    },
+    "Marija": {
+      "bereiche": {
+        "-NkfjNn0OmtpKmuUIIFy": {
+          "archived": false,
+          "name": "Firma 1"
+        }
+      },
+      "jobs": {
+        "-NkfjO4t2zmPKjrDoMpg": {
+          "archived": false,
+          "name": "Prihod"
+        }
+      },
+      "name": "Marija"
+    },
+    "New Client": {
+      "bereiche": {
+        "-N4X-swzrmFolRgL_ayj": {
+          "archived": false,
+          "name": "Thing"
+        },
+        "-N4beDaVPKENWMDD9lQg": {
+          "archived": false,
+          "name": "Huh?"
+        }
+      },
+      "jobs": {
+        "-N4X0OPk0VWrgrC5qQJE": {
+          "archived": false,
+          "name": "And now a job."
+        },
+        "-N4bej5nfIdDABPFCxbq": {
+          "archived": false,
+          "name": "Yep"
+        }
+      },
+      "name": "New Client"
+    },
+    "Schule B": {
+      "bereiche": {
+        "-N4XBNYURNzN71ToHHsP": {
+          "archived": false,
+          "name": "Area A"
+        },
+        "-N4gN_yIljBs2UBNq064": {
+          "archived": false,
+          "name": "ZA1"
+        }
+      },
+      "jobs": {
+        "-N4gNeMOLbaV7GJWUY1w": {
+          "archived": false,
+          "name": "Container"
+        }
+      },
+      "name": "Schule B"
+    },
+    "Street Food": {
+      "bereiche": {
+        "-N4XY3ezlQkl2X8O5stP": {
+          "archived": false,
+          "name": "Hot Dogs"
+        }
+      },
+      "jobs": {
+        "-N4XY4ypGRcAqqamuEOd": {
+          "archived": false,
+          "name": "Ketchup"
+        }
+      },
+      "name": "Street Food"
+    },
+    "Test Client": {
+      "bereiche": {
+        "-M0ZdT8udb8ujB9FwmXe": {
+          "archived": true,
+          "name": "New Area"
+        },
+        "-M5CslNsNVp0ggpdiU7L": {
+          "archived": true,
+          "name": "Second new Area"
+        },
+        "-M5Ctob3PJZPLRb-oEgR": {
+          "archived": false,
+          "name": "Third new area"
+        },
+        "-M5CwXzxupkmPzpcknrb": {
+          "archived": false,
+          "name": "Fourth area"
+        },
+        "-M5Cwu0zoaEu6MDTqQoG": {
+          "archived": false,
+          "name": "Fifth area"
+        },
+        "-M5CwxInGywSpaBwUYOi": {
+          "archived": false,
+          "name": "Sixth"
+        },
+        "-M5CyI1o2SCa2xhG2hzj": {
+          "archived": false,
+          "name": "Seventh Area"
+        },
+        "-M5CyIOthmxpn9Idbzt3": {
+          "archived": true,
+          "name": "Eighth Job"
+        },
+        "-M5CyIkZswjVf3vnZ-Ft": {
+          "archived": false,
+          "name": "Ninth Area"
+        },
+        "-M64C5-B_oV06S4TR_qO": {
+          "archived": true,
+          "name": "New Job Ten"
+        },
+        "-M66A0drG1n_tYJ4PwuT": {
+          "archived": true,
+          "name": "="
+        },
+        "-M66A1ZcxiOrf06l-bQ1": {
+          "archived": true,
+          "name": "+"
+        }
+      },
+      "jobs": {
+        "-M5grXiWKaexzFQBNvij": {
+          "archived": false,
+          "name": "2nd New One"
+        },
+        "-M5sKn6udRlk3GaTn7LP": {
+          "archived": false,
+          "name": "3rd New One"
+        },
+        "-M64AW9AzfujxpHj99wq": {
+          "archived": false,
+          "name": "4th new Job"
+        },
+        "-M67CeqIHbY0XTo5CwG3": {
+          "archived": true,
+          "name": "1st New Job"
+        }
+      },
+      "name": "Test Client"
+    },
+    "fux eG": {
+      "name": "fux eG"
+    }
+  },
+  "users": {
+    "dzxcznEaX7SfNbaJxEFG0crhx7F3": {
+      "email": "newuser@aldorr.net",
+      "fullname": "New User",
+      "username": "newuser"
+    },
+    "vFPaHJRCIAcRUv84sO0kskq6DXW2": {
+      "email": "sas100@gmx.net",
+      "fullname": "Sacha E.",
+      "timeentries": {
+        "-N4X6r7Z2OvWyT3Cqns6": {
+          "area": "IT",
+          "customer": "Hausverwaltung",
+          "date": "2022.06.14",
+          "job": "Kabel verlegen",
+          "note": "JK.",
+          "time": 3900
+        },
+        "-NMorryodZ32WNKBCyeY": {
+          "area": "Schrauben",
+          "customer": "Hausverwaltung",
+          "date": "2023.01.27",
+          "job": "Kabel verlegen stzaews",
+          "note": "aaaarrrrbeit",
+          "time": 32700
+        }
+      },
+      "username": "sacha"
+    },
+    "xk1krhUEpeRgpBLjvbCPcyuYIQ72": {
+      "email": "thyme-demo@aldorr.net",
+      "fullname": "Allan D.",
+      "timeentries": {
+        "-MGrEGxCBWMg6QR0l4Ku": {
+          "area": "Fourth area",
+          "customer": "Test Client",
+          "date": "2020.09.10",
+          "job": "2nd New One",
+          "note": "Really! For sure.",
+          "time": 7200
+        },
+        "-N4X0kiVIY9MJ3GFZZvt": {
+          "area": "Friendly Area",
+          "customer": "Friendly People",
+          "date": "2022.06.14",
+          "job": "Friendly Job",
+          "note": "Help me",
+          "time": 7380
+        }
+      },
+      "username": "aldorr"
+    },
+    "xpkYBJVYyNXpkaXAtk2TxjPgzZC2": {
+      "email": "demo-user@aldorr.net",
+      "fullname": "Demo U.",
+      "timeentries": {
+        "-MM8FHr7unnrQ2oVlxnC": {
+          "area": "Second new Area",
+          "customer": "Test Client",
+          "date": "2020.11.15",
+          "job": "2nd New One",
+          "note": "No note.",
+          "time": 8520
+        },
+        "-MMXWUWMjT0usFmRqpq2": {
+          "area": "Third new area",
+          "customer": "Test Client",
+          "date": "2020.11.19",
+          "job": "2nd New One",
+          "note": "yo",
+          "time": 3600
+        },
+        "-MMXYJpHJbrpQef56lZj": {
+          "area": "Third new area",
+          "customer": "Test Client",
+          "date": "2020.11.19",
+          "job": "3rd New One",
+          "note": "Nothing.",
+          "time": 3600
+        },
+        "-N4bkTmef1tcUW2gvdgZ": {
+          "area": "Schrauben",
+          "customer": "Hausverwaltung",
+          "date": "2022.06.15",
+          "job": "Drehen",
+          "note": "Nothing special here...",
+          "time": 9000
+        },
+        "-NMZVUyINdiIHXttAfSI": {
+          "area": "More friendly stuff to do",
+          "customer": "Friendly People",
+          "date": "2023.01.24",
+          "job": "Friendly Job",
+          "note": "",
+          "time": 108000
+        },
+        "-Nkfj5wRHwUyvxzwkAE6": {
+          "area": "Friendly Area",
+          "customer": "Friendly People",
+          "date": "2023.12.02",
+          "job": "Friendly Job",
+          "note": "",
+          "time": 3600
+        },
+        "-Nkfjgz6B2313AoHQnQv": {
+          "area": "Firma 1",
+          "customer": "Bojan",
+          "date": "2023.12.02",
+          "job": "komerciala",
+          "note": "",
+          "time": 7500
+        }
+      },
+      "username": "demo"
+    }
+  }
+}

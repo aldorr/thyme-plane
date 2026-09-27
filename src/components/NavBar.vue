@@ -35,6 +35,9 @@
 
             <div id="navbarMeta" class="navbar navbar-menu">
                 <div class="navbar-end">
+                    <div class="navbar-item" v-if="userLoggedIn">
+                        <span class="tag is-primary mr-2">{{ userName }}</span>
+                    </div>
                     <div class="navbar-item">
                         <div class="buttons is-right">
                             <b-button icon-left="user" class="button is-light" @click="openLogin()" v-if="!userLoggedIn">Login</b-button>
@@ -94,6 +97,9 @@ export default {
         },
         userLoggedIn () {
             return this.$store.getters.user
+        },
+        userName () {
+            return this.$store.getters.userName || this.$store.getters.userEmail
         }
     },
     mounted() {

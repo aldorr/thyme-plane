@@ -13,7 +13,7 @@
 <script>
   export default {
     // TODO: Admin area
-    name: "Admin",
+    name: "adminArea",
     data() {
       return {
 

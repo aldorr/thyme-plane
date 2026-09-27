@@ -21,9 +21,12 @@
                         <div class="column is-one-fifth-desktop is-full-mobile is-half-tablet">
                             <b-field label="Client:">
                                 <b-autocomplete expanded name="kunde" v-model="kunde" ref="kunde" open-on-focus
-                                    :data="filteredKundenArray" placeholder="e.g. Forest Inc" icon="building"
+                                    :data="kunden" placeholder="e.g. Forest Inc" icon="building"
                                     @select="option => selectedKunde = option" @input="clearJobs" key="kunde">
-                                    <template slot="empty">No Client named {{kunde}}.</template>
+                                    <template #default="option">
+                                        {{ option.option || option }}
+                                    </template>
+                                    <template v-slot:empty>No Client named {{kunde}}.</template>
                                 </b-autocomplete>
                             </b-field>
                         </div>
@@ -32,7 +35,10 @@
                                 <b-autocomplete expanded name="area" v-model="area" open-on-focus
                                     :data="filteredBereicheArray" placeholder="Choose Area" icon="folder-open"
                                     @select="option => selectedBereich = option" key="bereich" :disabled="!kunde||kunde=='All Clients'">
-                                    <template slot="empty">No Area named "{{area}}".</template>
+                                    <template #default="option">
+                                        {{ option.option || option }}
+                                    </template>
+                                    <template v-slot:empty>No Area named "{{area}}".</template>
                                 </b-autocomplete>
                             </b-field>
                         </div>
@@ -41,7 +47,10 @@
                                 <b-autocomplete expanded name="job" v-model="job" open-on-focus
                                     :data="filteredJobsArray" placeholder="Choose Job" icon="file-alt"
                                     @select="option => selectedJob = option" key="job" :disabled="!kunde||kunde=='All Clients'">
-                                    <template slot="empty">No Jobs named "{{job}}".</template>
+                                    <template #default="option">
+                                        {{ option.option || option }}
+                                    </template>
+                                    <template v-slot:empty>No Jobs named "{{job}}".</template>
                                 </b-autocomplete>
                             </b-field>
                         </div>
@@ -89,16 +98,16 @@
                     :selected.sync="selected">
                 <!-- <template v-slot="props"> -->
                     <b-table-column field="customer" label="Kunde" sortable>
-                        <template v-slot="props">{{ props.row.customer }}</template>
+                        <template v-slot="props">{{ props?.row?.customer }}</template>
                     </b-table-column>
                     <b-table-column field="area" label="Bereich" sortable>
-                        <template v-slot="props">{{ props.row.area }}</template>
+                        <template v-slot="props">{{ props?.row?.area }}</template>
                     </b-table-column>
-                    <b-table-column field="job" label="Job" sortable><template v-slot="props">{{ props.row.job }}</template></b-table-column>
-                    <b-table-column field="user" label="Nutzer" sortable><template v-slot="props">{{ props.row.user }} </template></b-table-column>
-                    <b-table-column field="date" label="Datum" sortable><template v-slot="props">{{ props.row.date | dateToHuman }}</template>
+                    <b-table-column field="job" label="Job" sortable><template v-slot="props">{{ props?.row?.job }}</template></b-table-column>
+                    <b-table-column field="user" label="Nutzer" sortable><template v-slot="props">{{ props?.row?.user }} </template></b-table-column>
+                    <b-table-column field="date" label="Datum" sortable><template v-slot="props">{{ props?.row?.date | dateToHuman }}</template>
                     </b-table-column>
-                    <b-table-column field="time" label="Zeit"><template v-slot="props">{{ props.row.time | secondsToHrsMins }}</template></b-table-column>
+                    <b-table-column field="time" label="Zeit"><template v-slot="props">{{ props?.row?.time | secondsToHrsMins }}</template></b-table-column>
                     <b-table-column field="ID" label="Notiz">
                         <template v-slot:header="{ column }">
                             <b-tooltip
@@ -108,24 +117,24 @@
                             </b-tooltip>
                         </template>
                         <template v-slot="props">
-                            <a @click="toggle(props.row)" v-if="props.row.note">
-                                <b-icon icon="angle-right" :class="showRow(props.row)"></b-icon>
+                            <a @click="toggle(props?.row)" v-if="props?.row?.note">
+                                <b-icon icon="angle-right" :class="showRow(props?.row)"></b-icon>
                             </a>
                             <b-icon icon="minus" type="is-light" v-else></b-icon>
                         </template>
                     </b-table-column>
                     <b-table-column label="Edit">
                         <template v-slot="props">
-                            <b-button icon-left="pen" type="is-primary is-outlined is-inverted" @click="showEditModal" :disabled="selected.ID!==props.row.ID"></b-button>
+                            <b-button icon-left="pen" type="is-primary is-outlined is-inverted" @click="showEditModal" :disabled="selected?.ID!==props?.row?.ID"></b-button>
                         </template>
                     </b-table-column>
                 <!-- </template> -->
-                <template slot="detail" slot-scope="props">
+                <template v-slot:detail="props">
                     <article class="media">
                         <div class="media-content">
                             <div class="content">
                                 <p>
-                                    {{ props.row.note }}
+                                    {{ props?.row?.note }}
                                 </p>
                             </div>
                         </div>
@@ -167,6 +176,7 @@
 import EditItem from '@/components/EditItem.vue'
 
 export default {
+    name: 'listView',
     data() {
         return {
             kunde: 'All Clients',
@@ -222,18 +232,33 @@ export default {
             return this.userIdList[userIndex]
         },
         filteredKundenArray() {
-            return this.kunden.filter((option) => {
+            console.log('List.vue filteredKundenArray computed - kunden:', this.kunden);
+            console.log('List.vue filteredKundenArray computed - kunde:', this.kunde);
+            // If kunde is empty or "All Clients", show all options
+            if (!this.kunde || this.kunde === 'All Clients' || this.kunde.trim() === '') {
+                console.log('List.vue filteredKundenArray - showing all options');
+                return this.kunden;
+            }
+            const filtered = this.kunden.filter((option) => {
                 return option
                     .toString()
                     .toLowerCase()
                     .indexOf(this.kunde.toLowerCase()) >= 0
-            })
+            });
+            console.log('List.vue filteredKundenArray computed - filtered result:', filtered);
+            return filtered;
         },
         kunden() {
             let myKundenReturn = ["All Clients"]
-            for (let entry in this.customerEntries) {
-                myKundenReturn.push(this.customerEntries[entry].name)
+            const customerEntries = this.customerEntries || {};
+            console.log('List.vue kunden computed - customerEntries:', customerEntries);
+            console.log('List.vue kunden computed - customerEntries keys:', Object.keys(customerEntries));
+            for (let entry in customerEntries) {
+                if (customerEntries[entry] && customerEntries[entry].name) {
+                    myKundenReturn.push(customerEntries[entry].name)
+                }
             }
+            console.log('List.vue kunden computed - returning:', myKundenReturn);
             return myKundenReturn
         },
         filteredJobsArray() {

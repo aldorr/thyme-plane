@@ -2,16 +2,12 @@
  * Sets the path for our various tabs.
  * 
  */
-import Vue from 'vue'
-import Router from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 import Home from './views/Home.vue'
 import store from './store'
 
-Vue.use(Router)
-
-const router = new Router({
-    mode: 'history',
-    base: process.env.BASE_URL,
+const router = createRouter({
+    history: createWebHistory(process.env.BASE_URL),
     routes: [{
             path: '/login',
             name: 'home',

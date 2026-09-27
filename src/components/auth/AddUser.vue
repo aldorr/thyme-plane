@@ -9,18 +9,18 @@
                 <b-icon icon="lock"></b-icon>
             </header>
             <div class="modal-card-body">
-            <ValidationProvider name="email" rules="required" v-slot="{ errors, valid }">
-              <b-field horizontal :type="{'is-danger':errors[0], 'is-success':valid}" :message="errors" label="Name">
+            <ValidationProvider name="email" rules="required" v-slot="slotProps">
+              <b-field horizontal :type="getFieldType(slotProps)" :message="getErrorMessage(slotProps)" label="Name">
                       <b-input type="text" v-model="fullname" name="fullname" value="fullname@domain.com" key="fullname" placeholder="Chucky Armbruster"  ref="name"/>
               </b-field>
             </ValidationProvider>
-            <ValidationProvider name="email" rules="required|email" v-slot="{ errors, valid }">
-              <b-field horizontal :type="{'is-danger':errors[0], 'is-success':valid}" :message="errors" label="Email">
+            <ValidationProvider name="email" rules="required|email" v-slot="slotProps">
+              <b-field horizontal :type="getFieldType(slotProps)" :message="getErrorMessage(slotProps)" label="Email">
                       <b-input type="email" v-model="email" name="email" value="email@domain.com" key="email" placeholder="newuser@aldorr.net" />
               </b-field>
             </ValidationProvider>
-            <ValidationProvider name="password" rules="required" v-slot="{ errors, valid }">
-              <b-field horizontal :type="{'is-danger':errors[0], 'is-success':valid}" :message="errors" label="Password">
+            <ValidationProvider name="password" rules="required" v-slot="slotProps">
+              <b-field horizontal :type="getFieldType(slotProps)" :message="getErrorMessage(slotProps)" label="Password">
               <!-- TODO: Make password revealer... -->
                       <b-input type="password" v-model="password" name="password" key="password" placeholder="something-secret-and-maybe-funny" password-reveal />
               </b-field>
@@ -40,19 +40,21 @@
 
 <script>
 import {
-  extend
+  defineRule
 } from 'vee-validate';
 import {
   required,
   email
-} from 'vee-validate/dist/rules';
+} from '@vee-validate/rules';
 import { ToastProgrammatic as Toast } from 'buefy'
 
 // Add the rules
-extend('email', email);
-extend('required', {
-  ...required,
-  message: 'Don\'t forget…'
+defineRule('email', email);
+defineRule('required', (value) => {
+  if (!required(value)) {
+    return 'Don\'t forget…';
+  }
+  return true;
 });
 
 import {
@@ -93,6 +95,33 @@ export default {
   },
 
   methods: {
+    getFieldType(slotProps) {
+      if (!slotProps) return {};
+      const hasError = slotProps.errors && Array.isArray(slotProps.errors) && slotProps.errors.length > 0;
+      const isValid = slotProps.valid === true;
+      return {
+        'is-danger': hasError,
+        'is-success': isValid
+      };
+    },
+    getErrorMessage(slotProps) {
+      if (!slotProps || !slotProps.errors) return '';
+      if (!Array.isArray(slotProps.errors) || slotProps.errors.length === 0) return '';
+      // Extract the first error value, ensuring it's a primitive
+      const firstError = slotProps.errors[0];
+      if (firstError == null) return '';
+      // Convert to string, handling Proxy objects
+      try {
+        return String(firstError);
+      } catch (e) {
+        // If String() fails, try JSON serialization to unwrap Proxy
+        try {
+          return JSON.parse(JSON.stringify(firstError));
+        } catch (e2) {
+          return '';
+        }
+      }
+    },
 
     validate() {
       this.$validator.validateAll().then((result) => {

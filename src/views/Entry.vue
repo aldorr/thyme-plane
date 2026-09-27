@@ -1,5 +1,5 @@
 <template>
-    <ValidationObserver ref="observer" v-slot="{ passes }">
+    <ValidationObserver ref="observer">
         <!-- START SINGLE ADD -->
         <div id="is-time-add" class="section is-view">
             <div class="container">
@@ -16,6 +16,11 @@
                                             <b-field>
                                                 <b-select placeholder="Find name" v-model="userName" mode="eager"
                                                     icon="user">
+                                                    <!-- Only show fallback if no users are loaded -->
+                                                    <option v-if="userList.length === 0"
+                                                        :value="getCurrentUserNameFallback()">
+                                                        {{ getCurrentUserNameFallback() }}
+                                                    </option>
                                                     <option v-for="option in userList" :value="option" :key="option">
                                                         {{ option }}
                                                     </option>
@@ -28,53 +33,62 @@
                                     <div class="columns">
                                         <div class="column">
                                             <ValidationProvider name="kunde" rules="required"
-                                                v-slot="{ errors, valid }">
+                                                v-slot="slotProps">
                                                 <b-field label="Choose Client"
-                                                    :type="{'is-danger': errors[0], 'is-success': valid}"
-                                                    :message="errors">
+                                                    :type="{ 'is-danger': !!slotProps?.errors?.[0], 'is-success': !!slotProps?.valid }"
+                                                    :message="String(slotProps?.errors?.[0] || '')">
                                                     <b-autocomplete expanded v-model="kunde" open-on-focus
                                                         :data="filteredKundenArray" placeholder="e.g. Forest Inc."
                                                         icon="building" @select="option => selected = option"
                                                         @input="clearJobs" key="customer" ref="kunde">
-                                                        <template slot="empty">No client named
-                                                            {{kunde}}</template>
+                                                        <template #default="option">
+                                                            {{ option.option || option }}
+                                                        </template>
+                                                        <template v-slot:empty>No client named
+                                                            {{ kunde }}</template>
                                                     </b-autocomplete>
                                                 </b-field>
                                             </ValidationProvider>
 
                                             <ValidationProvider name="bereich" rules="required"
-                                                v-slot="{ errors, valid }">
+                                                v-slot="slotProps">
                                                 <b-field label="Choose Area"
-                                                    :type="{'is-danger': errors[0] && kunde, 'is-success': valid, 'is-unselectable': !kunde}"
-                                                    :message="kunde?errors:''">
+                                                    :type="{ 'is-danger': !!(slotProps?.errors?.[0] && kunde), 'is-success': !!slotProps?.valid, 'is-unselectable': !kunde }"
+                                                    :message="kunde ? String(slotProps?.errors?.[0] || '') : ''">
                                                     <b-autocomplete expanded :disabled="!kunde" v-model="bereich"
                                                         open-on-focus :data="filteredBereicheArray"
                                                         placeholder="Find area" icon="folder-open"
                                                         @select="option => selected = option" key="bereich">
-                                                        <template slot="empty">No area named
-                                                            "{{bereich}}"</template>
+                                                        <template #default="option">
+                                                            {{ option.option || option }}
+                                                        </template>
+                                                        <template v-slot:empty>No area named
+                                                            "{{ bereich }}"</template>
                                                     </b-autocomplete>
                                                 </b-field>
                                             </ValidationProvider>
 
-                                            <ValidationProvider name="job" rules="required" v-slot="{ errors, valid }">
+                                            <ValidationProvider name="job" rules="required" v-slot="slotProps">
                                                 <b-field label="Choose Job"
-                                                    :type="{'is-danger': errors[0] && kunde, 'is-success': valid}"
-                                                    :message="kunde?errors:''">
+                                                    :type="{ 'is-danger': !!(slotProps?.errors?.[0] && kunde), 'is-success': !!slotProps?.valid }"
+                                                    :message="kunde ? String(slotProps?.errors?.[0] || '') : ''">
                                                     <b-autocomplete expanded :disabled="!kunde" v-model="job"
                                                         open-on-focus :data="filteredJobsArray" placeholder="Find job"
                                                         icon="file-alt" @select="option => selected = option" key="job">
-                                                        <template slot="empty">No job named
-                                                            "{{job}}"</template>
+                                                        <template #default="option">
+                                                            {{ option.option || option }}
+                                                        </template>
+                                                        <template v-slot:empty>No job named
+                                                            "{{ job }}"</template>
                                                     </b-autocomplete>
                                                 </b-field>
                                             </ValidationProvider>
                                         </div>
 
                                         <div class="column">
-                                            <ValidationProvider name="date" rules="required" v-slot="{ errors, valid }">
+                                            <ValidationProvider name="date" rules="required" v-slot="slotProps">
                                                 <b-field label="Choose Date Range"
-                                                    :type="{'is-danger': errors[0], 'is-success': valid}"
+                                                    :type="{ 'is-danger': !!slotProps?.errors?.[0], 'is-success': !!slotProps?.valid }"
                                                     message="Default: Today">
                                                     <b-datepicker placeholder="Click to select..." icon="calendar"
                                                         class="is-small" v-model="date" expanded :max-date="maxDate"
@@ -95,10 +109,10 @@
                                                 </b-field>
                                             </ValidationProvider>
                                             <ValidationProvider name="duration" rules="required"
-                                                v-slot="{ errors, valid }">
+                                                v-slot="slotProps">
                                                 <b-field label="Add Duration"
-                                                    :type="{'is-danger':errors[0], 'is-success': valid}"
-                                                    :message="{[errors]: errors[0], 'Format: 01h 05m': !errors[0]}">
+                                                    :type="{ 'is-danger': !!slotProps?.errors?.[0], 'is-success': !!slotProps?.valid }"
+                                                    :message="String(slotProps?.errors?.[0] || 'Format: 01h 05m')">
                                                     <b-input placeholder='01h 05m' class="duration"
                                                         :value="duration | durationFilter" v-cleave="masks.duration"
                                                         v-on:keyup.native="onInput" icon="clock" key="time-input" />
@@ -117,7 +131,7 @@
                                         </div>
                                         <div class="control card-footer-item is-link">
                                             <button class="button is-primary"
-                                                @click.prevent="passes(addEntry)">Submit</button>
+                                                @click.prevent="validateAndSubmit">Submit</button>
                                         </div>
                                     </div>
                                 </div>
@@ -133,282 +147,418 @@
 
 <script>
 
-    import Cleave from 'cleave.js'
+import Cleave from 'cleave.js'
 
-    import { extend } from 'vee-validate';
-    import { required } from 'vee-validate/dist/rules';
-    // Add the required rule
-    extend('required', {
-        ...required,
-        message: 'Nicht vergessen…'
-    });
-
-    import { ValidationObserver, ValidationProvider } from 'vee-validate'
-
-    const cleave = {
-        name: 'cleave',
-        bind(el, binding) {
-            const duration = el.querySelector('.duration input')
-            duration._vCleave = new Cleave(duration, binding.value)
-        },
-        unbind(el) {
-            const duration = el.querySelector('.duration input')
-            duration._vCleave.destroy()
-        }
+import { defineRule } from 'vee-validate';
+import { required } from '@vee-validate/rules';
+// Add the required rule
+defineRule('required', (value) => {
+    if (!required(value)) {
+        return 'Nicht vergessen…';
     }
+    return true;
+});
 
-    export default {
-        components: {
-            ValidationObserver,
-            ValidationProvider
+import { ValidationObserver, ValidationProvider } from 'vee-validate'
+
+const cleave = {
+    name: 'cleave',
+    bind(el, binding) {
+        const duration = el.querySelector('.duration input')
+        duration._vCleave = new Cleave(duration, binding.value)
+    },
+    unbind(el) {
+        const duration = el.querySelector('.duration input')
+        duration._vCleave.destroy()
+    }
+}
+
+export default {
+    name: 'entryEditor',
+    components: {
+        ValidationObserver,
+        ValidationProvider
+    },
+    directives: { cleave },
+    data() {
+        const today = new Date()
+
+        return {
+            kunde: '',
+            idx: '',
+            bereich: '',
+            job: '',
+            date: new Date(),
+            maxDate: new Date(today.getFullYear(), today.getMonth(), today.getDate()),
+            duration: '',
+            masks: {
+                duration: {
+                    delimiters: ['h ', 'm'],
+                    blocks: [2, 2, 0],
+                    numericOnly: true,
+                    noImmediatePrefix: true
+                }
+            },
+            note: '',
+            userName: '',
+            timeEntries: {},
+            currentUserName: ''
+        }
+    },
+    computed: {
+        userList() {
+            console.log('Computing userList');
+            const userTimeEntries = this.$store.state.userTimeEntries;
+            if (!userTimeEntries) {
+                console.log('No userTimeEntries found');
+                return [];
+            }
+
+            const users = [];
+            for (const userId in userTimeEntries) {
+                if (userTimeEntries[userId].fullname) {
+                    console.log('Found user:', userTimeEntries[userId].fullname);
+                    users.push(userTimeEntries[userId].fullname);
+                }
+            }
+
+            console.log('User list computed:', users);
+            return users;
         },
-        directives: { cleave },
-        data() {
-            const today = new Date()
+        userIdList() {
+            try {
+                // Get all users' names and ids
+                const userIdList = [];
+                const timeEntries = this.timeEntries || {};
 
-            return {
-                kunde: '',
-                idx: '',
-                bereich: '',
-                job: '',
-                date: new Date(),
-                maxDate: new Date(today.getFullYear(), today.getMonth(), today.getDate()),
-                duration: '',
-                masks: {
-                    duration: {
-                        delimiters: ['h ', 'm'],
-                        blocks: [2, 2, 0],
-                        numericOnly: true,
-                        noImmediatePrefix: true
+                // Safely iterate over entries
+                for (const id in timeEntries) {
+                    if (Object.prototype.hasOwnProperty.call(timeEntries, id)) {
+                        userIdList.push(id);
                     }
-                },
-                note: '',
-                userName: '',
-                timeEntries: {}
+                }
+
+                console.log('userIdList computed:', userIdList.length, 'users');
+                return userIdList;
+            } catch (error) {
+                console.error('Error in userIdList computed property:', error);
+                return [];
             }
         },
-        computed: {
-            currentUserName() {
-                // get user's name with the id this.$store.getters.user
-                let userID = this.$store.getters.user
-                let currentUserName = this.timeEntries[userID].fullname
-                return currentUserName
-            },
-            userList() {
-                // get all users' names and ids
-                let userList = []
-                let timeEntries = this.timeEntries
-                for (let [id] of Object.entries(timeEntries)) {
-                    userList.push(timeEntries[id].fullname)
-                }
-                return userList
-            },
-            userIdList() {
-                // get all users' names and ids
-                let userIdList = []
-                let timeEntries = this.timeEntries
-                for (let [id] of Object.entries(timeEntries)) {
-                    userIdList.push(id)
-                }
-                return userIdList
-            },
-            currentUserId() {
-                let userIndex = this.userList.indexOf(this.userName)
-                return this.userIdList[userIndex]
-            },
-            filteredKundenArray() {
-                return this.kunden.filter((option) => {
-                    return option
-                        .toString()
-                        .toLowerCase()
-                        .indexOf(this.kunde.toLowerCase()) >= 0
-                })
-            },
+        currentUserId() {
+            // Get the current user's ID directly from store
+            const userId = this.$store.getters.user;
+            console.log('Current user ID:', userId);
+            return userId;
+        },
+        filteredKundenArray() {
+            return this.kunden.filter((option) => {
+                return option
+                    .toString()
+                    .toLowerCase()
+                    .indexOf(this.kunde.toLowerCase()) >= 0
+            })
+        },
 
-            filteredBereicheArray() {
-                return this.bereiche.filter((option) => {
-                    return option
-                        .toString()
-                        .toLowerCase()
-                        .indexOf(this.bereich.toLowerCase()) >= 0
-                })
-            },
-            filteredJobsArray() {
-                return this.jobs.filter((option) => {
-                    return option
-                        .toString()
-                        .toLowerCase()
-                        .indexOf(this.job.toLowerCase()) >= 0
-                })
-            },
-            customerEntries() {
-                return this.$store.state.customerEntries
-            },
-            kunden() {
-                let myKundenReturn = []
-                for (let entry in this.customerEntries) {
-                    myKundenReturn.push(this.customerEntries[entry].name)
+        filteredBereicheArray() {
+            return this.bereiche.filter((option) => {
+                return option
+                    .toString()
+                    .toLowerCase()
+                    .indexOf(this.bereich.toLowerCase()) >= 0
+            })
+        },
+        filteredJobsArray() {
+            return this.jobs.filter((option) => {
+                return option
+                    .toString()
+                    .toLowerCase()
+                    .indexOf(this.job.toLowerCase()) >= 0
+            })
+        },
+        customerEntries() {
+            return this.$store.state.customerEntries
+        },
+        kunden() {
+            try {
+                const myKundenReturn = [];
+                const customerEntries = this.customerEntries || {};
+
+                for (const entry in customerEntries) {
+                    if (customerEntries[entry] && customerEntries[entry].name) {
+                        myKundenReturn.push(customerEntries[entry].name);
+                    }
                 }
-                return myKundenReturn
-            },
-            bereiche() {
-                let myBereicheReturn = []
-                // check in each array if it has that one
-                for (let entry in this.customerEntries) {
-                    if (this.customerEntries[entry].name === this.kunde) {
-                        for (let bereich in this.customerEntries[entry].bereiche) {
-                            if (this.customerEntries[entry].bereiche[bereich].archived == false) {
-                                myBereicheReturn.push(this.customerEntries[entry].bereiche[bereich].name)
+
+                console.log('Customers found:', myKundenReturn.length);
+                return myKundenReturn;
+            } catch (error) {
+                console.error('Error in kunden computed property:', error);
+                return [];
+            }
+        },
+        bereiche() {
+            try {
+                const myBereicheReturn = [];
+                const customerEntries = this.customerEntries || {};
+
+                // Return empty array if no client selected
+                if (!this.kunde) {
+                    return [];
+                }
+
+                // Check in each array if it has that one
+                for (const entry in customerEntries) {
+                    if (customerEntries[entry] && customerEntries[entry].name === this.kunde) {
+                        const bereiche = customerEntries[entry].bereiche || {};
+
+                        for (const bereich in bereiche) {
+                            if (bereiche[bereich] && bereiche[bereich].archived === false) {
+                                myBereicheReturn.push(bereiche[bereich].name);
                             }
                         }
                     }
                 }
-                return myBereicheReturn
-            },
-            jobs() {
-                let myJobsReturn = []
-                for (let entry in this.customerEntries) {
-                    if (this.customerEntries[entry].name === this.kunde) {
-                        for (let job in this.customerEntries[entry].jobs) {
-                            if (this.customerEntries[entry].jobs[job].archived == false) {
-                                myJobsReturn.push(this.customerEntries[entry].jobs[job].name)
+
+                console.log('Areas found for', this.kunde + ':', myBereicheReturn.length);
+                return myBereicheReturn;
+            } catch (error) {
+                console.error('Error in bereiche computed property:', error);
+                return [];
+            }
+        },
+        jobs() {
+            try {
+                const myJobsReturn = [];
+                const customerEntries = this.customerEntries || {};
+
+                // Return empty array if no client selected
+                if (!this.kunde) {
+                    return [];
+                }
+
+                for (const entry in customerEntries) {
+                    if (customerEntries[entry] && customerEntries[entry].name === this.kunde) {
+                        const jobs = customerEntries[entry].jobs || {};
+
+                        for (const job in jobs) {
+                            if (jobs[job] && jobs[job].archived === false) {
+                                myJobsReturn.push(jobs[job].name);
                             }
                         }
                     }
                 }
-                return myJobsReturn
-            },
-            idxs() {
-                let keys = [], i = 0;
-                for (keys[i++] in this.customerEntries) {
-                    // do nothing?
-                }
-                return keys
-            },
-            rawDuration() {
-                let mins = this.duration.slice(4, 6)
-                let hrs = this.duration.slice(0, 2)
-                return hrs * 60 * 60 + mins * 60
-            },
-            dateToString() {
-                // This format is better for sorting
-                // 2016.10.15
-                let date = this.date
-                let dateString
-                let year    = date.getFullYear();
-                let month   = date.getMonth() + 1;
-                let month0  = month<10?"0" + month:month
-                let day     = date.getDate();
-                let day0    = day<10?"0" + day:day
-                dateString = year + '.' + month0 + '.' + day0
-                return dateString
-                // return this.date.toString()
-            },
-            dateToHuman() {
-                // Maybe in this format is better
-                // 2016-10-15 13:43:27
-                let date = this.date
-                let dateHuman
-                let year    = date.getFullYear();
-                let month   = date.getMonth() + 1;
-                let day     = date.getDate();
-                dateHuman = day + '.' + month + '.' + year
-                return dateHuman
+
+                console.log('Jobs found for', this.kunde + ':', myJobsReturn.length);
+                return myJobsReturn;
+            } catch (error) {
+                console.error('Error in jobs computed property:', error);
+                return [];
             }
         },
-        methods: {
-            addEntry() {
-                // this.$validator.validateAll().then((result) => {
-                //     if (result) {
-                        this.$buefy.dialog.confirm({
-                            title: 'Please Check your Entries',
-                            message: '<table class="table is-striped is-fullwidth"><tbody><tr><th>User</th><td> ' + this.userName +'</td></tr><tr><th>Client</th><td>' + this.kunde + '</td></tr><tr><th>Area</th><td>' + this.bereich + '</td></tr><tr><th>Job</th><td>' + this.job + '</td></tr><tr><th>Date</th><td>' + this.dateToHuman + '</td></tr><tr><th>Duration</th><td>' + this.duration + '</td></tr><tr><th>Note</th><td>' + this.note + "</td></tr></tbody></table>",
-                            confirmText: 'Save',
-                            type: 'is-primary',
-                            trapFocus: true,
-                            hasIcon: true,
-                            icon: 'calendar',
-                            cancelText: 'Edit',
-                            onConfirm: () => {
-                                let user = this.currentUserId
-                                let newEntry = {
-                                    customer: this.kunde,
-                                    area: this.bereich,
-                                    job: this.job,
-                                    date: this.dateToString,
-                                    time: this.rawDuration,
-                                    note: this.note
-                                }
-                                this.$store.dispatch('newEntry', {
-                                    user: user,
-                                    newEntry: newEntry
-                                }).then(
-                                    this.$buefy.toast.open({duration: 5000,
-                                        message: `Added!`,
-                                        position: 'is-bottom',
-                                        type: 'is-success'
-                                    }),
-                                    this.resetData()
-                                )
-                            }
-                        })
-                //     } else {
-                //       this.$buefy.toast.open({
-                //         message: 'It seems your form is missing something! Please check the fields.',
-                //         type: 'is-danger',
-                //         position: 'is-bottom'
-                //       })
-                //     }
-                // })
-            },
-            resetData(){
-                this.kunde = '',
+        idxs() {
+            let keys = [], i = 0;
+            for (keys[i++] in this.customerEntries) {
+                // do nothing?
+            }
+            return keys
+        },
+        rawDuration() {
+            let mins = this.duration.slice(4, 6)
+            let hrs = this.duration.slice(0, 2)
+            return hrs * 60 * 60 + mins * 60
+        },
+        dateToString() {
+            // This format is better for sorting
+            // 2016.10.15
+            let date = this.date
+            let dateString
+            let year = date.getFullYear();
+            let month = date.getMonth() + 1;
+            let month0 = month < 10 ? "0" + month : month
+            let day = date.getDate();
+            let day0 = day < 10 ? "0" + day : day
+            dateString = year + '.' + month0 + '.' + day0
+            return dateString
+            // return this.date.toString()
+        },
+        dateToHuman() {
+            // Maybe in this format is better
+            // 2016-10-15 13:43:27
+            let date = this.date
+            let dateHuman
+            let year = date.getFullYear();
+            let month = date.getMonth() + 1;
+            let day = date.getDate();
+            dateHuman = day + '.' + month + '.' + year
+            return dateHuman
+        }
+    },
+    methods: {
+        getCurrentUserNameFallback() {
+            // This is a fallback method to get the current user's name if no users are loaded
+            // First try from store getters
+            const userName = this.$store.getters.userName;
+            if (userName) {
+                console.log('Getting username from store getter:', userName);
+                return userName;
+            }
+
+            // Then try from email
+            const userEmail = this.$store.getters.userEmail;
+            if (userEmail) {
+                console.log('Getting username from email:', userEmail);
+                return userEmail.split('@')[0]; // Use the part before @ as a name
+            }
+
+            console.warn('Could not get any username');
+            return 'Unknown User';
+        },
+        addEntry() {
+            this.$buefy.dialog.confirm({
+                title: 'Please Check your Entries',
+                message: '<table class="table is-striped is-fullwidth"><tbody><tr><th>User</th><td> ' + this.userName + '</td></tr><tr><th>Client</th><td>' + this.kunde + '</td></tr><tr><th>Area</th><td>' + this.bereich + '</td></tr><tr><th>Job</th><td>' + this.job + '</td></tr><tr><th>Date</th><td>' + this.dateToHuman + '</td></tr><tr><th>Duration</th><td>' + this.duration + '</td></tr><tr><th>Note</th><td>' + this.note + "</td></tr></tbody></table>",
+                confirmText: 'Save',
+                type: 'is-primary',
+                trapFocus: true,
+                hasIcon: true,
+                icon: 'calendar',
+                cancelText: 'Edit',
+                onConfirm: () => {
+                    let user = this.currentUserId
+                    let newEntry = {
+                        customer: this.kunde,
+                        area: this.bereich,
+                        job: this.job,
+                        date: this.dateToString,
+                        time: this.rawDuration,
+                        note: this.note
+                    }
+                    this.$store.dispatch('newEntry', {
+                        user: user,
+                        newEntry: newEntry
+                    }).then(
+                        this.$buefy.toast.open({
+                            duration: 5000,
+                            message: `Added!`,
+                            position: 'is-bottom',
+                            type: 'is-success'
+                        }),
+                        this.resetData()
+                    )
+                }
+            })
+        },
+        validateAndSubmit() {
+            // Use the validateForm from the slot scope
+            if (this.$refs.observer && this.$refs.observer.validate) {
+                this.$refs.observer.validate().then(({ valid }) => {
+                    if (valid) {
+                        this.addEntry();
+                    }
+                });
+            } else {
+                // Fallback if observer ref is not available
+                this.addEntry();
+            }
+        },
+        resetData() {
+            this.kunde = '',
                 this.bereich = '',
                 this.job = '',
                 this.date = new Date(),
                 this.duration = '',
                 this.note = ''
-                requestAnimationFrame(() => {
-                    this.$refs.observer.reset();
-                });
-            },
-            loadAllData() {
-                this.$store.dispatch('loadCustomerEntries')
-                this.$store.dispatch('loadTimeEntries')
-                .then(() => {
-                    this.timeEntries = this.$store.state.userTimeEntries
-                    this.userName = this.currentUserName
-                })
-            },
-            // setKundeSubs() {
-            //     this.bereiche = this.bereiche
-            // },
-            getKunde() {
-                return this.data.kunde
-            },
-            getKundeBool() {
-                if ( this.data.kunde != null ) {
-                    return true
-                } else {
-                    return false
+            requestAnimationFrame(() => {
+                if (this.$refs.observer) {
+                    if (typeof this.$refs.observer.reset === 'function') {
+                        this.$refs.observer.reset();
+                    } else if (typeof this.$refs.observer.resetForm === 'function') {
+                        this.$refs.observer.resetForm();
+                    }
                 }
-            },
-            clearJobs() {
-                this.bereich = ''
-                this.job = ''
-                requestAnimationFrame(() => {
-                    this.$refs.observer.reset();
+            });
+        },
+        loadAllData() {
+            console.log('Loading all data in Entry view');
+
+            // Initialize currentUserName first to avoid undefined errors
+            const fallbackName = this.getCurrentUserNameFallback();
+            this.currentUserName = fallbackName;
+            this.userName = fallbackName;
+            console.log('Initially set currentUserName to:', this.currentUserName);
+
+            // Load both data sources in parallel
+            Promise.all([
+                this.$store.dispatch('loadCustomerEntries'),
+                this.$store.dispatch('loadTimeEntries')
+            ])
+                .then(() => {
+                    console.log('All data loaded in Entry view');
+
+                    // Set timeEntries from store
+                    this.timeEntries = this.$store.state.userTimeEntries;
+                    console.log('Time entries set:', this.timeEntries ? 'Yes' : 'No');
+
+                    // Set userName to current user's name
+                    if (this.$store.getters.userName) {
+                        this.userName = this.$store.getters.userName;
+                        this.currentUserName = this.$store.getters.userName;
+                        console.log('Set userName from store:', this.userName);
+                    } else {
+                        // Use our fallback method
+                        this.userName = this.getCurrentUserNameFallback();
+                        this.currentUserName = this.userName;
+                        console.log('Set userName from fallback:', this.userName);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading data:', error);
+                    // Even if we have an error, ensure userName is set
+                    if (!this.userName) {
+                        this.userName = this.getCurrentUserNameFallback();
+                        this.currentUserName = this.userName;
+                        console.log('Set userName from fallback after error:', this.userName);
+                    }
                 });
-            },
-            onInput(event) {
-                this.duration = event.target._vCleave.getFormattedValue()
-            },
-            focusInput() {
-                this.$refs.kunde.focus()
+        },
+        // setKundeSubs() {
+        //     this.bereiche = this.bereiche
+        // },
+        getKunde() {
+            return this.data.kunde
+        },
+        getKundeBool() {
+            if (this.data.kunde != null) {
+                return true
+            } else {
+                return false
             }
         },
-        filters: {
-          durationFilter: function (value) {
+        clearJobs() {
+            this.bereich = ''
+            this.job = ''
+            requestAnimationFrame(() => {
+                if (this.$refs.observer) {
+                    if (typeof this.$refs.observer.reset === 'function') {
+                        this.$refs.observer.reset();
+                    } else if (typeof this.$refs.observer.resetForm === 'function') {
+                        this.$refs.observer.resetForm();
+                    }
+                }
+            });
+        },
+        onInput(event) {
+            this.duration = event.target._vCleave.getFormattedValue()
+        },
+        focusInput() {
+            if (this.$refs.kunde && this.$refs.kunde.focus) {
+                this.$refs.kunde.focus()
+            }
+        }
+    },
+    filters: {
+        durationFilter: function (value) {
             let hrs, mins
             if (value.length === 4) {
                 hrs = value.slice(0, 2)
@@ -431,22 +581,29 @@
                 return value
             }
 
-          }
-        },
-        mounted() {
-            this.loadAllData()
-            this.focusInput()
         }
+    },
+    created() {
+        console.log('Entry view created');
+        // Call our improved loadAllData method
+        this.loadAllData();
+    },
+    mounted() {
+        // Just focus the input, data loading is handled in created
+        this.focusInput();
     }
+}
 </script>
 
 <style>
-span > .field {
+span>.field {
     margin-bottom: 1em;
 }
+
 label.label {
     text-align: left;
 }
+
 .modal .media {
     width: 100%;
 }

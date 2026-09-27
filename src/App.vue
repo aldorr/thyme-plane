@@ -12,21 +12,36 @@ export default {
   name: "App",
   components: {
     NavBar
+  },
+  created() {
+    // Check for authentication when app loads
+    this.$store.dispatch('checkAuth')
   }
 }
 </script>
 
 
 <style lang="scss">
-// Import Bulma's core -- but wait, didn't we also import Buefy (including Bulma)
-// This is probably important to make our own color palette.
-@import "~bulma/sass/utilities/_all";
+// Import Bulma's utilities using @import for compatibility
+// Note: Bulma 1.0+ uses @forward internally, but @import still works
+@import "~bulma/sass/utilities/initial-variables";
+@import "~bulma/sass/utilities/functions";
+@import "~bulma/sass/utilities/derived-variables";
+@import "~bulma/sass/utilities/controls";
 
 // Set your colors
 $primary: #8c67ef;
 $primary-invert: findColorInvert($primary);
 $twitter: #4099FF;
 $twitter-invert: findColorInvert($twitter);
+
+// Define invert colors (not all provided by Bulma 1.0+)
+$light-invert: findColorInvert($light);
+$dark-invert: findColorInvert($dark);
+$info-invert: findColorInvert($info);
+$success-invert: findColorInvert($success);
+$warning-invert: findColorInvert($warning);
+$danger-invert: findColorInvert($danger);
 
 // Setup $colors to use as bulma classes (e.g. 'is-twitter')
 $colors: (
@@ -47,9 +62,9 @@ $link: $primary;
 $link-invert: $primary-invert;
 $link-focus-border: $primary;
 
-// Import Bulma and Buefy styles
+// Import Bulma styles
+// Note: Buefy styles are automatically loaded when Buefy is used as a Vue plugin
 @import "~bulma";
-@import "~buefy/src/scss/buefy";
 
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;

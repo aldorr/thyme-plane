@@ -1,6 +1,6 @@
 <template>
     <form>
-  <ValidationObserver ref="observer" v-slot="{ passes }">
+  <ValidationObserver ref="observer">
         <div class="modal-card">
             <header class="modal-card-head">
                 <p class="modal-card-title">
@@ -9,9 +9,9 @@
                 <b-icon icon="lock"></b-icon>
             </header>
             <div class="modal-card-body">
-            <ValidationProvider name="email" rules="required|email" v-slot="{ errors, valid }">
-              <b-field horizontal label="Email" :type="{'is-danger':errors[0], 'is-success': valid}">
-                      <b-input type="email" :message="errors[0]" v-model="email" name="email" value="email@domain.com" key="email" placeholder="your email address" ref="email"/>
+            <ValidationProvider name="email" rules="required|email" v-slot="slotProps">
+              <b-field horizontal label="Email" :type="getFieldType(slotProps)">
+                      <b-input type="email" :message="getErrorMessage(slotProps)" v-model="email" name="email" value="email@domain.com" key="email" placeholder="your email address" ref="email"/>
               </b-field>
             </ValidationProvider>
             </div>
@@ -20,7 +20,7 @@
                     <b-button
                     type="is-success"
                     icon-right="lock"
-                    @click.prevent="passes(validate)">Send</b-button>
+                    @click.prevent="validateForm">Send</b-button>
             </footer>
         </div>
   </ValidationObserver>
@@ -29,17 +29,19 @@
 
 <script>
 import {
-  extend
+  defineRule
 } from 'vee-validate';
 import {
   required, email
-} from 'vee-validate/dist/rules';
+} from '@vee-validate/rules';
 
 // Add the rules
-extend('email', email);
-extend('required', {
-  ...required,
-  message: 'Don\'t forget…'
+defineRule('email', email);
+defineRule('required', (value) => {
+  if (!required(value)) {
+    return 'Don\'t forget…';
+  }
+  return true;
 });
 
 import {
@@ -67,7 +69,17 @@ export default {
           // want to display friendly message if invalid...
           // not just red marks everywhere.
     },
-
+    validateForm() {
+      if (this.$refs.observer && this.$refs.observer.validate) {
+        this.$refs.observer.validate().then(({ valid }) => {
+          if (valid) {
+            this.validate();
+          }
+        });
+      } else {
+        this.validate();
+      }
+    },
     passwordReset() {
       const user = {
         email: this.email
