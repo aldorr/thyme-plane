@@ -108,14 +108,12 @@
                                                     </b-datepicker>
                                                 </b-field>
                                             </ValidationProvider>
-                                            <ValidationProvider v-model="duration" name="duration" rules="required"
+                                            <ValidationProvider v-model="durationSeconds" name="duration" rules="min_duration"
                                                 v-slot="slotProps">
-                                                <b-field label="Add Duration"
+                                                <b-field label="Duration"
                                                     :type="{ 'is-danger': !!slotProps?.errors?.[0], 'is-success': !!slotProps?.valid }"
-                                                    :message="String(slotProps?.errors?.[0] || 'Format: 01h 05m')">
-                                                    <b-input placeholder='01h 05m' class="duration"
-                                                        :value="formatDuration(duration)" v-cleave="masks.duration"
-                                                        @keyup="onInput" icon="clock" key="time-input" />
+                                                    :message="String(slotProps?.errors?.[0] || 'Use the steppers or a preset')">
+                                                    <DurationPicker v-model="durationSeconds" />
                                                 </b-field>
                                             </ValidationProvider>
                                             <b-field label="Note">
@@ -151,8 +149,8 @@ import { defineRule } from 'vee-validate';
 import { required } from '@vee-validate/rules';
 import ValidationObserver from '@/components/ValidationObserver.vue'
 import ValidationProvider from '@/components/ValidationProvider.vue'
-import { cleaveDirective as cleave } from '@/utils/cleave-directive'
-import { durationFilter } from '@/utils/formatters'
+import DurationPicker from '@/components/DurationPicker.vue'
+import { formatDurationLabel } from '@/utils/formatters'
 
 // Add the required rule
 defineRule('required', (value) => {
@@ -162,13 +160,20 @@ defineRule('required', (value) => {
     return true;
 });
 
+defineRule('min_duration', (value) => {
+    if (Number(value) >= 60) {
+        return true;
+    }
+    return 'Pick a duration';
+});
+
 export default {
     name: 'entryEditor',
     components: {
         ValidationObserver,
-        ValidationProvider
+        ValidationProvider,
+        DurationPicker
     },
-    directives: { cleave },
     data() {
         const today = new Date()
 
@@ -179,15 +184,7 @@ export default {
             job: '',
             date: new Date(),
             maxDate: new Date(today.getFullYear(), today.getMonth(), today.getDate()),
-            duration: '',
-            masks: {
-                duration: {
-                    delimiters: ['h ', 'm'],
-                    blocks: [2, 2, 0],
-                    numericOnly: true,
-                    noImmediatePrefix: true
-                }
-            },
+            durationSeconds: 0,
             note: '',
             userName: '',
             timeEntries: {},
@@ -353,9 +350,7 @@ export default {
             return keys
         },
         rawDuration() {
-            let mins = this.duration.slice(4, 6)
-            let hrs = this.duration.slice(0, 2)
-            return hrs * 60 * 60 + mins * 60
+            return this.durationSeconds
         },
         dateToString() {
             // This format is better for sorting
@@ -406,7 +401,7 @@ export default {
         addEntry() {
             this.$buefy.dialog.confirm({
                 title: 'Please Check your Entries',
-                message: '<table class="table is-striped is-fullwidth"><tbody><tr><th>User</th><td> ' + this.userName + '</td></tr><tr><th>Client</th><td>' + this.kunde + '</td></tr><tr><th>Area</th><td>' + this.bereich + '</td></tr><tr><th>Job</th><td>' + this.job + '</td></tr><tr><th>Date</th><td>' + this.dateToHuman + '</td></tr><tr><th>Duration</th><td>' + this.duration + '</td></tr><tr><th>Note</th><td>' + this.note + "</td></tr></tbody></table>",
+                message: '<table class="table is-striped is-fullwidth"><tbody><tr><th>User</th><td> ' + this.userName + '</td></tr><tr><th>Client</th><td>' + this.kunde + '</td></tr><tr><th>Area</th><td>' + this.bereich + '</td></tr><tr><th>Job</th><td>' + this.job + '</td></tr><tr><th>Date</th><td>' + this.dateToHuman + '</td></tr><tr><th>Duration</th><td>' + formatDurationLabel(this.durationSeconds) + '</td></tr><tr><th>Note</th><td>' + this.note + "</td></tr></tbody></table>",
                 confirmText: 'Save',
                 type: 'is-primary',
                 trapFocus: true,
@@ -456,7 +451,7 @@ export default {
                 this.bereich = '',
                 this.job = '',
                 this.date = new Date(),
-                this.duration = '',
+                this.durationSeconds = 0,
                 this.note = ''
             requestAnimationFrame(() => {
                 if (this.$refs.observer) {
@@ -537,15 +532,11 @@ export default {
                 }
             });
         },
-        onInput(event) {
-            this.duration = event.target._vCleave.getFormattedValue()
-        },
         focusInput() {
             if (this.$refs.kunde && this.$refs.kunde.focus) {
                 this.$refs.kunde.focus()
             }
-        },
-        formatDuration: durationFilter
+        }
     },
     created() {
         console.log('Entry view created');

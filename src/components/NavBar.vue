@@ -1,10 +1,10 @@
 <template>
-    <nav class="navbar is-white is-fixed-top">
+    <nav class="navbar is-fixed-top">
         <div class="container">
             
             <div class="navbar-brand">
                 <router-link class="navbar-item" :to="userLoggedIn?'/':'/login'">
-                <img src="../assets/logo.png" width="140" height="27">
+                <img src="@/assets/thyme-plane-logo.svg" alt="thyme-plane" width="140" height="27">
                 </router-link>
 
                 <div class="navbar-item navbar-meta">
@@ -164,9 +164,9 @@ export default {
     margin-left: unset;
 }
 @media screen and (min-width: 1024px) {
-    .navbar.is-white #navbarThyme .navbar-start>a.navbar-item.router-link-active {
-        background-color: #f2f2f2;
-        color: #0a0a0a;
+    .navbar #navbarThyme .navbar-start>a.navbar-item.router-link-active {
+        background-color: var(--bulma-scheme-main-ter);
+        color: var(--bulma-text-strong);
     }
     .navbar-brand .navbar-item.navbar-meta {
         display: none;

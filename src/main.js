@@ -32,8 +32,11 @@ app.config.globalProperties.$firebase = {
   db: db
 }
 
-app.use(Buefy, { defaultIconPack: 'fas' })
 app.component('font-awesome-icon', FontAwesomeIcon)
+app.use(Buefy, {
+  defaultIconPack: 'fas',
+  defaultIconComponent: 'font-awesome-icon'
+})
 app.component('ValidationObserver', ValidationObserver)
 app.component('ValidationProvider', ValidationProvider)
 

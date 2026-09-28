@@ -1,17 +1,109 @@
-// Brand colors (Bulma 1 Sass customization)
+// Catppuccin Mocha palette
+// https://catppuccin.com/palette/
+$ctp-rosewater: #f5e0dc;
+$ctp-flamingo: #f2cdcd;
+$ctp-pink: #f5c2e7;
+$ctp-mauve: #cba6f7;
+$ctp-red: #f38ba8;
+$ctp-maroon: #eba0ac;
+$ctp-peach: #fab387;
+$ctp-yellow: #f9e2af;
+$ctp-green: #a6e3a1;
+$ctp-teal: #94e2d5;
+$ctp-sky: #89dceb;
+$ctp-sapphire: #74c7ec;
+$ctp-blue: #89b4fa;
+$ctp-lavender: #b4befe;
+$ctp-text: #cdd6f4;
+$ctp-subtext1: #bac2de;
+$ctp-subtext0: #a6adc8;
+$ctp-overlay2: #9399b2;
+$ctp-overlay1: #7f849c;
+$ctp-overlay0: #6c7086;
+$ctp-surface2: #585b70;
+$ctp-surface1: #45475a;
+$ctp-surface0: #313244;
+$ctp-base: #1e1e2e;
+$ctp-mantle: #181825;
+$ctp-crust: #11111b;
+
+// Brand colors (Bulma 1 / Buefy Sass customization)
+// https://buefy.org/documentation/sass
 @use "bulma/sass" with (
-  $primary: #8c67ef,
-  $link: #8c67ef
+  $scheme-h: 240,
+  $scheme-s: 21%,
+  $black: $ctp-crust,
+  $black-bis: $ctp-mantle,
+  $black-ter: $ctp-base,
+  $grey-darker: $ctp-surface1,
+  $grey-dark: $ctp-surface2,
+  $grey: $ctp-overlay0,
+  $grey-light: $ctp-overlay2,
+  $grey-lighter: $ctp-subtext0,
+  $grey-lightest: $ctp-subtext1,
+  $white-ter: $ctp-text,
+  $white-bis: $ctp-subtext1,
+  $white: $ctp-text,
+  $orange: $ctp-peach,
+  $yellow: $ctp-yellow,
+  $green: $ctp-green,
+  $turquoise: $ctp-teal,
+  $cyan: $ctp-sky,
+  $blue: $ctp-blue,
+  $purple: $ctp-mauve,
+  $red: $ctp-red,
+  $primary: $ctp-mauve,
+  $link: $ctp-blue,
+  $info: $ctp-sky,
+  $success: $ctp-green,
+  $warning: $ctp-yellow,
+  $danger: $ctp-red
 );
 
 @use "buefy/src/scss/buefy";
+
+// Exact Mocha surfaces/text (Bulma dark only inverts lightness; Mocha text hue differs)
+[data-theme="dark"] {
+  --bulma-scheme-h: 240deg;
+  --bulma-scheme-s: 21%;
+  --bulma-scheme-main-l: 15%;
+  --bulma-scheme-main-bis-l: 12%;
+  --bulma-scheme-main-ter-l: 23%;
+  --bulma-background-l: 12%;
+  --bulma-border-l: 31%;
+  --bulma-border-weak-l: 23%;
+  --bulma-text-l: 88%;
+  --bulma-text-weak-l: 72%;
+  --bulma-text-strong-l: 88%;
+  --bulma-text-title-l: 88%;
+
+  --bulma-scheme-main: #{$ctp-base};
+  --bulma-scheme-main-bis: #{$ctp-mantle};
+  --bulma-scheme-main-ter: #{$ctp-surface0};
+  --bulma-background: #{$ctp-mantle};
+  --bulma-border: #{$ctp-surface1};
+  --bulma-border-weak: #{$ctp-surface0};
+  --bulma-text: #{$ctp-text};
+  --bulma-text-strong: #{$ctp-text};
+  --bulma-text-weak: #{$ctp-subtext0};
+  --bulma-text-title: #{$ctp-text};
+  --bulma-scheme-invert: #{$ctp-text};
+  --bulma-scheme-invert-bis: #{$ctp-subtext1};
+  --bulma-scheme-invert-ter: #{$ctp-subtext0};
+}
+
+html,
+body,
+#app {
+  background-color: $ctp-base;
+  color: $ctp-text;
+}
 
 #app {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
 }
 
 #nav {
@@ -20,11 +112,11 @@
 
 #nav a {
   font-weight: bold;
-  color: #2c3e50;
+  color: $ctp-text;
 }
 
 #nav a.router-link-exact-active {
-  color: #42b983;
+  color: $ctp-mauve;
 }
 
 div.is-view {
@@ -36,4 +128,38 @@ div.is-view {
 .field-body > .field:not(.is-narrow) {
   align-items: center;
   justify-content: space-between;
+}
+
+// vue-fontawesome SVGs default larger than input text; keep them ~1em
+.icon {
+  svg.svg-inline--fa,
+  svg {
+    width: 1em;
+    height: 1em;
+    max-width: 1.125rem;
+    max-height: 1.125rem;
+    vertical-align: -0.125em;
+  }
+}
+
+.control.has-icons-left .icon,
+.control.has-icons-right .icon,
+.b-numberinput .button .icon {
+  font-size: 1rem;
+
+  svg.svg-inline--fa,
+  svg {
+    max-width: 1rem;
+    max-height: 1rem;
+  }
+}
+
+.button .icon {
+  font-size: inherit;
+
+  svg.svg-inline--fa,
+  svg {
+    max-width: 1em;
+    max-height: 1em;
+  }
 }

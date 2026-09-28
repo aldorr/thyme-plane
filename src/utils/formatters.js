@@ -1,34 +1,42 @@
 /**
- * Format duration input as HH h MM m while typing.
- * @param {string} value
- * @returns {string}
+ * Split total seconds into hours and minutes parts.
+ * @param {number} seconds
+ * @returns {{ hours: number, minutes: number }}
  */
-export function durationFilter(value) {
-  if (!value) return value
-  let hrs, mins
-  if (value.length === 4) {
-    hrs = value.slice(0, 2)
-    if (hrs > 12) {
-      hrs = 12
-    }
-    return hrs + 'h '
-  }
-  if (value.length >= 6) {
-    mins = value.slice(4, 6)
-    hrs = value.slice(0, 2)
-    if (hrs > 12) {
-      hrs = 12
-    }
-    if (mins > 59) {
-      mins = 59
-    }
-    return hrs + 'h ' + mins + 'm'
-  }
-  return value
+export function secondsToParts(seconds) {
+  const total = Math.max(0, Math.floor(Number(seconds) || 0))
+  const hours = Math.min(12, Math.floor(total / 3600))
+  const minutes = Math.min(59, Math.floor((total % 3600) / 60))
+  return { hours, minutes }
 }
 
 /**
- * Convert seconds to "X hrs Y mins".
+ * Convert hours + minutes into total seconds.
+ * @param {number} hours
+ * @param {number} minutes
+ * @returns {number}
+ */
+export function partsToSeconds(hours, minutes) {
+  const h = Math.min(12, Math.max(0, Math.floor(Number(hours) || 0)))
+  const m = Math.min(59, Math.max(0, Math.floor(Number(minutes) || 0)))
+  return h * 3600 + m * 60
+}
+
+/**
+ * Human-readable duration label, e.g. "1h 15m".
+ * @param {number} seconds
+ * @returns {string}
+ */
+export function formatDurationLabel(seconds) {
+  const { hours, minutes } = secondsToParts(seconds)
+  if (hours === 0 && minutes === 0) return '0m'
+  if (hours === 0) return `${minutes}m`
+  if (minutes === 0) return `${hours}h`
+  return `${hours}h ${minutes}m`
+}
+
+/**
+ * Convert seconds to "X hrs Y mins" (list/export display).
  * @param {number} seconds
  * @returns {string}
  */

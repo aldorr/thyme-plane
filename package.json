@@ -19,7 +19,6 @@
         "@vee-validate/rules": "^4.15.1",
         "buefy": "^3.1.0",
         "bulma": "^1.0.4",
-        "cleave.js": "^1.6.0",
         "firebase": "^12.19.0",
         "vee-validate": "^4.15.1",
         "vue": "^3.5.43",

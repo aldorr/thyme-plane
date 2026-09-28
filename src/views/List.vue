@@ -2,7 +2,7 @@
     <!-- START CALENDAR VIEW -->
     <div id="is-time-calendar" class="section is-view">
         <div class="container">
-            <div class="hero is-small is-light">
+            <div class="hero is-small">
                 <div class="hero-body">
 
                     <div class="columns is-vcentered is-multiline">

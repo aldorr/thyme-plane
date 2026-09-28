@@ -47,11 +47,10 @@
               </b-datepicker>
             </b-field>
           </ValidationProvider>
-          <ValidationProvider v-model="duration" name="duration" rules="required" v-slot="slotProps">
-            <b-field label="Zeitspanne eingeben" :type="{'is-danger': !!slotProps?.errors?.[0], 'is-success': !!slotProps?.valid}"
-              :message="String(slotProps?.errors?.[0] || 'Im Format:  01h 05m')">
-              <b-input type="text" :value="formatDuration(duration)" required v-cleave="masks.duration"
-                class="duration" @keyup="onInput" icon="clock" key="duration"></b-input>
+          <ValidationProvider v-model="durationSeconds" name="duration" rules="min_duration" v-slot="slotProps">
+            <b-field label="Duration" :type="{'is-danger': !!slotProps?.errors?.[0], 'is-success': !!slotProps?.valid}"
+              :message="String(slotProps?.errors?.[0] || 'Use the steppers or a preset')">
+              <DurationPicker v-model="durationSeconds" />
             </b-field>
           </ValidationProvider>
 
@@ -86,8 +85,7 @@
     import { required } from '@vee-validate/rules'
     import ValidationObserver from '@/components/ValidationObserver.vue'
     import ValidationProvider from '@/components/ValidationProvider.vue'
-    import { cleaveDirective as cleave } from '@/utils/cleave-directive'
-    import { durationFilter } from '@/utils/formatters'
+    import DurationPicker from '@/components/DurationPicker.vue'
 
     // Add the required rule
     defineRule('required', (value) => {
@@ -96,12 +94,20 @@
         }
         return true;
     });
+
+    defineRule('min_duration', (value) => {
+        if (Number(value) >= 60) {
+            return true;
+        }
+        return 'Pick a duration';
+    });
+
 export default {
   name: 'EditItem',
-  directives: { cleave },
   components: {
       ValidationObserver,
-      ValidationProvider
+      ValidationProvider,
+      DurationPicker
   },
   data() {
     const today = new Date()
@@ -113,18 +119,9 @@ export default {
       area: this.$attrs.selected.area,
       date: this.dateToObj(this.$attrs.selected.date),
       origDate: this.dateToObj(this.$attrs.selected.date),
-      duration: 0,
+      durationSeconds: Number(this.$attrs.selected.time) || 0,
       note: this.$attrs.selected.note,
       maxDate: new Date(today.getFullYear(), today.getMonth(), today.getDate()),
-      masks: {
-          duration: {
-              delimiters: ['h ', 'm'],
-              blocks: [2, 2, 0],
-              numericOnly: true,
-              noImmediatePrefix: true
-          }
-      },
-
     }
   },
   computed: {
@@ -192,12 +189,10 @@ export default {
         return dateString
     },
     rawDuration() {
-        let mins = this.duration.slice(4, 6)
-        let hrs = this.duration.slice(0, 2)
-        return hrs * 60 * 60 + mins * 60
+        return this.durationSeconds
     },
     anyChanges() {
-      if (this.area !== this.$attrs.selected.area || this.job !== this.$attrs.selected.job || this.dateToString !== this.$attrs.selected.date || this.rawDuration !== this.$attrs.selected.time || this.note !== this.$attrs.selected.note) {
+      if (this.area !== this.$attrs.selected.area || this.job !== this.$attrs.selected.job || this.dateToString !== this.$attrs.selected.date || this.durationSeconds !== this.$attrs.selected.time || this.note !== this.$attrs.selected.note) {
         return true
       } else {
         return false
@@ -311,13 +306,9 @@ export default {
         })
 
     },
-    onInput(event) {
-        this.duration = event.target._vCleave.getFormattedValue()
-    },
     closeModal() {
       this.$emit('close')
     },
-    formatDuration: durationFilter,
     dateToHuman(dateString) {
         // Make date into string based on locale
         let dateArray = dateString.split(".")
@@ -336,20 +327,10 @@ export default {
         let date = new Date(year,month,day)
         return date
     },
-    secondsToHMs: function(seconds) {
-        if (!seconds) return '0 h 0 m'
-        let mins = seconds / 60
-        let hrs = Math.floor(mins / 60)
-        if (hrs<10) hrs = "0" + hrs
-        mins = mins % 60
-        if (mins<10) mins = "0" + mins
-        return hrs + 'h ' + mins + 'm'
-    },
   },
 
   mounted() {
-    // console.log(this.secondsToHMs(this.$attrs.time))
-    this.duration = this.secondsToHMs(this.$attrs.selected.time)
+    this.durationSeconds = Number(this.$attrs.selected.time) || 0
   }
 }
 </script>

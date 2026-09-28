@@ -22,7 +22,7 @@
                                                 <template v-slot:empty>
                                                     <div style="padding: 0.5rem;">
                                                         <a @click.prevent.stop="showAddKunde"
-                                                            style="cursor: pointer; color: #3273dc; text-decoration: underline;">
+                                                            class="has-text-link" style="cursor: pointer; text-decoration: underline;">
                                                             <span> Add new client "{{ kunde }}" </span>
                                                         </a>
                                                     </div>
@@ -64,7 +64,7 @@
                                                 </div>
                                             </b-field>
                                         </b-message>
-                                        <article class="message is-white">
+                                        <article class="message">
                                             <b-button
                                                 v-if="kunde !== '' && kundeExists && !isEmpty(archivedBereicheObject)"
                                                 type="is-warning is-outlined"
@@ -123,7 +123,7 @@
                                             </b-field>
                                         </b-message>
 
-                                        <article class="message is-white">
+                                        <article class="message">
                                             <b-button v-if="kunde !== '' && kundeExists && !isEmpty(archivedJobsObject)"
                                                 type="is-warning is-outlined" @click="jobsArchActive = !jobsArchActive"
                                                 expanded>Archived Jobs</b-button>

@@ -1,5 +1,5 @@
 <template>
-        <HelloWorld v-bind:msg="`Welcome ` + userName" v-bind:text="`You are logged in as ` + userEmail"/>
+  <HelloWorld v-bind:msg="`Welcome ` + userName + ` to`" v-bind:text="`You are logged in as ` + userEmail" />
 </template>
 
 <script>
@@ -16,13 +16,13 @@ export default {
       return this.$store.getters.userEmail
     },
     userName: {
-        get: function() {
-          return this.$store.getters.userName
-        },
-        set: function(value) {
-          // console.log(value)
-          this.$store.commit('setUserName', value)
-        }
+      get: function () {
+        return this.$store.getters.userName
+      },
+      set: function (value) {
+        // console.log(value)
+        this.$store.commit('setUserName', value)
+      }
     }
   },
   methods: {
