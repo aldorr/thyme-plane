@@ -13,15 +13,15 @@ Add clients, areas, and jobs, log time entries, then filter and total hours for 
 
 ## Stack (v2)
 
-| Piece | Details |
-| --- | --- |
-| UI | Vue 3 + Vue Router 4 + Vuex 4 |
-| Components | Buefy 3 on Bulma 1 |
-| Theme | [Catppuccin Mocha](https://catppuccin.com/palette/) (dark by default) via Sass in [`src/assets/scss/main.scss`](src/assets/scss/main.scss) |
-| Auth / data | Firebase Auth (email/password) + Realtime Database |
-| Build | Vite 8 |
-| Icons | Font Awesome (vue-fontawesome) |
-| Validation | VeeValidate 4 |
+| Piece       | Details                                                                                                                                    |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| UI          | Vue 3 + Vue Router 4 + Vuex 4                                                                                                              |
+| Components  | Buefy 3 on Bulma 1                                                                                                                         |
+| Theme       | [Catppuccin Mocha](https://catppuccin.com/palette/) (dark by default) via Sass in [`src/assets/scss/main.scss`](src/assets/scss/main.scss) |
+| Auth / data | Firebase Auth (email/password) + Realtime Database                                                                                         |
+| Build       | Vite 8                                                                                                                                     |
+| Icons       | Font Awesome (vue-fontawesome)                                                                                                             |
+| Validation  | VeeValidate 4                                                                                                                              |
 
 ## Requirements
 
@@ -115,13 +115,13 @@ After the first user exists, additional users can be created from the app (nav *
 
 ## Scripts
 
-| Command | Purpose |
-| --- | --- |
-| `npm run dev` / `npm run serve` | Local Vite dev server |
-| `npm run build` | Production build → `dist/` |
-| `npm run preview` | Serve the production build locally |
-| `npm run lint` | ESLint (`.js` / `.vue`) |
-| `npm run deploy` | Build + publish with [Surge](https://surge.sh/) via [`deploy.sh`](deploy.sh) |
+| Command                         | Purpose                                                                      |
+| ------------------------------- | ---------------------------------------------------------------------------- |
+| `npm run dev` / `npm run serve` | Local Vite dev server                                                        |
+| `npm run build`                 | Production build → `dist/`                                                   |
+| `npm run preview`               | Serve the production build locally                                           |
+| `npm run lint`                  | ESLint (`.js` / `.vue`)                                                      |
+| `npm run deploy`                | Build + publish with [Surge](https://surge.sh/) via [`deploy.sh`](deploy.sh) |
 
 ## Deploy
 
@@ -166,16 +166,16 @@ Code released under the [MIT](LICENSE) license.
 
 ## Version
 
-* **2.0.0** — Vue 3, Vite, Buefy 3 / Bulma 1, Catppuccin Mocha, custom DurationPicker
+- **2.0.0** — Vue 3, Vite, Buefy 3 / Bulma 1, Catppuccin Mocha, custom DurationPicker
 
 ## Live demo
 
-* [https://thyme.aldorr.net/](https://thyme.aldorr.net/)
+- [https://thyme.aldorr.net/](https://thyme.aldorr.net/)
 
 ## Communication
 
-* Open an issue on this repository
-* Discord: https://discord.gg/2U8EmG
+- Open an issue on this repository
+- Discord: https://discord.gg/jGkwFnp76
 
 ## Donate
 
